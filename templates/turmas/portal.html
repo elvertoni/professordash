@@ -1,0 +1,58 @@
+{% extends "base_publico.html" %}
+
+{% block title %}{{ turma.nome }} — Portal{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <!-- Info da turma -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <h1 class="text-xl font-bold text-gray-900">{{ turma.nome }}</h1>
+    <p class="text-sm text-gray-500 mt-1">{{ turma.codigo }} &middot; {{ turma.periodo }} &middot; {{ turma.ano_letivo }}</p>
+    {% if turma.descricao %}
+      <p class="text-sm text-gray-600 mt-3">{{ turma.descricao }}</p>
+    {% endif %}
+  </div>
+
+  <!-- CTA de login -->
+  <div class="bg-blue-600 rounded-xl p-6 text-white text-center">
+    <h2 class="font-semibold text-lg mb-2">Acesse o portal completo</h2>
+    <p class="text-blue-100 text-sm mb-4">Entre com sua conta Google para ver materiais, atividades e seu desempenho.</p>
+    <a href="{% url 'turmas:entrar' token=turma.token_publico %}"
+       class="inline-block bg-white text-blue-700 font-medium text-sm px-5 py-2.5 rounded-lg hover:bg-blue-50 transition-colors">
+      Entrar com Google
+    </a>
+  </div>
+
+  <!-- Aulas realizadas -->
+  <div>
+    <h2 class="text-base font-semibold text-gray-900 mb-3">Aulas</h2>
+    {% if aulas %}
+      <div class="space-y-2">
+        {% for aula in aulas %}
+          <a href="{% url 'turmas:portal_aulas_detalhe' token=turma.token_publico aula_pk=aula.pk %}"
+             class="flex items-center gap-3 bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-blue-300 hover:shadow-sm transition-all">
+            <span class="w-8 h-8 flex items-center justify-center rounded-full bg-green-100 text-green-700 text-xs font-bold shrink-0">
+              {{ aula.numero }}
+            </span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900 truncate">{{ aula.titulo }}</p>
+              {% if aula.data %}
+                <p class="text-xs text-gray-400">{{ aula.data|date:"d/m/Y" }}</p>
+              {% endif %}
+            </div>
+            <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="bg-white rounded-xl border border-dashed border-gray-300 p-8 text-center">
+        <p class="text-sm text-gray-400">Nenhuma aula disponível ainda.</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

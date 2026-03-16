@@ -1,0 +1,78 @@
+{% extends "base_admin.html" %}
+{% load markdownx %}
+
+{% block title %}{{ aula }} — ProfessorDash{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-blue-600">Turmas</a>
+    <span>/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-blue-600">{{ turma.nome }}</a>
+    <span>/</span>
+    <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}" class="hover:text-blue-600">Aulas</a>
+    <span>/</span>
+    <span class="text-gray-900 font-medium">Aula {{ aula.numero }}</span>
+  </nav>
+
+  <!-- Cabeçalho -->
+  <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+    <div>
+      <div class="flex items-center gap-3">
+        <span class="w-10 h-10 flex items-center justify-center rounded-full text-sm font-bold
+                     {% if aula.realizada %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-500{% endif %}">
+          {{ aula.numero }}
+        </span>
+        <h1 class="text-2xl font-bold text-gray-900">{{ aula.titulo }}</h1>
+      </div>
+      {% if aula.data %}
+        <p class="text-sm text-gray-500 mt-1 ml-13">{{ aula.data|date:"d \d\e F \d\e Y" }}</p>
+      {% endif %}
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <!-- Botão realizada -->
+      <button id="btn-realizada"
+              hx-post="{% url 'turmas:aulas_realizada' pk=turma.pk aula_pk=aula.pk %}"
+              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+              hx-swap="none"
+              hx-on::after-request="location.reload()"
+              class="text-sm border px-3 py-2 rounded-lg transition-colors
+                     {% if aula.realizada %}border-green-300 text-green-700 bg-green-50 hover:bg-green-100{% else %}border-gray-300 text-gray-500 hover:bg-gray-100{% endif %}">
+        {% if aula.realizada %}Marcar como pendente{% else %}Marcar como realizada{% endif %}
+      </button>
+      <a href="{% url 'turmas:aulas_editar' pk=turma.pk aula_pk=aula.pk %}"
+         class="text-sm text-gray-600 hover:text-gray-900 border border-gray-300 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+        Editar
+      </a>
+      <a href="{% url 'turmas:aulas_excluir' pk=turma.pk aula_pk=aula.pk %}"
+         class="text-sm text-red-600 hover:text-red-800 border border-red-300 px-3 py-2 rounded-lg hover:bg-red-50 transition-colors">
+        Excluir
+      </a>
+    </div>
+  </div>
+
+  <!-- Conteúdo Markdown -->
+  {% if aula.conteudo %}
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+      <article class="prose prose-gray max-w-none">
+        {{ aula.conteudo|markdownify }}
+      </article>
+    </div>
+  {% else %}
+    <div class="bg-white rounded-xl border border-dashed border-gray-300 p-10 text-center">
+      <p class="text-gray-400 text-sm">Nenhum conteúdo cadastrado para esta aula.</p>
+      <a href="{% url 'turmas:aulas_editar' pk=turma.pk aula_pk=aula.pk %}"
+         class="mt-2 inline-block text-blue-600 hover:underline text-sm">Adicionar conteúdo</a>
+    </div>
+  {% endif %}
+
+  <!-- Materiais (Sprint 2) -->
+  <div class="mt-6">
+    <h2 class="text-base font-semibold text-gray-900 mb-3">Materiais</h2>
+    <p class="text-sm text-gray-400">Módulo de materiais disponível na Sprint 2.</p>
+  </div>
+
+</div>
+{% endblock %}

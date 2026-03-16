@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="min-h-screen flex flex-col">
+
+  <!-- Navbar pública -->
+  <nav class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+    <a href="{% url 'turmas:portal' token=turma.token_publico %}"
+       class="font-semibold text-gray-800 text-lg truncate">
+      {{ turma.nome }}
+    </a>
+    <a href="{% url 'turmas:entrar' token=turma.token_publico %}"
+       class="text-sm bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700">
+      Entrar com Google
+    </a>
+  </nav>
+
+  <!-- Mensagens -->
+  {% include "components/_messages.html" %}
+
+  <!-- Conteúdo -->
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-6">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="text-center text-xs text-gray-400 py-4">
+    ProfessorDash · {{ turma.nome }}
+  </footer>
+</div>
+{% endblock %}

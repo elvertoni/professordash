@@ -1,0 +1,68 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Turmas — ProfessorDash{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+
+  <!-- Cabeçalho -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Turmas</h1>
+      <p class="text-sm text-gray-500 mt-1">Gerencie suas turmas e disciplinas</p>
+    </div>
+    <a href="{% url 'turmas:nova' %}"
+       class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Nova turma
+    </a>
+  </div>
+
+  <!-- Turmas ativas -->
+  {% if turmas_ativas %}
+    <section class="mb-10">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Ativas</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for turma in turmas_ativas %}
+          {% include "components/_card_turma.html" %}
+        {% endfor %}
+      </div>
+    </section>
+  {% else %}
+    <div class="bg-white rounded-xl border border-dashed border-gray-300 p-10 text-center mb-10">
+      <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9
+                 a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+      </svg>
+      <p class="text-gray-500 text-sm">Nenhuma turma ativa.</p>
+      <a href="{% url 'turmas:nova' %}"
+         class="mt-3 inline-block text-blue-600 hover:underline text-sm font-medium">
+        Criar a primeira turma
+      </a>
+    </div>
+  {% endif %}
+
+  <!-- Turmas arquivadas -->
+  {% if turmas_arquivadas %}
+    <section x-data="{ aberto: false }">
+      <button @click="aberto = !aberto"
+              class="flex items-center gap-2 text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 hover:text-gray-700">
+        <svg class="w-4 h-4 transition-transform" :class="aberto ? 'rotate-90' : ''"
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        Arquivadas ({{ turmas_arquivadas.count }})
+      </button>
+      <div x-show="aberto" x-transition class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for turma in turmas_arquivadas %}
+          {% include "components/_card_turma.html" %}
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+</div>
+{% endblock %}

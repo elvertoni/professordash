@@ -1,0 +1,43 @@
+{% extends "base_publico.html" %}
+{% load markdownx %}
+
+{% block title %}{{ aula.titulo }} — {{ turma.nome }}{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <!-- Navegação -->
+  <div>
+    <a href="{% url 'turmas:portal_aulas_lista' token=turma.token_publico %}"
+       class="text-sm text-blue-600 hover:underline">&larr; Todas as aulas</a>
+  </div>
+
+  <!-- Cabeçalho da aula -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <div class="flex items-center gap-3 mb-2">
+      <span class="w-9 h-9 flex items-center justify-center rounded-full text-sm font-bold
+                   {% if aula.realizada %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-500{% endif %}">
+        {{ aula.numero }}
+      </span>
+      <h1 class="text-xl font-bold text-gray-900">{{ aula.titulo }}</h1>
+    </div>
+    {% if aula.data %}
+      <p class="text-sm text-gray-500 ml-12">{{ aula.data|date:"d \d\e F \d\e Y" }}</p>
+    {% endif %}
+  </div>
+
+  <!-- Conteúdo Markdown -->
+  {% if aula.conteudo %}
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+      <article class="prose prose-gray max-w-none">
+        {{ aula.conteudo|markdownify }}
+      </article>
+    </div>
+  {% else %}
+    <div class="bg-white rounded-xl border border-dashed border-gray-300 p-8 text-center">
+      <p class="text-sm text-gray-400">Nenhum conteúdo disponível para esta aula.</p>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

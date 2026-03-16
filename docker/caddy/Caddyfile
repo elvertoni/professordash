@@ -1,0 +1,24 @@
+aulas.tonicoimbra.com {
+
+    # Arquivos de mídia: servidos diretamente pelo Caddy (sem passar pelo Django)
+    handle /media/* {
+        root * /srv/professordash
+        file_server
+        header Content-Disposition "attachment"
+    }
+
+    # Arquivos estáticos: servidos diretamente pelo Caddy
+    handle /static/* {
+        root * /srv/professordash
+        file_server
+    }
+
+    # Demais requests → Gunicorn
+    reverse_proxy app:8000
+
+    # Logs
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+}

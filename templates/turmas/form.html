@@ -1,0 +1,111 @@
+{% extends "base_admin.html" %}
+
+{% block title %}{% if object.pk %}Editar turma{% else %}Nova turma{% endif %} — ProfessorDash{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-blue-600">Turmas</a>
+    <span>/</span>
+    <span class="text-gray-900 font-medium">
+      {% if object.pk %}Editar {{ object.nome }}{% else %}Nova turma{% endif %}
+    </span>
+  </nav>
+
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+    <div class="px-6 py-5 border-b border-gray-100">
+      <h1 class="text-xl font-bold text-gray-900">
+        {% if object.pk %}Editar turma{% else %}Nova turma{% endif %}
+      </h1>
+    </div>
+
+    <form method="post" class="p-6 space-y-5">
+      {% csrf_token %}
+
+      <!-- Nome -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.nome.id_for_label }}">
+          Nome da turma <span class="text-red-500">*</span>
+        </label>
+        {{ form.nome }}
+        {% if form.nome.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ form.nome.errors|join:", " }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Código e Período (grid 2 cols) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.codigo.id_for_label }}">
+            Código <span class="text-red-500">*</span>
+          </label>
+          {{ form.codigo }}
+          {% if form.codigo.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ form.codigo.errors|join:", " }}</p>
+          {% endif %}
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.periodo.id_for_label }}">
+            Período <span class="text-red-500">*</span>
+          </label>
+          {{ form.periodo }}
+          {% if form.periodo.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ form.periodo.errors|join:", " }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Ano letivo -->
+      <div class="max-w-xs">
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.ano_letivo.id_for_label }}">
+          Ano letivo <span class="text-red-500">*</span>
+        </label>
+        {{ form.ano_letivo }}
+        {% if form.ano_letivo.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ form.ano_letivo.errors|join:", " }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Descrição -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.descricao.id_for_label }}">
+          Descrição
+        </label>
+        {{ form.descricao }}
+        {% if form.descricao.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ form.descricao.errors|join:", " }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Erros não-campo -->
+      {% if form.non_field_errors %}
+        <div class="rounded-lg bg-red-50 border border-red-200 p-3">
+          <p class="text-red-600 text-sm">{{ form.non_field_errors|join:", " }}</p>
+        </div>
+      {% endif %}
+
+      <!-- Ações -->
+      <div class="flex items-center gap-3 pt-2">
+        <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors">
+          {% if object.pk %}Salvar alterações{% else %}Criar turma{% endif %}
+        </button>
+        <a href="{% if object.pk %}{% url 'turmas:detalhe' pk=object.pk %}{% else %}{% url 'turmas:lista' %}{% endif %}"
+           class="text-sm text-gray-500 hover:text-gray-700 px-4 py-2.5 rounded-lg hover:bg-gray-100 transition-colors">
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<style>
+  .input-field {
+    @apply w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm
+           focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none;
+  }
+</style>
+{% endblock %}

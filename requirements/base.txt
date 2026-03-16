@@ -1,0 +1,15 @@
+Django==6.0.3
+django-allauth==65.15.0
+django-markdownx==4.0.9
+django-import-export==4.4.0
+gunicorn==25.1.0
+psycopg2-binary==2.9.11
+redis==7.3.0
+python-decouple==3.8
+python-magic==0.4.27
+Pillow==12.1.1
+WeasyPrint==68.1
+whitenoise==6.12.0
+PyJWT==2.12.1
+cryptography==46.0.5
+requests==2.32.5

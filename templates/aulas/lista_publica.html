@@ -1,0 +1,45 @@
+{% extends "base_publico.html" %}
+
+{% block title %}Aulas — {{ turma.nome }}{% endblock %}
+
+{% block content %}
+<div class="space-y-4">
+
+  <h2 class="text-lg font-bold text-gray-900">Aulas da turma</h2>
+
+  {% if aulas %}
+    <div class="space-y-2">
+      {% for aula in aulas %}
+        <a href="{% url 'turmas:portal_aulas_detalhe' token=turma.token_publico aula_pk=aula.pk %}"
+           class="flex items-center gap-3 bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-blue-300 hover:shadow-sm transition-all">
+          <span class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold shrink-0
+                       {% if aula.realizada %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-400{% endif %}">
+            {{ aula.numero }}
+          </span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900 truncate">{{ aula.titulo }}</p>
+            {% if aula.data %}
+              <p class="text-xs text-gray-400">{{ aula.data|date:"d/m/Y" }}</p>
+            {% endif %}
+          </div>
+          {% if aula.realizada %}
+            <span class="text-xs text-green-600 font-medium shrink-0">Realizada</span>
+          {% endif %}
+          <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="bg-white rounded-xl border border-dashed border-gray-300 p-8 text-center">
+      <p class="text-sm text-gray-400">Nenhuma aula disponível ainda.</p>
+    </div>
+  {% endif %}
+
+  <div class="pt-2">
+    <a href="{% url 'turmas:portal' token=turma.token_publico %}"
+       class="text-sm text-blue-600 hover:underline">&larr; Voltar ao portal</a>
+  </div>
+</div>
+{% endblock %}
