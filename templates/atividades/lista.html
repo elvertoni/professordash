@@ -1,0 +1,44 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Atividades - {{ turma.nome }} | {{ block.super }}{% endblock %}
+
+{% block page_title %}Atividades: {{ turma.nome }}{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'turmas:atividades_nova' pk=turma.pk %}" class="btn border-brand-200 text-brand-700 hover:bg-brand-50 flex items-center gap-2">
+  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+  Nova Atividade
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      Voltar para turma
+    </a>
+  </div>
+
+  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div class="p-6">
+      {% if atividades %}
+        <div class="space-y-4">
+          {% for atividade in atividades %}
+            {% include "atividades/_card_atividade.html" %}
+          {% endfor %}
+        </div>
+      {% else %}
+        {% url 'turmas:atividades_nova' pk=turma.pk as url_nova_atividade %}
+        {% include "components/_empty_state.html" with
+           icon_path="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+           title="Nenhuma atividade cadastrada"
+           subtitle="Crie a primeira atividade para esta turma."
+           action_url=url_nova_atividade
+           action_label="Nova atividade"
+        %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Importar Alunos — {{ turma.nome }} — ProfessorDash{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-blue-600">Turmas</a>
+    <span>/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-blue-600">{{ turma.nome }}</a>
+    <span>/</span>
+    <a href="{% url 'turmas:alunos_lista' pk=turma.pk %}" class="hover:text-blue-600">Alunos</a>
+    <span>/</span>
+    <span class="text-gray-900 font-medium">Importar CSV</span>
+  </nav>
+
+  <div class="bg-white rounded-xl border border-gray-200 p-6 sm:p-8 shadow-sm">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">Importar Alunos</h1>
+      <p class="text-sm text-gray-500 mt-1">
+        Envie um arquivo CSV contendo os alunos para importá-los e matriculá-los automaticamente em <strong>{{ turma.nome }}</strong>.
+      </p>
+    </div>
+
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+      <h3 class="text-sm font-semibold text-blue-800 mb-2">Formato esperado do CSV:</h3>
+      <ul class="list-disc list-inside text-xs text-blue-700 space-y-1">
+        <li>A primeira linha deve conter os cabeçalhos das colunas (ex: <code class="bg-blue-100 px-1 rounded">nome,email,matricula</code>).</li>
+        <li><strong>nome</strong> (obrigatório): O nome completo do aluno.</li>
+        <li><strong>email</strong> (obrigatório): O e-mail usado para login (Google).</li>
+        <li><strong>matricula</strong> (opcional): O número de registro do aluno (CGM, RA, etc.).</li>
+      </ul>
+      <p class="text-xs text-blue-800 mt-2 italic">Se um e-mail já constar no sistema, o aluno existente será apenas matriculado nesta turma.</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+      {% csrf_token %}
+      
+      <div class="w-full">
+        <label for="arquivo_csv" class="block text-sm font-medium text-gray-700 mb-2">
+          Selecione o arquivo CSV
+        </label>
+        <input type="file" name="arquivo_csv" id="arquivo_csv" required accept=".csv"
+               class="block w-full text-sm text-gray-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-md file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-blue-50 file:text-blue-700
+                      hover:file:bg-blue-100 cursor-pointer">
+      </div>
+
+      <div class="pt-6 border-t border-gray-100 flex justify-end gap-3">
+        <a href="{% url 'turmas:alunos_lista' pk=turma.pk %}" class="text-sm font-medium text-gray-700 bg-white border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+          Cancelar
+        </a>
+        <button type="submit" class="text-sm font-medium text-white bg-blue-600 px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"/></svg>
+          Importar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

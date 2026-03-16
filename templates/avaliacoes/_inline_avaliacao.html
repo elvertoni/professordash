@@ -1,0 +1,64 @@
+{% if edit_mode %}
+  <form hx-post="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}"
+        hx-target="#avaliacao-{{ entrega.pk }}"
+        hx-swap="outerHTML"
+        class="flex flex-col gap-2 min-w-[200px]"
+        id="avaliacao-{{ entrega.pk }}">
+    {% csrf_token %}
+    <div class="flex items-center gap-2">
+      {{ form.nota }}
+      <span class="text-sm font-medium text-gray-500">/ {{ entrega.atividade.valor_pontos }}</span>
+    </div>
+    {% if form.nota.errors %}
+      <div class="text-xs text-red-600">{{ form.nota.errors.0 }}</div>
+    {% endif %}
+    
+    {{ form.feedback }}
+    {% if form.feedback.errors %}
+      <div class="text-xs text-red-600">{{ form.feedback.errors.0 }}</div>
+    {% endif %}
+    
+    <div class="flex items-center gap-2 justify-end">
+      <button type="button" 
+              hx-get="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}?cancel=1"
+              hx-target="#avaliacao-{{ entrega.pk }}"
+              hx-swap="outerHTML"
+              class="text-xs text-gray-500 hover:text-gray-700 font-medium">
+        Cancelar
+      </button>
+      <button type="submit" class="btn-primary py-1 px-3 text-xs w-auto">
+        Salvar
+      </button>
+    </div>
+  </form>
+{% else %}
+  <div id="avaliacao-{{ entrega.pk }}" class="flex flex-col items-end gap-1">
+    {% if entrega.nota is not None %}
+      <div class="flex items-center gap-2">
+        <span class="text-lg font-bold {% if entrega.nota >= entrega.atividade.valor_pontos|add:"-0.01"|floatformat:2|add:"/2" %}text-green-600{% else %}text-brand-600{% endif %}">
+          {{ entrega.nota }}
+        </span>
+        <span class="text-sm text-gray-500">/ {{ entrega.atividade.valor_pontos }}</span>
+      </div>
+      {% if entrega.feedback %}
+        <div class="text-xs text-gray-500 max-w-[200px] truncate" title="{{ entrega.feedback }}">
+          {{ entrega.feedback }}
+        </div>
+      {% endif %}
+      <button hx-get="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk|default:turma.pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}"
+              hx-target="#avaliacao-{{ entrega.pk }}"
+              hx-swap="outerHTML"
+              class="text-xs text-brand-600 hover:text-brand-800 font-medium mt-1">
+        Editar
+      </button>
+    {% else %}
+      <button hx-get="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk|default:turma.pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}"
+              hx-target="#avaliacao-{{ entrega.pk }}"
+              hx-swap="outerHTML"
+              class="btn-secondary py-1 px-3 text-xs flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        Avaliar
+      </button>
+    {% endif %}
+  </div>
+{% endif %}

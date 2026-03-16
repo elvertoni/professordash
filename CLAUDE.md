@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 source .venv/bin/activate
 
 # Subir banco e Redis (Django roda local)
-docker compose -f docker-compose.dev.yml up -d db redis
+docker compose up -d db redis
 
 # Migrations e superuser
 python manage.py migrate
@@ -24,9 +24,9 @@ python manage.py runserver
 
 # Testes
 pytest
-pytest apps/turmas/                        # testar um app específico
+pytest turmas/                             # testar um app específico
 pytest -k "test_entrega"                   # testar por nome
-pytest --cov=apps --cov-report=html        # com cobertura
+pytest --cov=. --cov-report=html           # com cobertura
 
 # Qualidade de código
 black .
@@ -56,7 +56,7 @@ Django 5.1 + HTMX 2.x + Alpine.js 3.x + Tailwind CSS 3.x (todos via CDN). Postgr
 - `/painel/*` — professor (`is_staff=True`), login próprio (email+senha)
 - `/turma/<uuid:token>/*` — aluno (Google OAuth) ou público (sem login)
 
-### Mixins principais (`apps/core/mixins.py`)
+### Mixins principais (`core/mixins.py`)
 
 - `ProfessorRequiredMixin` — verifica `request.user.is_staff`
 - `TurmaPublicaMixin` — resolve `self.turma` pelo `token` da URL

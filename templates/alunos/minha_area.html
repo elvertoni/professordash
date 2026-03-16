@@ -1,0 +1,103 @@
+{% extends "base_publico.html" %}
+
+{% block title %}Minha Área — {{ turma.nome }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+  <div class="mb-8 flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Minha Área</h1>
+      <p class="mt-2 text-sm text-gray-600">Acompanhe suas atividades na turma <strong>{{ turma.nome }}</strong></p>
+    </div>
+    <div class="hidden sm:block text-right">
+      <p class="text-sm font-medium text-gray-900">{{ aluno.nome }}</p>
+      <p class="text-xs text-gray-500">{{ aluno.email }}</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-sm font-medium text-gray-500 mb-1">Status na Turma</h3>
+      {% if matricula.ativa %}
+        <p class="text-lg font-bold text-green-600">Matriculado</p>
+      {% else %}
+        <p class="text-lg font-bold text-red-600">Inativo</p>
+      {% endif %}
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-sm font-medium text-gray-500 mb-1">Entregas Feitas</h3>
+      <p class="text-2xl font-bold text-gray-900">{{ aluno.entregas.count }}</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col justify-center gap-3">
+      <a href="{% url 'turmas:portal_minhas_notas' token=turma.token_publico %}" class="text-sm font-medium text-amber-600 hover:text-amber-700 hover:underline flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Ver Minhas Notas e Aproveitamento
+      </a>
+      <a href="{% url 'turmas:portal' token=turma.token_publico %}" class="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        Voltar para o Portal da Turma
+      </a>
+    </div>
+  </div>
+
+  <h2 class="text-xl font-bold text-gray-900 mb-4">Minhas Atividades</h2>
+  
+  {% if atividades_status %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <ul class="divide-y divide-gray-100">
+        {% for item in atividades_status %}
+          <li class="p-4 sm:p-6 hover:bg-gray-50 transition-colors">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex-1">
+                <h3 class="text-base font-medium text-gray-900">
+                  <span class="mr-2">{{ item.atividade.titulo }}</span>
+                  {% if item.entrega %}
+                    {% if item.entrega.status == 'pendente' %}
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">Rascunho</span>
+                    {% elif item.entrega.status == 'entregue' %}
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">Entregue</span>
+                    {% elif item.entrega.status == 'avaliado' %}
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Avaliado</span>
+                    {% elif item.entrega.status == 'atrasado' %}
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Entregue com atraso</span>
+                    {% endif %}
+                  {% else %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">Não entregue</span>
+                  {% endif %}
+                </h3>
+                <div class="mt-1 flex items-center gap-4 text-sm text-gray-500">
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Prazo: {{ item.atividade.prazo|date:"d/m/Y H:i"|default:"Sem prazo" }}
+                  </span>
+                  <span class="flex items-center gap-1.5 border-l border-gray-300 pl-4">
+                    <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    Pontos: {{ item.atividade.pontos }}
+                  </span>
+                </div>
+              </div>
+              <div class="shrink-0 flex items-center">
+                {% if item.entrega and item.entrega.status == 'avaliado' %}
+                  <div class="text-right mr-4">
+                    <p class="text-xs text-gray-500">Nota</p>
+                    <p class="text-lg font-bold text-green-600">{{ item.entrega.nota }} / {{ item.atividade.pontos }}</p>
+                  </div>
+                {% endif %}
+                <!-- Na sprint 3 aqui entrará o botão "Ver Entrega/Entregar" -->
+                <button class="bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors" disabled title="Funcionalidade em desenvolvimento">
+                  Detalhes
+                </button>
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <div class="bg-gray-50 rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-500">
+      <p>Nenhuma atividade publicada para esta turma ainda.</p>
+    </div>
+  {% endif %}
+  
+</div>
+{% endblock %}

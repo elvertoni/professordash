@@ -1,0 +1,50 @@
+{% if stats_turmas %}
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+  <div class="px-5 py-3 bg-gray-50 border-b border-gray-200 flex items-center gap-2">
+    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+    </svg>
+    <h2 class="text-sm font-semibold text-gray-700">Estatísticas por turma</h2>
+  </div>
+  <div class="divide-y divide-gray-100">
+    {% for stat in stats_turmas %}
+    <div class="px-5 py-4">
+      <div class="flex items-center justify-between mb-2">
+        <div>
+          <p class="text-sm font-medium text-gray-900">{{ stat.turma.nome }}</p>
+          <p class="text-xs text-gray-500">
+            {{ stat.total_alunos }} aluno{{ stat.total_alunos|pluralize }} &middot; {{ stat.total_atividades }} atividade{{ stat.total_atividades|pluralize }}
+          </p>
+        </div>
+        <div class="text-right">
+          {% if stat.media_notas %}
+          <p class="text-lg font-bold text-gray-900">{{ stat.media_notas }}</p>
+          <p class="text-xs text-gray-400">média geral</p>
+          {% else %}
+          <p class="text-xs text-gray-400 mt-1">Sem notas</p>
+          {% endif %}
+        </div>
+      </div>
+      {# Barra de progresso — taxa de entrega #}
+      <div class="flex items-center gap-2">
+        <div class="flex-1 bg-gray-100 rounded-full h-1.5">
+          <div class="h-1.5 rounded-full transition-all duration-500
+            {% if stat.taxa_entrega >= 80 %}bg-green-500
+            {% elif stat.taxa_entrega >= 50 %}bg-amber-400
+            {% else %}bg-red-400{% endif %}"
+               style="width: {{ stat.taxa_entrega }}%">
+          </div>
+        </div>
+        <span class="text-xs font-medium text-gray-600 w-10 text-right">{{ stat.taxa_entrega }}%</span>
+      </div>
+      <p class="text-xs text-gray-400 mt-0.5">taxa de entrega</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="bg-white rounded-xl border border-gray-200 p-8 text-center text-sm text-gray-400">
+  Nenhuma turma ativa com dados disponíveis.
+</div>
+{% endif %}

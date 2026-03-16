@@ -1,8 +1,8 @@
 document.addEventListener("alpine:init", () => {
 
-  // Sidebar collapse/expand
+  // Sidebar collapse/expand — colapsa por padrão em mobile (< 640px)
   Alpine.store("sidebar", {
-    collapsed: false,
+    collapsed: window.innerWidth < 640,
     toggle() {
       this.collapsed = !this.collapsed;
     },

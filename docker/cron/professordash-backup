@@ -1,0 +1,15 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# Dump PostgreSQL diário às 2h
+0 2 * * * root docker exec professordash-db-1 \
+  pg_dump -U prof professordash | gzip \
+  > /srv/backups/db_$(date +\%Y\%m\%d).sql.gz
+
+# Backup de arquivos de media às 3h
+0 3 * * * root tar -czf \
+  /srv/backups/media_$(date +\%Y\%m\%d).tar.gz \
+  /srv/professordash/media/
+
+# Manter apenas últimos 30 dias
+0 4 * * * root find /srv/backups/ -mtime +30 -delete

@@ -201,13 +201,14 @@ Cron job (`/etc/cron.d/professordash-backup`):
 
 ## Checklist de Segurança
 
-- [ ] `DEBUG=False` em produção
-- [ ] `SECRET_KEY` única e segura (32+ chars aleatórios)
-- [ ] `CSRF_COOKIE_SECURE=True` + `SESSION_COOKIE_SECURE=True`
-- [ ] `X_FRAME_OPTIONS='DENY'`
-- [ ] `SECURE_BROWSER_XSS_FILTER=True`
-- [ ] Rate limiting no endpoint de upload (django-ratelimit)
-- [ ] Validação de MIME type nos uploads (python-magic)
-- [ ] Arquivos de entrega servidos com `Content-Disposition: attachment`
-- [ ] Google OAuth configurado apenas para domínio do professor (opcional)
-- [ ] Logs de acesso ativados no Caddy
+- [x] `DEBUG=False` em produção (`config/settings/production.py`)
+- [x] `SECRET_KEY` via variável de ambiente com `python-decouple` (nunca hardcoded)
+- [x] `CSRF_COOKIE_SECURE=True` + `SESSION_COOKIE_SECURE=True` (`production.py`)
+- [x] `X_FRAME_OPTIONS='DENY'` (`production.py`)
+- [x] `SECURE_BROWSER_XSS_FILTER=True` + `SECURE_CONTENT_TYPE_NOSNIFF=True` (`production.py`)
+- [x] `SECURE_HSTS_SECONDS=31536000` com `INCLUDE_SUBDOMAINS` e `PRELOAD` (`production.py`)
+- [ ] Rate limiting no endpoint de upload (django-ratelimit) — pendente, implementar se necessário
+- [x] Validação de MIME type nos uploads com `python-magic` (`core/validators.py`)
+- [x] Arquivos de entrega servidos com `Content-Disposition: attachment` (Caddyfile)
+- [ ] Google OAuth restrito ao domínio do professor (opcional) — configurar em `SOCIALACCOUNT_PROVIDERS`
+- [x] Logs de acesso do Caddy via stdout/stderr coletados pelo Docker

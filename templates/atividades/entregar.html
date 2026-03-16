@@ -1,0 +1,177 @@
+{% extends "base_aluno.html" %}
+
+{% load markdownx %}
+
+{% block title %}Entregar Atividade | {{ block.super }}{% endblock %}
+
+{% block page_title %}Entregar: {{ atividade.titulo }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-gray-500">
+    <a href="{% url 'turmas:portal_minha_area' token=turma.token_publico %}" class="hover:text-brand-600">Minha Área</a>
+    <span>/</span>
+    <span class="text-gray-900 font-medium text-ellipsis overflow-hidden whitespace-nowrap">{{ atividade.titulo }}</span>
+  </nav>
+
+  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div class="p-6 border-b border-gray-200 bg-gray-50">
+      <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-6">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border {% if not atividade.esta_aberta %}bg-red-50 border-red-200 text-red-700{% else %}bg-white border-gray-200{% endif %}">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Prazo: <span class="font-medium">{{ atividade.prazo|date:"d/m/Y H:i" }}</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-gray-200">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Formato: <span class="font-medium text-gray-900">{{ atividade.get_tipo_entrega_display }}</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-gray-200">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Pontos: <span class="font-medium text-gray-900">{{ atividade.valor_pontos }}</span>
+        </div>
+      </div>
+
+      <div class="prose max-w-none text-gray-700">
+        {{ atividade.descricao|markdownify }}
+      </div>
+    </div>
+
+    <!-- Formulário de Entrega -->
+    <div class="p-6" x-data="{ tipo_entrega: '{{ atividade.tipo_entrega }}', arquivo_nome: null }">
+      
+      {% if form.instance.pk and form.instance.status in 'avaliada' %}
+        <div class="rounded-lg bg-green-50 p-4 border border-green-200 mb-6">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-green-800">Atividade Avaliada</h3>
+              <div class="mt-2 text-sm text-green-700">
+                <p>Você recebeu <strong>{{ form.instance.nota }}</strong> / {{ atividade.valor_pontos }} pontos.</p>
+                {% if form.instance.feedback %}
+                <p class="mt-1 italic">"{{ form.instance.feedback }}"</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if form.instance.pk and form.instance.status in 'entregue,atrasada' %}
+        <div class="rounded-lg bg-blue-50 p-4 border border-blue-200 mb-6 flex justify-between items-center">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-blue-800">
+                Entrega registrada em {{ form.instance.data_envio|date:"d/m/Y às H:i" }}
+              </h3>
+              {% if form.instance.status == 'atrasada' %}
+                <p class="text-xs text-red-600 mt-1 font-medium">Entregue com atraso.</p>
+              {% endif %}
+            </div>
+          </div>
+          {% if form.instance.arquivo %}
+            <a href="{{ form.instance.arquivo.url }}" target="_blank" class="text-brand-600 hover:text-brand-800 text-sm font-medium flex items-center gap-1">
+              Ver Arquivo Enviado
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if not form.instance.pk or form.instance.status not in 'avaliada' and atividade.permitir_reenvio or form.instance.status == 'pendente' %}
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+          {% csrf_token %}
+          
+          <div>
+            <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">
+              {% if form.instance.pk and form.instance.status != 'pendente' %}
+                Reenviar Trabalho
+              {% else %}
+                Enviar Trabalho
+              {% endif %}
+            </h3>
+
+            {% if atividade.tipo_entrega == 'arquivo' %}
+              <div x-show="tipo_entrega === 'arquivo'">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Selecione o arquivo para envio</label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-brand-500 hover:bg-brand-50 transition-colors relative"
+                     x-data="{ dragging: false }"
+                     @dragover.prevent="dragging = true"
+                     @dragleave.prevent="dragging = false"
+                     @drop.prevent="dragging = false; const files = $event.dataTransfer.files; if(files.length > 0) { $refs.fileInput.files = files; arquivo_nome = files[0].name }"
+                     :class="{'border-brand-500 bg-brand-50': dragging}">
+                  <div class="space-y-1 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <div class="flex text-sm text-gray-600 justify-center">
+                      <label for="{{ form.arquivo.id_for_label }}" class="relative cursor-pointer rounded-md font-medium text-brand-600 hover:text-brand-500 focus-within:outline-none z-10">
+                        <span>Fazer upload de arquivo</span>
+                        <input id="{{ form.arquivo.id_for_label }}" name="{{ form.html_name|default:'arquivo' }}" type="file" class="sr-only" x-ref="fileInput" @change="arquivo_nome = $event.target.files[0].name" {% if form.arquivo.field.required %}required{% endif %}>
+                      </label>
+                      <p class="pl-1">ou arraste e solte</p>
+                    </div>
+                    <p class="text-xs text-gray-500">PDF, DOCX, ZIP, JPG, PNG até 10MB</p>
+                    
+                    <div x-show="arquivo_nome" class="mt-4 p-2 bg-brand-100 text-brand-800 rounded text-sm font-medium flex items-center justify-center gap-2" style="display: none;">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      <span x-text="arquivo_nome"></span>
+                    </div>
+                  </div>
+                </div>
+                {% if form.arquivo.errors %}
+                  <p class="mt-1 text-sm text-red-600">{{ form.arquivo.errors.0 }}</p>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {% if atividade.tipo_entrega == 'texto' %}
+              <div x-show="tipo_entrega === 'texto'">
+                <label for="{{ form.texto.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Resposta / Texto</label>
+                {{ form.texto }}
+                {% if form.texto.errors %}<p class="mt-1 text-sm text-red-600">{{ form.texto.errors.0 }}</p>{% endif %}
+              </div>
+            {% endif %}
+
+            {% if atividade.tipo_entrega == 'link' %}
+              <div x-show="tipo_entrega === 'link'">
+                <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">URL (Link)</label>
+                {{ form.url }}
+                {% if form.url.errors %}<p class="mt-1 text-sm text-red-600">{{ form.url.errors.0 }}</p>{% endif %}
+                <p class="mt-1 text-xs text-gray-500">Cole aqui um link para o Google Drive, GitHub, Replit, etc.</p>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="pt-4 border-t border-gray-200">
+            <button type="submit" class="btn-primary w-full sm:w-auto">
+              {% if form.instance.pk and form.instance.status != 'pendente' %}
+                Substituir Entrega
+              {% else %}
+                Enviar Atividade
+              {% endif %}
+            </button>
+            {% if not atividade.esta_aberta %}
+              <p class="mt-2 text-xs text-red-600 font-medium text-center sm:text-left">Atenção: A entrega será registrada como COM ATRASO.</p>
+            {% endif %}
+          </div>
+        </form>
+      {% elif not atividade.permitir_reenvio %}
+        <div class="text-center py-6 text-gray-500 text-sm">
+          Esta atividade não permite reenvios após a primeira entrega.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

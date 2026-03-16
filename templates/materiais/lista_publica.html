@@ -1,0 +1,127 @@
+{% extends "base_publico.html" %}
+
+{% block title %}Materiais — {{ turma.nome }} — Portal{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-gray-500">
+    <a href="{% url 'turmas:portal' token=turma.token_publico %}" class="hover:text-blue-600">{{ turma.nome }}</a>
+    <span>/</span>
+    <span class="text-gray-900 font-medium">Materiais</span>
+  </nav>
+
+  <!-- Cabeçalho -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <h1 class="text-xl font-bold text-gray-900">{{ turma.nome }}</h1>
+    <p class="text-sm text-gray-500 mt-1">Materiais e recursos da turma.</p>
+  </div>
+
+  <!-- Navegação Pública Rápida -->
+  <div class="flex gap-3 border-b border-gray-200">
+    <a href="{% url 'turmas:portal' token=turma.token_publico %}"
+       class="text-sm font-medium py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors">
+      Aulas
+    </a>
+    <a href="{% url 'turmas:portal_materiais_lista' token=turma.token_publico %}"
+       class="text-sm font-medium py-3 border-b-2 border-blue-600 text-blue-600">
+      Materiais
+    </a>
+  </div>
+
+  <!-- Lista de materiais -->
+  {% if materiais %}
+    <div class="space-y-3">
+      {% for material in materiais %}
+        <div class="bg-white rounded-xl border border-gray-200 p-5 hover:border-blue-300 hover:shadow-sm transition-all flex items-start gap-4">
+          
+          <!-- Ícone do tipo -->
+          <div class="shrink-0 pt-1">
+            {% if material.tipo == 'pdf' %}
+              <div class="bg-red-50 text-red-600 p-2.5 rounded-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+              </div>
+            {% elif material.tipo == 'zip' or material.tipo == 'arquivo' %}
+              <div class="bg-blue-50 text-blue-600 p-2.5 rounded-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                </svg>
+              </div>
+            {% elif material.tipo == 'markdown' %}
+              <div class="bg-purple-50 text-purple-600 p-2.5 rounded-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+              </div>
+            {% else %}
+              <div class="bg-indigo-50 text-indigo-600 p-2.5 rounded-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                </svg>
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="flex-1 min-w-0">
+            <h2 class="text-base font-semibold text-gray-900">
+              {{ material.titulo }}
+            </h2>
+            
+            <div class="flex flex-wrap items-center gap-2 mt-1.5 text-xs">
+              <span class="font-medium text-gray-500 uppercase tracking-wide">{{ material.get_tipo_display }}</span>
+              {% if material.aula %}
+                <span class="text-gray-300">&bull;</span>
+                <span class="text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full font-medium text-xs">Aula {{ material.aula.numero }}</span>
+              {% endif %}
+            </div>
+            
+            {% if material.descricao %}
+              <p class="text-sm text-gray-600 mt-2">{{ material.descricao }}</p>
+            {% endif %}
+
+            {% if material.tipo == 'markdown' %}
+              <div class="mt-4 prose prose-sm max-w-none prose-blue">
+                {{ material.get_conteudo_html|safe }}
+              </div>
+            {% endif %}
+
+            <div class="mt-4">
+              {% if material.arquivo %}
+                <a href="{{ material.arquivo.url }}" target="_blank"
+                   class="inline-flex items-center gap-1.5 font-medium text-sm text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                  </svg>
+                  Fazer Download
+                </a>
+              {% elif material.url_externa %}
+                <a href="{{ material.url_externa }}" target="_blank"
+                   class="inline-flex items-center gap-1.5 font-medium text-sm text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                  </svg>
+                  Acessar Link Externo
+                </a>
+              {% endif %}
+            </div>
+
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="bg-white rounded-xl border border-dashed border-gray-300 p-8 text-center">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-50 mb-3 text-gray-400">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+        </svg>
+      </div>
+      <p class="text-sm text-gray-500">Nenhum material disponível para esta turma no momento.</p>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

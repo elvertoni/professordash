@@ -1,0 +1,75 @@
+{% extends "base_admin.html" %}
+
+{% load markdownx %}
+
+{% block title %}{{ atividade.titulo }} | {{ block.super }}{% endblock %}
+
+{% block page_title %}{{ atividade.titulo }}{% endblock %}
+
+{% block page_actions %}
+<div class="flex flex-wrap items-center gap-2">
+  <a href="{% url 'turmas:atividades_editar' pk=turma.pk atividade_pk=atividade.pk %}" class="btn border-gray-300 text-gray-700 bg-white hover:bg-gray-50 flex items-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+    <span class="hidden sm:inline">Editar</span>
+  </a>
+  <a href="{% url 'turmas:atividades_excluir' pk=turma.pk atividade_pk=atividade.pk %}" class="btn border-red-200 text-red-700 hover:bg-red-50 flex items-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+    <span class="hidden sm:inline">Excluir</span>
+  </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}#atividades" class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      Voltar para turma
+    </a>
+  </div>
+
+  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-6">
+        <div class="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Prazo: <span class="font-medium text-gray-900">{{ atividade.prazo|date:"d/m/Y H:i" }}</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Entrega: <span class="font-medium text-gray-900">{{ atividade.get_tipo_entrega_display }}</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Valor: <span class="font-medium text-gray-900">{{ atividade.valor_pontos }} pontos</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          Status: 
+          {% if atividade.publicada %}
+            <span class="font-medium text-green-600">Publicada</span>
+          {% else %}
+            <span class="font-medium text-gray-500">Rascunho</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="prose max-w-none text-gray-700">
+        {{ atividade.descricao|markdownify }}
+      </div>
+    </div>
+    
+    <div class="bg-gray-50 p-4 border-b border-gray-200 flex items-center justify-between">
+      <h3 class="text-lg font-medium text-gray-900">Entregas dos Alunos</h3>
+      {% if atividade.tipo_entrega == 'arquivo' %}
+        <a href="{% url 'turmas:atividades_baixar_entregas' pk=turma.pk atividade_pk=atividade.pk %}" class="text-brand-600 hover:text-brand-900 text-sm font-medium flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Baixar Todas (ZIP)
+        </a>
+      {% endif %}
+    </div>
+    
+    {% include "atividades/_tabela_entregas.html" %}
+  </div>
+</div>
+{% endblock %}

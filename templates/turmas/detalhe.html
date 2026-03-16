@@ -38,7 +38,7 @@
         <button type="submit"
                 class="text-sm border px-3 py-2 rounded-lg transition-colors
                        {% if turma.ativa %}border-amber-300 text-amber-700 hover:bg-amber-50{% else %}border-green-300 text-green-700 hover:bg-green-50{% endif %}"
-                onclick="return confirm('{{ turma.ativa|yesno:'Arquivar,Reativar' }} esta turma?')">
+                onclick="return confirm('{% if turma.ativa %}Arquivar{% else %}Reativar{% endif %} esta turma?')"
           {{ turma.ativa|yesno:"Arquivar,Reativar" }}
         </button>
       </form>
@@ -74,14 +74,14 @@
       <p class="text-xs text-gray-500 mt-1">Alunos</p>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
-      <p class="text-2xl font-bold text-gray-600">0</p>
+      <p class="text-2xl font-bold text-gray-600">{{ materiais.count }}</p>
       <p class="text-xs text-gray-500 mt-1">Materiais</p>
     </div>
   </div>
 
   <!-- Abas -->
-  <div class="border-b border-gray-200 mb-6">
-    <nav class="-mb-px flex gap-6">
+  <div class="border-b border-gray-200 mb-6 overflow-x-auto">
+    <nav class="-mb-px flex gap-6 whitespace-nowrap">
       <button @click="tab = 'aulas'"
               :class="tab === 'aulas' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'"
               class="text-sm font-medium py-3 border-b-2 transition-colors">
@@ -156,40 +156,113 @@
     </div>
     {% if matriculas %}
       <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <table class="w-full text-sm">
-          <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
-            <tr>
-              <th class="px-4 py-3 text-left">Nome</th>
-              <th class="px-4 py-3 text-left">E-mail</th>
-              <th class="px-4 py-3 text-left">Matrícula</th>
-              <th class="px-4 py-3 text-left">Entrada</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100">
-            {% for matricula in matriculas %}
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-3 font-medium text-gray-900">{{ matricula.aluno.nome }}</td>
-                <td class="px-4 py-3 text-gray-500">{{ matricula.aluno.email }}</td>
-                <td class="px-4 py-3 text-gray-500">{{ matricula.aluno.matricula|default:"—" }}</td>
-                <td class="px-4 py-3 text-gray-500">{{ matricula.data_entrada|date:"d/m/Y" }}</td>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+              <tr>
+                <th class="px-4 py-3 text-left">Nome</th>
+                <th class="px-4 py-3 text-left hidden sm:table-cell">E-mail</th>
+                <th class="px-4 py-3 text-left hidden md:table-cell">Matrícula</th>
+                <th class="px-4 py-3 text-left hidden md:table-cell">Entrada</th>
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {% for matricula in matriculas %}
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-900">
+                    <div class="flex items-center gap-2">
+                      <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs uppercase shrink-0">
+                        {{ matricula.aluno.nome|slice:":2" }}
+                      </div>
+                      <span class="truncate">{{ matricula.aluno.nome }}</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-gray-500 hidden sm:table-cell">{{ matricula.aluno.email }}</td>
+                  <td class="px-4 py-3 text-gray-500 hidden md:table-cell">{{ matricula.aluno.matricula|default:"—" }}</td>
+                  <td class="px-4 py-3 text-gray-500 hidden md:table-cell">{{ matricula.data_entrada|date:"d/m/Y" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     {% else %}
-      <p class="text-sm text-gray-400 py-6 text-center">Nenhum aluno matriculado.</p>
+      {% include "components/_empty_state.html" with
+         title="Nenhum aluno matriculado"
+         subtitle="Adicione alunos para que eles possam acessar os materiais e atividades."
+      %}
     {% endif %}
   </div>
 
   <!-- Aba: Materiais -->
   <div x-show="tab === 'materiais'">
-    <p class="text-sm text-gray-400 py-6 text-center">Módulo de materiais disponível na Sprint 2.</p>
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-base font-semibold text-gray-900">Materiais da Turma</h2>
+      <a href="{% url 'turmas:materiais_novo' pk=turma.pk %}"
+         class="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Novo material
+      </a>
+    </div>
+    {% if materiais %}
+      <div class="space-y-2">
+        {% for material in materiais.all|slice:":5" %}
+          {% include "materiais/_card_material.html" with material=material turma=turma compact=True %}
+        {% endfor %}
+      </div>
+      <div class="mt-3">
+        <a href="{% url 'turmas:materiais_lista' pk=turma.pk %}"
+           class="text-sm text-blue-600 hover:underline">Ver todos os materiais &rarr;</a>
+      </div>
+    {% else %}
+      {% url 'turmas:materiais_novo' pk=turma.pk as url_novo_material_detalhe %}
+      {% include "components/_empty_state.html" with
+         title="Nenhum material cadastrado"
+         subtitle="Adicione arquivos, links ou conteúdo Markdown para esta turma."
+         action_url=url_novo_material_detalhe
+         action_label="Novo material"
+      %}
+    {% endif %}
   </div>
 
   <!-- Aba: Atividades -->
   <div x-show="tab === 'atividades'">
-    <p class="text-sm text-gray-400 py-6 text-center">Módulo de atividades disponível na Sprint 3.</p>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+      <h2 class="text-base font-semibold text-gray-900">Atividades e Avaliações</h2>
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="{% url 'turmas:boletim_turma' pk=turma.pk %}"
+           class="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 bg-brand-50 border border-brand-200 hover:bg-brand-100 px-3 py-1.5 rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Ver Boletim
+        </a>
+        <a href="{% url 'turmas:atividades_nova' pk=turma.pk %}"
+           class="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Nova atividade
+        </a>
+      </div>
+    </div>
+    {% if atividades %}
+      <div class="space-y-4">
+        {% for atividade in atividades %}
+          {% include "atividades/_card_atividade.html" with atividade=atividade compact=False %}
+        {% endfor %}
+      </div>
+    {% else %}
+      {% url 'turmas:atividades_nova' pk=turma.pk as url_nova_atividade_detalhe %}
+      {% include "components/_empty_state.html" with
+         title="Nenhuma atividade cadastrada"
+         subtitle="Crie a primeira atividade para esta turma."
+         action_url=url_nova_atividade_detalhe
+         action_label="Nova atividade"
+      %}
+    {% endif %}
   </div>
 
 </div>

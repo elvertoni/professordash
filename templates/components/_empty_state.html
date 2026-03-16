@@ -1,0 +1,42 @@
+{#
+  Componente de estado vazio reutilizável.
+
+  Parâmetros (via {% include ... with ... %}):
+    icon_path  — (opcional) SVG <path> do ícone (padrão: ícone de caixa)
+    title      — Título do estado vazio (padrão: "Nenhum item encontrado")
+    subtitle   — Subtítulo descritivo
+    action_url — (opcional) URL do botão de ação
+    action_label — (opcional) Label do botão (padrão: "Criar")
+#}
+
+<div class="bg-white rounded-xl border border-dashed border-gray-300 p-12 text-center">
+  <svg class="mx-auto h-12 w-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    {% if icon_path %}
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ icon_path }}"/>
+    {% else %}
+      {# Ícone padrão: caixa vazia #}
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+    {% endif %}
+  </svg>
+
+  <h3 class="text-sm font-semibold text-gray-700">
+    {{ title|default:"Nenhum item encontrado" }}
+  </h3>
+
+  {% if subtitle %}
+    <p class="mt-1 text-sm text-gray-400">{{ subtitle }}</p>
+  {% endif %}
+
+  {% if action_url %}
+    <div class="mt-5">
+      <a href="{{ action_url }}"
+         class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        {{ action_label|default:"Criar" }}
+      </a>
+    </div>
+  {% endif %}
+</div>

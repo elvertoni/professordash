@@ -1,0 +1,57 @@
+{% extends "base_aluno.html" %}
+
+{% load markdownx %}
+
+{% block title %}Detalhes da Atividade | {{ block.super }}{% endblock %}
+
+{% block page_title %}Atividade: {{ atividade.titulo }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+  <!-- Breadcrumbs -->
+  <nav class="flex items-center gap-2 text-sm text-gray-500">
+    <a href="{% url 'turmas:portal' token=turma.token_publico %}" class="hover:text-brand-600 truncate max-w-[200px] sm:max-w-none">{{ turma.nome }}</a>
+    <span>/</span>
+    <a href="{% url 'turmas:portal_atividades_lista' token=turma.token_publico %}" class="hover:text-brand-600">Atividades</a>
+    <span>/</span>
+    <span class="text-gray-900 font-medium truncate max-w-[200px]">{{ atividade.titulo }}</span>
+  </nav>
+
+  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+    <div class="p-6 border-b border-gray-200 bg-gray-50">
+      <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-6">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border {% if not atividade.esta_aberta %}bg-red-50 border-red-200 text-red-700{% else %}bg-white border-gray-200{% endif %}">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Prazo: <span class="font-medium">{{ atividade.prazo|date:"d/m/Y H:i" }}</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-gray-200">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Formato: <span class="font-medium text-gray-900">{{ atividade.get_tipo_entrega_display }}</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-gray-200">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Pontos: <span class="font-medium text-gray-900">{{ atividade.valor_pontos }}</span>
+        </div>
+      </div>
+
+      <div class="prose max-w-none text-gray-700">
+        {{ atividade.descricao|markdownify }}
+      </div>
+    </div>
+    
+    <div class="p-6 bg-yellow-50 flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <h4 class="text-sm font-medium text-yellow-800">Para entregar esta atividade:</h4>
+        <p class="text-sm text-yellow-700 mt-1">É necessário estar autenticado na Área do Aluno com seu e-mail cadastrado.</p>
+      </div>
+      <div>
+        <a href="{% url 'turmas:entrar' token=turma.token_publico %}" class="btn-primary flex items-center gap-2">
+            Acessar Área do Aluno
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

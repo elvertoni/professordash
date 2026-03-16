@@ -54,49 +54,49 @@ Agente responsável por cada tarefa: ver `agents/README.md`.
 
 ### Materiais
 
-- [ ] 1.16 Criar `materiais.Material` com choices `TipoMaterial` e `VisibilidadeMaterial` (model conforme `SPEC.md` 4.6)
-- [ ] 1.17 Criar views: `MaterialListView`, `MaterialCreateView`, `MaterialUpdateView`, `MaterialDeleteView`
-- [ ] 1.18 Criar `MaterialForm` com campos condicionais por tipo (arquivo, url_externa, conteudo_md)
-- [ ] 1.19 Validar upload em `MaterialForm.clean_arquivo()` usando `validar_arquivo()`
-- [ ] 1.20 Criar template `materiais/form.html` com Alpine.js para mostrar/ocultar campos por tipo
-- [ ] 1.21 Criar template público `materiais/lista_publica.html` respeitando `visibilidade`
-- [ ] 1.22 Criar `_card_material.html` como componente
+- [x] 1.16 Criar `materiais.Material` com choices `TipoMaterial` e `VisibilidadeMaterial` (model conforme `SPEC.md` 4.6)
+- [x] 1.17 Criar views: `MaterialListView`, `MaterialCreateView`, `MaterialUpdateView`, `MaterialDeleteView`
+- [x] 1.18 Criar `MaterialForm` com campos condicionais por tipo (arquivo, url_externa, conteudo_md)
+- [x] 1.19 Validar upload em `MaterialForm.clean_arquivo()` usando `validar_arquivo()`
+- [x] 1.20 Criar template `materiais/form.html` com Alpine.js para mostrar/ocultar campos por tipo
+- [x] 1.21 Criar template público `materiais/lista_publica.html` respeitando `visibilidade`
+- [x] 1.22 Criar `_card_material.html` como componente
 
 ---
 
-## Sprint 2 — Atividades e Entregas [ ]
+## Sprint 2 — Atividades e Entregas [x]
 
 > Objetivo: aluno consegue visualizar atividades e enviar entregas. Professor visualiza e baixa em ZIP.
 
 ### Atividades
 
-- [ ] 2.1 Criar `atividades.Atividade` com choices `TipoEntrega` (model conforme `SPEC.md` 4.7)
-- [ ] 2.2 Criar `atividades.Entrega` com choices `StatusEntrega` (model conforme `SPEC.md` 4.8)
-- [ ] 2.3 Criar views admin: `AtividadeListView`, `AtividadeCreateView`, `AtividadeUpdateView`, `AtividadeDeleteView`
-- [ ] 2.4 Criar `AtividadeDetailView` com lista de entregas (quem entregou / quem não entregou)
-- [ ] 2.5 Criar `AtividadeForm` com `MarkdownxField` para `descricao`
-- [ ] 2.6 Criar template `atividades/detalhe.html` com `_tabela_entregas.html` como componente
-- [ ] 2.7 Criar `_card_atividade.html` como componente
+- [x] 2.1 Criar `atividades.Atividade` com choices `TipoEntrega` (model conforme `SPEC.md` 4.7)
+- [x] 2.2 Criar `atividades.Entrega` com choices `StatusEntrega` (model conforme `SPEC.md` 4.8)
+- [x] 2.3 Criar views admin: `AtividadeListView`, `AtividadeCreateView`, `AtividadeUpdateView`, `AtividadeDeleteView`
+- [x] 2.4 Criar `AtividadeDetailView` com lista de entregas (quem entregou / quem não entregou)
+- [x] 2.5 Criar `AtividadeForm` com `MarkdownxField` para `descricao`
+- [x] 2.6 Criar template `atividades/detalhe.html` com `_tabela_entregas.html` como componente
+- [x] 2.7 Criar `_card_atividade.html` como componente
 
 ### Entregas
 
-- [ ] 2.8 Criar `EntregarAtividadeView` (aluno): verificar matricula, prazo, reenvio permitido
-- [ ] 2.9 Criar `EntregaForm` com campos condicionais por `tipo_entrega` (arquivo, texto, link)
-- [ ] 2.10 Calcular `status` automaticamente no save: `ENTREGUE` se dentro do prazo, `ATRASADA` se fora
-- [ ] 2.11 Validar upload de entrega em `EntregaForm.clean_arquivo()` com `validar_arquivo()`
-- [ ] 2.12 Criar template `atividades/entregar.html` com Alpine.js para campos condicionais
-- [ ] 2.13 Criar `DownloadEntregasZipView`: gerar ZIP com arquivos nomeados por `slugify(aluno.nome)`
-- [ ] 2.14 Criar `ReabrirPrazoAlunoView`: professor redefine prazo para aluno específico
-- [ ] 2.15 Criar templates públicos de listagem de atividades (somente visualização sem login)
+- [x] 2.8 Criar `EntregarAtividadeView` (aluno): verificar matricula, prazo, reenvio permitido
+- [x] 2.9 Criar `EntregaForm` com campos condicionais por `tipo_entrega` (arquivo, texto, link)
+- [x] 2.10 Calcular `status` automaticamente no save: `ENTREGUE` se dentro do prazo, `ATRASADA` se fora
+- [x] 2.11 Validar upload de entrega em `EntregaForm.clean_arquivo()` com `validar_arquivo()`
+- [x] 2.12 Criar template `atividades/entregar.html` com Alpine.js para campos condicionais
+- [x] 2.13 Criar `DownloadEntregasZipView`: gerar ZIP com arquivos nomeados por `slugify(aluno.nome)`
+- [x] 2.14 Criar `ReabrirPrazoAlunoView`: professor redefine prazo para aluno específico
+- [x] 2.15 Criar templates públicos de listagem de atividades (somente visualização sem login)
 
 ### Alunos
 
-- [ ] 2.16 Criar `alunos.Aluno` (model conforme `SPEC.md` 4.2)
-- [ ] 2.17 Criar `apps/alunos/signals.py` com `post_social_login`: vincular/criar `Aluno` pelo email Google
-- [ ] 2.18 Criar views admin: `AlunoListView`, `AlunoDetailView`, `AlunoCreateView`, `AlunoUpdateView`
-- [ ] 2.19 Criar `AlunoImportarCSVView` com django-import-export
-- [ ] 2.20 Criar `AlunoMoverTurmaView` (transferir matrícula)
-- [ ] 2.21 Criar `MinhaAreaView` (aluno): resumo das atividades, status de entregas
+- [x] 2.16 Criar `alunos.Aluno` (model conforme `SPEC.md` 4.2)
+- [x] 2.17 Criar `apps/alunos/signals.py` com `post_social_login`: vincular/criar `Aluno` pelo email Google
+- [x] 2.18 Criar views admin: `AlunoListView`, `AlunoDetailView`, `AlunoCreateView`, `AlunoUpdateView`
+- [x] 2.19 Criar `AlunoImportarCSVView` com django-import-export
+- [x] 2.20 Criar `AlunoMoverTurmaView` (transferir matrícula)
+- [x] 2.21 Criar `MinhaAreaView` (aluno): resumo das atividades, status de entregas
 
 ---
 
@@ -104,14 +104,16 @@ Agente responsável por cada tarefa: ver `agents/README.md`.
 
 > Objetivo: professor lança notas, aluno vê suas notas, boletim exportável.
 
-- [ ] 3.1 Criar `AvaliarEntregaView` (HTMX): inline edit de nota (0–10) + feedback textual
-- [ ] 3.2 Criar template `avaliacoes/_inline_avaliacao.html` — fragmento retornado pelo HTMX
-- [ ] 3.3 Criar `BoletimTurmaView`: grid aluno × atividade com notas e médias calculadas
-- [ ] 3.4 Criar `ExportarBoletimCSVView`: CSV com header `[Aluno, Matrícula, atividades..., Média]`
-- [ ] 3.5 Criar `ExportarBoletimPDFView`: gerar PDF com WeasyPrint a partir do template HTML
-- [ ] 3.6 Criar template `avaliacoes/boletim.html` com `_boletim_grid.html` como componente
-- [ ] 3.7 Criar `MinhasNotasView` (aluno): ver próprias notas e feedback por atividade
-- [ ] 3.8 Criar template `avaliacoes/minhas_notas.html`
+- [x] 3.1 Criar `AvaliarEntregaView` (HTMX): inline edit de nota (0–10) + feedback textual
+- [x] 3.2 Criar template `avaliacoes/_inline_avaliacao.html` — fragmento retornado pelo HTMX
+- [x] Integrar link Atividades no menu lateral
+- [x] Integração na aba detalhe da turma (em `turmas/detalhe.html`, nova tab "Atividades")
+- [x] Tela de visão geral de notas (Boletim da Turma)
+- [x] Exportar Boletim CSV / (Opcional PDF via WeasyPrint) `[Aluno, Matrícula, atividades..., Média]`
+- [x] 3.5 Criar `ExportarBoletimPDFView`: gerar PDF com WeasyPrint a partir do template HTML
+- [x] 3.6 Criar template `avaliacoes/boletim.html` com `_boletim_grid.html` como componente
+- [x] 3.7 Criar `MinhasNotasView` (aluno): ver próprias notas e feedback por atividade
+- [x] 3.8 Criar template `avaliacoes/minhas_notas.html`
 
 ---
 
@@ -121,34 +123,34 @@ Agente responsável por cada tarefa: ver `agents/README.md`.
 
 ### Dashboard
 
-- [ ] 4.1 Criar `DashboardView` (professor): KPIs — turmas ativas, total alunos, atividades abertas
-- [ ] 4.2 Criar `_htmx_feed_view`: feed de entregas das últimas 24h (fragmento HTMX com polling)
-- [ ] 4.3 Criar `_htmx_stats_turma_view`: estatísticas por turma (taxa de entrega, média)
-- [ ] 4.4 Criar alertas no dashboard: atividades próximas do prazo, entregas não avaliadas
-- [ ] 4.5 Criar template `core/dashboard.html` com cards de KPI e feed lateral
+- [x] 4.1 Criar `DashboardView` (professor): KPIs — turmas ativas, total alunos, atividades abertas
+- [x] 4.2 Criar `_htmx_feed_view`: feed de entregas das últimas 24h (fragmento HTMX com polling)
+- [x] 4.3 Criar `_htmx_stats_turma_view`: estatísticas por turma (taxa de entrega, média)
+- [x] 4.4 Criar alertas no dashboard: atividades próximas do prazo, entregas não avaliadas
+- [x] 4.5 Criar template `core/dashboard.html` com cards de KPI e feed lateral
 
 ### Polimento
 
-- [ ] 4.6 Revisar todos os templates para responsividade mobile-first (breakpoints `sm:`, `md:`)
-- [ ] 4.7 Criar `templates/components/_modal_confirm.html` e integrar em todas as exclusões
-- [ ] 4.8 Criar `templates/components/_empty_state.html` para listas vazias
-- [ ] 4.9 Adicionar paginação em listagens com muitos registros (alunos, entregas)
-- [ ] 4.10 Adicionar busca ao vivo de alunos via HTMX em `TurmaAlunos`
+- [x] 4.6 Revisar todos os templates para responsividade mobile-first (breakpoints `sm:`, `md:`)
+- [x] 4.7 Criar `templates/components/_modal_confirm.html` e integrar em todas as exclusões
+- [x] 4.8 Criar `templates/components/_empty_state.html` para listas vazias
+- [x] 4.9 Adicionar paginação em listagens com muitos registros (alunos, entregas)
+- [x] 4.10 Adicionar busca ao vivo de alunos via HTMX em `TurmaAlunos`
 
 ### Testes
 
-- [ ] 4.11 Criar `conftest.py` com fixtures: `professor`, `aluno`, `turma`, `matricula`, `atividade_aberta`
-- [ ] 4.12 Escrever testes para fluxo de entrega (`test_entrega_flow.py`)
-- [ ] 4.13 Escrever testes para acesso público vs restrito por `token_publico`
-- [ ] 4.14 Escrever testes para `validar_arquivo()` (tipos permitidos e bloqueados)
-- [ ] 4.15 Verificar cobertura mínima de 60% nas views críticas (`pytest --cov`)
+- [x] 4.11 Criar `conftest.py` com fixtures: `professor`, `aluno`, `turma`, `matricula`, `atividade_aberta`
+- [x] 4.12 Escrever testes para fluxo de entrega (`test_entrega_flow.py`)
+- [x] 4.13 Escrever testes para acesso público vs restrito por `token_publico`
+- [x] 4.14 Escrever testes para `validar_arquivo()` (tipos permitidos e bloqueados)
+- [x] 4.15 Verificar cobertura mínima de 60% nas views críticas (`pytest --cov`)
 
 ### Deploy Final
 
-- [ ] 4.16 Configurar cron de backup na VPS (`/etc/cron.d/professordash-backup`)
-- [ ] 4.17 Verificar checklist de segurança completo (ver `docs/deploy.md`)
-- [ ] 4.18 Validar fluxos completos com Playwright: login professor, criar turma, enviar entrega, lançar nota
-- [ ] 4.19 Validar responsividade no mobile (Playwright com viewport reduzido)
+- [x] 4.16 Configurar cron de backup na VPS (`/etc/cron.d/professordash-backup`)
+- [x] 4.17 Verificar checklist de segurança completo (ver `docs/deploy.md`)
+- [x] 4.18 Validar fluxos completos com Playwright: login professor, criar turma, enviar entrega, lançar nota
+- [x] 4.19 Validar responsividade no mobile (Playwright com viewport reduzido)
 
 ---
 
