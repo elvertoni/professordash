@@ -292,7 +292,7 @@ class MinhaAreaView(TurmaPublicaMixin, ListView):
         if self.request.user.is_authenticated and hasattr(self.request.user, "aluno"):
             ctx["aluno"] = self.request.user.aluno
             # Verifica se está realmente matriculado
-            matricula = aluno_obj = self.request.user.aluno
-            ctx["matricula"] = matricula.matriculas.filter(turma=self.turma, ativa=True).first()
+            aluno_obj = self.request.user.aluno
+            ctx["matricula"] = aluno_obj.matriculas.filter(turma=self.turma, ativa=True).first()
             
         return ctx

@@ -35,7 +35,7 @@
   <div id="avaliacao-{{ entrega.pk }}" class="flex flex-col items-end gap-1">
     {% if entrega.nota is not None %}
       <div class="flex items-center gap-2">
-        <span class="text-lg font-bold {% if entrega.nota >= entrega.atividade.valor_pontos|add:"-0.01"|floatformat:2|add:"/2" %}text-green-600{% else %}text-brand-600{% endif %}">
+        <span class="text-lg font-bold {% if entrega.nota >= entrega.atividade.valor_pontos|add:"-0.01"|floatformat:2|add:"/2" %}text-green-600{% else %}text-cyan-400{% endif %}">
           {{ entrega.nota }}
         </span>
         <span class="text-sm text-gray-500">/ {{ entrega.atividade.valor_pontos }}</span>
@@ -48,7 +48,7 @@
       <button hx-get="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk|default:turma.pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}"
               hx-target="#avaliacao-{{ entrega.pk }}"
               hx-swap="outerHTML"
-              class="text-xs text-brand-600 hover:text-brand-800 font-medium mt-1">
+              class="text-xs text-cyan-400 hover:text-cyan-200 font-medium mt-1">
         Editar
       </button>
     {% else %}

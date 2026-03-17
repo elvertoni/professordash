@@ -11,9 +11,9 @@
 
   <!-- Breadcrumbs -->
   <nav class="flex items-center gap-2 text-sm text-gray-500">
-    <a href="{% url 'turmas:portal' token=turma.token_publico %}" class="hover:text-brand-600 truncate max-w-[200px] sm:max-w-none">{{ turma.nome }}</a>
+    <a href="{% url 'turmas:portal' token=turma.token_publico %}" class="hover:text-cyan-400 truncate max-w-[200px] sm:max-w-none">{{ turma.nome }}</a>
     <span>/</span>
-    <a href="{% url 'turmas:portal_atividades_lista' token=turma.token_publico %}" class="hover:text-brand-600">Atividades</a>
+    <a href="{% url 'turmas:portal_atividades_lista' token=turma.token_publico %}" class="hover:text-cyan-400">Atividades</a>
     <span>/</span>
     <span class="text-gray-900 font-medium truncate max-w-[200px]">{{ atividade.titulo }}</span>
   </nav>

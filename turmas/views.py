@@ -22,12 +22,12 @@ class TurmaListView(ProfessorRequiredMixin, ListView):
     context_object_name = "turmas"
 
     def get_queryset(self):
-        return Turma.objects.all()
+        return Turma.objects.prefetch_related("matriculas", "aulas")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx["turmas_ativas"] = Turma.objects.filter(ativa=True)
-        ctx["turmas_arquivadas"] = Turma.objects.filter(ativa=False)
+        ctx["turmas_ativas"] = Turma.objects.filter(ativa=True).prefetch_related("matriculas", "aulas")
+        ctx["turmas_arquivadas"] = Turma.objects.filter(ativa=False).prefetch_related("matriculas", "aulas")
         return ctx
 
 
@@ -86,10 +86,22 @@ class TurmaArquivarView(ProfessorRequiredMixin, View):
     def post(self, request, pk):
         turma = get_object_or_404(Turma, pk=pk)
         turma.ativa = not turma.ativa
-        turma.save(update_fields=["ativa", "atualizado_em"])
+        turma.save()
         status = "ativada" if turma.ativa else "arquivada"
         logger.info(f"Turma pk={pk} {status}")
         messages.success(request, f'Turma "{turma.nome}" {status}.')
+        return redirect("turmas:lista")
+
+
+class TurmaDeleteView(ProfessorRequiredMixin, View):
+    """Exclui permanentemente uma turma via POST."""
+
+    def post(self, request, pk):
+        turma = get_object_or_404(Turma, pk=pk)
+        nome = turma.nome
+        turma.delete()
+        logger.info(f"Turma pk={pk} excluída")
+        messages.success(request, f'Turma "{nome}" excluída permanentemente.')
         return redirect("turmas:lista")
 
 

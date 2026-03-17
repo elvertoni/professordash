@@ -1,18 +1,18 @@
 {% extends "base_admin.html" %}
 
-{% block title %}Boletim - {{ turma.nome }} | ProfessorDash{% endblock %}
+{% block title %}Boletim - {{ turma.nome }} | Prof Toni Coimbra{% endblock %}
 
 {% block content %}
 <div class="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
   <div>
     <div class="flex items-center gap-2 mb-2">
-      <a href="{% url 'turmas:turma_detalhe' turma.pk %}" class="text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1 text-sm">
+      <a href="{% url 'turmas:turma_detalhe' turma.pk %}" class="text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1 text-sm">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         Voltar para Turma
       </a>
     </div>
-    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Boletim: {{ turma.nome }}</h1>
-    <p class="text-gray-500 mt-1 text-sm">Visão geral das notas de todas as atividades publicadas.</p>
+    <h1 class="text-xl sm:text-2xl font-bold text-zinc-100">Boletim: {{ turma.nome }}</h1>
+    <p class="text-zinc-400 mt-1 text-sm">Visão geral das notas de todas as atividades publicadas.</p>
   </div>
   <div class="flex gap-2 shrink-0">
     <a href="{% url 'turmas:boletim_exportar_pdf' turma.pk %}" class="btn-secondary py-2 px-4 flex items-center gap-2 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
@@ -28,7 +28,7 @@
   </div>
 </div>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="bg-zinc-900 rounded-lg shadow-sm border border-zinc-700 overflow-hidden">
   {% include "avaliacoes/_boletim_grid.html" %}
 </div>
 {% endblock %}

@@ -51,6 +51,16 @@ class DashboardView(ProfessorRequiredMixin, TemplateView):
             nota__isnull=True,
         ).select_related("aluno", "atividade__turma").order_by("-data_envio")[:8]
 
+        # ── Alunos recentes (para avatar section no dashboard) ─────────────────
+        from alunos.models import Aluno
+        ctx["alunos_recentes"] = (
+            Aluno.objects.filter(
+                matriculas__turma__ativa=True,
+            )
+            .distinct()
+            .order_by("-criado_em")[:12]
+        )
+
         return ctx
 
 

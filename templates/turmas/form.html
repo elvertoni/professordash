@@ -1,22 +1,22 @@
 {% extends "base_admin.html" %}
 
-{% block title %}{% if object.pk %}Editar turma{% else %}Nova turma{% endif %} — ProfessorDash{% endblock %}
+{% block title %}{% if object.pk %}Editar turma{% else %}Nova turma{% endif %} — Prof Toni Coimbra{% endblock %}
 
 {% block content %}
 <div class="max-w-2xl mx-auto">
 
   <!-- Breadcrumb -->
-  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-blue-600">Turmas</a>
+  <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-cyan-400">Turmas</a>
     <span>/</span>
-    <span class="text-gray-900 font-medium">
+    <span class="text-zinc-100 font-medium">
       {% if object.pk %}Editar {{ object.nome }}{% else %}Nova turma{% endif %}
     </span>
   </nav>
 
-  <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-    <div class="px-6 py-5 border-b border-gray-100">
-      <h1 class="text-xl font-bold text-gray-900">
+  <div class="bg-zinc-900 rounded-xl border border-zinc-700 shadow-sm">
+    <div class="px-6 py-5 border-b border-zinc-800">
+      <h1 class="text-xl font-bold text-zinc-100">
         {% if object.pk %}Editar turma{% else %}Nova turma{% endif %}
       </h1>
     </div>
@@ -26,7 +26,7 @@
 
       <!-- Nome -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.nome.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.nome.id_for_label }}">
           Nome da turma <span class="text-red-500">*</span>
         </label>
         {{ form.nome }}
@@ -38,7 +38,7 @@
       <!-- Código e Período (grid 2 cols) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.codigo.id_for_label }}">
+          <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.codigo.id_for_label }}">
             Código <span class="text-red-500">*</span>
           </label>
           {{ form.codigo }}
@@ -47,7 +47,7 @@
           {% endif %}
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.periodo.id_for_label }}">
+          <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.periodo.id_for_label }}">
             Período <span class="text-red-500">*</span>
           </label>
           {{ form.periodo }}
@@ -59,7 +59,7 @@
 
       <!-- Ano letivo -->
       <div class="max-w-xs">
-        <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.ano_letivo.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.ano_letivo.id_for_label }}">
           Ano letivo <span class="text-red-500">*</span>
         </label>
         {{ form.ano_letivo }}
@@ -70,7 +70,7 @@
 
       <!-- Descrição -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.descricao.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.descricao.id_for_label }}">
           Descrição
         </label>
         {{ form.descricao }}
@@ -89,11 +89,11 @@
       <!-- Ações -->
       <div class="flex items-center gap-3 pt-2">
         <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors">
+                class="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors">
           {% if object.pk %}Salvar alterações{% else %}Criar turma{% endif %}
         </button>
         <a href="{% if object.pk %}{% url 'turmas:detalhe' pk=object.pk %}{% else %}{% url 'turmas:lista' %}{% endif %}"
-           class="text-sm text-gray-500 hover:text-gray-700 px-4 py-2.5 rounded-lg hover:bg-gray-100 transition-colors">
+           class="text-sm text-zinc-400 hover:text-zinc-300 px-4 py-2.5 rounded-lg hover:bg-zinc-800 transition-colors">
           Cancelar
         </a>
       </div>
@@ -102,10 +102,4 @@
 
 </div>
 
-<style>
-  .input-field {
-    @apply w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm
-           focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none;
-  }
-</style>
 {% endblock %}

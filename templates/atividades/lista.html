@@ -5,7 +5,7 @@
 {% block page_title %}Atividades: {{ turma.nome }}{% endblock %}
 
 {% block page_actions %}
-<a href="{% url 'turmas:atividades_nova' pk=turma.pk %}" class="btn border-brand-200 text-brand-700 hover:bg-brand-50 flex items-center gap-2">
+<a href="{% url 'turmas:atividades_nova' pk=turma.pk %}" class="btn border-cyan-600 text-cyan-300 hover:bg-cyan-950 flex items-center gap-2">
   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
   Nova Atividade
 </a>
@@ -13,14 +13,29 @@
 
 {% block content %}
 <div class="space-y-4">
-  <div class="flex items-center justify-between">
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-      Voltar para turma
+
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-2">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-zinc-200 transition-colors">Turmas</a>
+    <span>/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}?tab=atividades" class="hover:text-zinc-200 transition-colors">{{ turma.nome }}</a>
+    <span>/</span>
+    <span class="text-zinc-200">Atividades</span>
+  </nav>
+
+  <!-- Cabeçalho -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
+    <h1 class="text-xl font-semibold text-zinc-100">Atividades</h1>
+    <a href="{% url 'turmas:atividades_nova' pk=turma.pk %}"
+       class="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-700 px-3 py-1.5 rounded-lg transition-colors shrink-0">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Nova atividade
     </a>
   </div>
 
-  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+  <div class="bg-zinc-900 rounded-lg border border-zinc-700 overflow-hidden">
     <div class="p-6">
       {% if atividades %}
         <div class="space-y-4">

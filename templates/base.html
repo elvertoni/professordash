@@ -3,15 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}ProfessorDash{% endblock %}</title>
+  <title>{% block title %}Prof Toni Coimbra{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: '#1a1a2e',
+            'surface-high': '#22223b',
+          }
+        }
+      }
+    }
+  </script>
   <script src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.min.js"></script>
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-zinc-950 text-zinc-100 antialiased selection:bg-cyan-500/30">
+<body class="bg-[#0f0f17] text-zinc-100 antialiased selection:bg-violet-500/30">
   {% block body %}{% endblock %}
   <script src="{% static 'js/app.js' %}"></script>
   {% block extra_js %}{% endblock %}

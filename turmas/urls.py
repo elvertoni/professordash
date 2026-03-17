@@ -32,6 +32,11 @@ urlpatterns = [
         turmas_views.TurmaArquivarView.as_view(),
         name="arquivar",
     ),
+    path(
+        "painel/turmas/<int:pk>/excluir/",
+        turmas_views.TurmaDeleteView.as_view(),
+        name="excluir",
+    ),
     # Aulas admin
     path(
         "painel/turmas/<int:pk>/aulas/",

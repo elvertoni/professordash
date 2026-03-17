@@ -25,15 +25,15 @@
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10">
-                <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-brand-100">
-                  <span class="font-medium text-brand-700 leading-none">
+                <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-cyan-900">
+                  <span class="font-medium text-cyan-300 leading-none">
                     {{ entrega.aluno.nome|make_list|first|upper }}
                   </span>
                 </span>
               </div>
               <div class="ml-4">
                 <div class="text-sm font-medium text-gray-900">
-                  <a href="{% url 'turmas:alunos_detalhe' pk=turma.pk aluno_pk=entrega.aluno.pk %}" class="hover:text-brand-600 hover:underline">
+                  <a href="{% url 'turmas:alunos_detalhe' pk=turma.pk aluno_pk=entrega.aluno.pk %}" class="hover:text-cyan-400 hover:underline">
                     {{ entrega.aluno.nome }}
                   </a>
                 </div>
@@ -67,12 +67,12 @@
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
             {% if entrega.arquivo %}
-              <a href="{{ entrega.arquivo.url }}" target="_blank" class="text-brand-600 hover:text-brand-900 flex items-center gap-1">
+              <a href="{{ entrega.arquivo.url }}" target="_blank" class="text-cyan-400 hover:text-cyan-200 flex items-center gap-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
                 Anexo
               </a>
             {% elif entrega.url %}
-              <a href="{{ entrega.url }}" target="_blank" class="text-brand-600 hover:text-brand-900 flex items-center gap-1">
+              <a href="{{ entrega.url }}" target="_blank" class="text-cyan-400 hover:text-cyan-200 flex items-center gap-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
                 Link
               </a>

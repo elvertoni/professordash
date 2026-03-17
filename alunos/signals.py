@@ -14,7 +14,7 @@ def vincular_ou_criar_aluno_apos_login(sender, user, request, **kwargs):
     - Se não encontrar o Aluno pelo e-mail, cria um novo Aluno automaticamente
       já vinculado a este usuário.
     """
-    if not user.email:
+    if not user.email or user.is_staff:
         return
 
     aluno = Aluno.objects.filter(email=user.email).first()
@@ -27,8 +27,7 @@ def vincular_ou_criar_aluno_apos_login(sender, user, request, **kwargs):
     else:
         # Se o aluno não existe ainda, cria automaticamente
         nome = user.get_full_name() or user.username or user.email.split("@")[0]
-        Aluno.objects.create(
+        Aluno.objects.get_or_create(
             user=user,
-            email=user.email,
-            nome=nome,
+            defaults={"email": user.email, "nome": nome},
         )

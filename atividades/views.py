@@ -35,7 +35,7 @@ class AtividadeListView(AtividadeMixin, ListView):
     context_object_name = "atividades"
     
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = super().get_queryset().select_related("turma", "aula")
         return qs.annotate(
             total_entregas=Count("entregas"),
             entregas_avaliadas=Count("entregas", filter=Q(entregas__status="avaliada"))

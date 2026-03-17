@@ -1,27 +1,27 @@
 {% extends "base_admin.html" %}
 
-{% block title %}Materiais — {{ turma.nome }} — ProfessorDash{% endblock %}
+{% block title %}Materiais — {{ turma.nome }} — Prof Toni Coimbra{% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto" x-data>
 
   <!-- Breadcrumb -->
-  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6 overflow-x-auto whitespace-nowrap">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-blue-600 shrink-0">Turmas</a>
+  <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-cyan-400 shrink-0">Turmas</a>
     <span>/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-blue-600 shrink-0">{{ turma.nome }}</a>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-cyan-400 shrink-0">{{ turma.nome }}</a>
     <span>/</span>
-    <span class="text-gray-900 font-medium">Materiais</span>
+    <span class="text-zinc-100 font-medium">Materiais</span>
   </nav>
 
   <!-- Cabeçalho -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
     <div>
-      <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Materiais</h1>
-      <p class="text-sm text-gray-500 mt-1">{{ turma.nome }}</p>
+      <h1 class="text-xl sm:text-2xl font-bold text-zinc-100">Materiais</h1>
+      <p class="text-sm text-zinc-400 mt-1">{{ turma.nome }}</p>
     </div>
     <a href="{% url 'turmas:materiais_novo' pk=turma.pk %}"
-       class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shrink-0">
+       class="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shrink-0">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
       </svg>
