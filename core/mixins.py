@@ -7,7 +7,9 @@ class ProfessorRequiredMixin(LoginRequiredMixin):
     """Restringe acesso às views /painel/ ao professor (is_staff=True)."""
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated or not request.user.is_staff:
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        if not request.user.is_staff:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
