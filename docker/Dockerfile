@@ -19,9 +19,6 @@ RUN pip install --no-cache-dir -r requirements/production.txt
 
 COPY . .
 
-RUN python manage.py collectstatic --noinput \
-      --settings=config.settings.production || true
-
 EXPOSE 80
 
 ENTRYPOINT ["/app/docker/entrypoint.sh"]

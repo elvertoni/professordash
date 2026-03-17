@@ -19,6 +19,9 @@ while True:
 "
 echo "PostgreSQL disponível."
 
+echo "Coletando arquivos estáticos..."
+python manage.py collectstatic --noinput --settings=config.settings.production
+
 echo "Executando migrations..."
 python manage.py migrate --noinput --settings=config.settings.production
 
