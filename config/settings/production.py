@@ -11,6 +11,10 @@ ALLOWED_HOSTS = config(
     cast=lambda v: [h.strip() for h in v.split(",")],
 )
 
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{host}" for host in ALLOWED_HOSTS
+] + ["http://localhost:8000"]
+
 # --- Banco de dados ---
 
 db_url = config("DATABASE_URL", default="")
