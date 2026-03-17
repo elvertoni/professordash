@@ -22,10 +22,10 @@ COPY . .
 RUN python manage.py collectstatic --noinput \
       --settings=config.settings.production || true
 
-EXPOSE 8000
+EXPOSE 80
 
 ENTRYPOINT ["/app/docker/entrypoint.sh"]
 CMD ["gunicorn", "config.wsgi:application", \
-     "--bind", "0.0.0.0:8000", \
+     "--bind", "0.0.0.0:80", \
      "--workers", "3", \
      "--timeout", "60"]
