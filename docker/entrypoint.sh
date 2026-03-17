@@ -1,10 +1,22 @@
 #!/bin/bash
 set -e
 
-echo "Aguardando PostgreSQL em $DB_HOST:5432..."
-while ! nc -z "${DB_HOST:-db}" 5432; do
-  sleep 0.5
-done
+echo "Aguardando PostgreSQL verificar conexao via DATABASE_URL..."
+python -c "
+import os, sys, time, psycopg2
+db_url = os.environ.get('DATABASE_URL')
+if not db_url:
+    print('DATABASE_URL nao configurada, ignorando wait.')
+    sys.exit(0)
+while True:
+    try:
+        conn = psycopg2.connect(db_url)
+        conn.close()
+        break
+    except psycopg2.OperationalError:
+        print('Aguardando banco...')
+        time.sleep(1)
+"
 echo "PostgreSQL disponível."
 
 echo "Executando migrations..."
