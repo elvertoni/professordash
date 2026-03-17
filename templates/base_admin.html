@@ -10,18 +10,18 @@
        style="transition: margin-left 0.2s">
 
     <!-- Topbar -->
-    <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+    <header class="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
       <button @click="$store.sidebar.toggle()"
-              class="text-gray-500 hover:text-gray-700 focus:outline-none">
+              class="text-zinc-400 hover:text-cyan-400 focus:outline-none transition-colors">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
       </button>
       <div class="flex items-center gap-4">
-        <span class="text-sm text-gray-600">{{ request.user.get_full_name|default:request.user.email }}</span>
+        <span class="text-sm font-medium text-zinc-300">{{ request.user.get_full_name|default:request.user.email }}</span>
         <a href="{% url 'logout' %}"
-           class="text-sm text-gray-500 hover:text-red-600">Sair</a>
+           class="text-sm text-zinc-500 hover:text-cyan-400 transition-colors">Sair</a>
       </div>
     </header>
 
