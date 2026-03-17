@@ -206,6 +206,7 @@ class ExportarBoletimCSVView(ProfessorRequiredMixin, View):
             linha.append(soma_notas)
             media = (soma_notas / soma_pesos * 100) if soma_pesos > 0 else 0
             linha.append(f"{media:.1f}%")
+            writer.writerow(linha)
         return response
 
 import weasyprint

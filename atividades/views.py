@@ -136,20 +136,6 @@ class EntregarAtividadeView(AlunoAutenticadoMixin, UpdateView):
         )
         return entrega
 
-    def dispatch(self, request, *args, **kwargs):
-        # Primeiro pega o objeto para ter a self.atividade e a entrega
-        response = super().dispatch(request, *args, **kwargs)
-        
-        # Só precisamos checar prazo se estiver tentando enviar (POST)
-        if request.method == "POST":
-            # Já tem uma entrega anterior e a atividade não permite reenvio?
-            entrega = self.get_object()
-            if entrega.pk and entrega.status in ["entregue", "atrasada", "avaliada"] and not self.atividade.permitir_reenvio:
-                messages.error(request, "Esta atividade não permite reenvios.")
-                return redirect("turmas:portal_minha_area", token=self.atividade.turma.token_publico)
-        
-        return response
-
     def _get_prazo_efetivo(self, entrega):
         """Retorna o prazo efetivo: individual se definido, senão o geral da atividade."""
         return entrega.prazo_extendido or self.atividade.prazo
@@ -167,18 +153,19 @@ class EntregarAtividadeView(AlunoAutenticadoMixin, UpdateView):
 
     def form_valid(self, form):
         entrega = form.save(commit=False)
-        
+
+        # Bloqueia reenvio se não permitido
+        if entrega.pk and entrega.status in ["entregue", "atrasada", "avaliada"] and not self.atividade.permitir_reenvio:
+            messages.error(self.request, "Esta atividade não permite reenvios.")
+            return redirect("turmas:portal_minha_area", token=self.atividade.turma.token_publico)
+
         # Determina o status com base no prazo efetivo (individual ou geral)
         agora = timezone.now()
         prazo = self._get_prazo_efetivo(entrega)
-        if agora <= prazo:
-            entrega.status = "entregue"
-        else:
-            entrega.status = "atrasada"
-            
+        entrega.status = "entregue" if agora <= prazo else "atrasada"
         entrega.data_envio = agora
         entrega.save()
-        
+
         messages.success(self.request, f"Atividade entregue com sucesso! Status: {entrega.get_status_display()}")
         return redirect("turmas:portal_minha_area", token=self.atividade.turma.token_publico)
 
@@ -218,8 +205,8 @@ class DownloadEntregasZipView(AtividadeMixin, View):
                     try:
                         zip_file.write(entrega.arquivo.path, arcname=nome_no_zip)
                     except Exception as e:
-                        # Em caso de arquivo não encontrado fisicamente
-                        print(f"Erro ao zipar {entrega.arquivo.path}: {e}")
+                        import logging as _logging
+                        _logging.getLogger(__name__).warning("Erro ao zipar %s: %s", entrega.arquivo.path, e)
 
         # Configura as respostas HTTP
         zip_buffer.seek(0)

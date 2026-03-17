@@ -188,11 +188,6 @@ urlpatterns = [
         name="alunos_editar",
     ),
     path(
-        "painel/turmas/<int:pk>/alunos/<int:aluno_pk>/remover/",
-        alunos_views.AlunoRemoverView.as_view(),
-        name="alunos_remover",
-    ),
-    path(
         "painel/turmas/<int:pk>/alunos/<int:aluno_pk>/mover/",
         alunos_views.AlunoMoverTurmaView.as_view(),
         name="alunos_mover",

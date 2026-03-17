@@ -31,6 +31,7 @@ class Atividade(BaseModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+        related_name="atividades",
     )
     titulo = models.CharField(max_length=300)
     descricao = MarkdownxField()
@@ -78,7 +79,7 @@ class Entrega(BaseModel):
     status = models.CharField(
         max_length=20,
         choices=StatusEntrega.choices,
-        default=StatusEntrega.ENTREGUE,
+        default=StatusEntrega.PENDENTE,
     )
     arquivo = models.FileField(
         upload_to="entregas/%Y/%m/",

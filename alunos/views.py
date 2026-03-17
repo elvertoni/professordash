@@ -191,8 +191,17 @@ class AlunoImportarCSVView(ProfessorRequiredMixin, AlunoMixin, View):
             messages.error(request, "Por favor, envie um arquivo CSV válido.")
             return redirect("turmas:alunos_importar", pk=self.turma.pk)
 
-        # Lendo arquivo CSV
-        dataset = csv_file.read().decode('utf-8')
+        # Lendo arquivo CSV (suporta UTF-8 com BOM, UTF-8 e Latin-1)
+        raw = csv_file.read()
+        for encoding in ('utf-8-sig', 'utf-8', 'latin-1'):
+            try:
+                dataset = raw.decode(encoding)
+                break
+            except UnicodeDecodeError:
+                continue
+        else:
+            messages.error(request, "Não foi possível decodificar o arquivo CSV. Use UTF-8 ou Latin-1.")
+            return redirect("turmas:alunos_importar", pk=self.turma.pk)
         io_string = io.StringIO(dataset)
         reader = csv.DictReader(io_string, delimiter=',')
         
