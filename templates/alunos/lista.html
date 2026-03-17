@@ -90,11 +90,10 @@
     </div>
 
   {% else %}
-    {# Estado vazio (task 4.8) #}
+    {# Estado vazio #}
     {% include "components/_empty_state.html" with
        title="Nenhum aluno matriculado"
        subtitle="Comece adicionando um novo aluno ou importando via CSV."
-       action_url=turma|yesno:","
     %}
     <div class="mt-6 flex flex-col sm:flex-row justify-center gap-3">
       <a href="{% url 'turmas:alunos_importar' pk=turma.pk %}"
