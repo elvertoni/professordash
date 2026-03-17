@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-COPY requirements/production.txt .
-RUN pip install --no-cache-dir -r production.txt
+COPY requirements/ ./requirements/
+RUN pip install --no-cache-dir -r requirements/production.txt
 
 COPY . .
 
