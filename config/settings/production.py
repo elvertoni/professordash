@@ -1,3 +1,4 @@
+import urllib.parse
 from decouple import config
 
 from .base import *  # noqa: F401, F403
@@ -12,14 +13,22 @@ ALLOWED_HOSTS = config(
 
 # --- Banco de dados ---
 
+db_url = config("DATABASE_URL", default="")
+db_host = "db"
+db_port = 5432
+if db_url:
+    parsed_db = urllib.parse.urlparse(db_url)
+    db_host = parsed_db.hostname or db_host
+    db_port = parsed_db.port or db_port
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": config("POSTGRES_DB"),
         "USER": config("POSTGRES_USER"),
         "PASSWORD": config("POSTGRES_PASSWORD"),
-        "HOST": config("DB_HOST", default="db"),
-        "PORT": config("DB_PORT", default="5432"),
+        "HOST": config("DB_HOST", default=db_host),
+        "PORT": config("DB_PORT", default=db_port),
     }
 }
 
