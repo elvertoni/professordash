@@ -25,6 +25,13 @@ python manage.py collectstatic --noinput --settings=config.settings.production
 echo "Executando migrations..."
 python manage.py migrate --noinput --settings=config.settings.production
 
+echo "Atualizando domínio do Site (django.contrib.sites)..."
+python manage.py shell --settings=config.settings.production -c "
+from django.contrib.sites.models import Site
+Site.objects.update_or_create(id=1, defaults={'domain': 'aulas.tonicoimbra.com', 'name': 'ProfessorDash'})
+print('Site atualizado: aulas.tonicoimbra.com')
+"
+
 echo "Criando superuser se não existir..."
 python manage.py shell --settings=config.settings.production -c "
 from django.contrib.auth import get_user_model
