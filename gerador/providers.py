@@ -9,7 +9,6 @@ import json
 import logging
 
 from django.conf import settings
-from openai import OpenAI
 
 from gerador.tokens import UsoTokens, extrair_uso_da_resposta
 
@@ -27,8 +26,10 @@ MODELOS = {
 PROVIDER_PADRAO = "claude"
 
 
-def _get_client() -> OpenAI:
+def _get_client():
     """Retorna cliente OpenRouter configurado com a API key do settings."""
+    from openai import OpenAI  # lazy — não bloqueia o startup se não instalado
+
     api_key = getattr(settings, "OPENROUTER_API_KEY", "")
     if not api_key:
         raise ValueError(
