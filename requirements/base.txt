@@ -13,3 +13,10 @@ whitenoise==6.12.0
 PyJWT==2.12.1
 cryptography==46.0.5
 requests==2.32.5
+# Gerador de Aulas
+python-pptx==1.0.2
+python-docx==1.1.2
+pdfplumber==0.11.4
+newspaper3k==0.2.8
+beautifulsoup4==4.12.3
+openai==1.51.0

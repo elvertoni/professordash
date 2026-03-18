@@ -51,6 +51,12 @@ Django 5.1 + HTMX 2.x + Alpine.js 3.x + Tailwind CSS 3.x (todos via CDN). Postgr
 | `avaliacoes` | Nota + feedback por Entrega. Export boletim CSV (WeasyPrint para PDF) |
 | `alunos` | Aluno + importação CSV. Vinculação ao `User` via Google OAuth |
 
+### Módulos auxiliares
+
+| Módulo | Responsabilidade |
+|---|---|
+| `gerador_aulas/` | Extratores de conteúdo (PDF, PPTX, DOCX, URL, RCO) + geração de aulas via IA (OpenRouter). Uso exclusivo do professor/admin. Ver `gerador_aulas/PRD-GeradorAulas-v2.md` |
+
 ### Dois níveis de interface
 
 - `/painel/*` — professor (`is_staff=True`), login próprio (email+senha)

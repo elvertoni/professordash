@@ -1,0 +1,116 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Planejamento Proposto — {{ sessao.disciplina.nome }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-[#0d0d1a] text-[#e4e4f0]">
+  <div class="max-w-4xl mx-auto px-4 py-8">
+
+    {# Page Header #}
+    <div class="mb-6">
+      <nav class="text-sm text-[#8b8ba7] mb-2">
+        <span>Gerador</span>
+        <span class="mx-2">/</span>
+        <span class="text-[#e4e4f0]">Planejamento</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-[#e4e4f0]">
+        Planejamento Proposto — {{ sessao.disciplina.nome }}
+      </h1>
+    </div>
+
+    {# Meta Info Row #}
+    <div class="flex flex-wrap gap-3 mb-6">
+      <span class="inline-flex items-center gap-1.5 bg-[#1a1a2e] border border-zinc-800 rounded-full px-4 py-1.5 text-sm text-[#8b8ba7]">
+        <span class="text-[#e4e4f0] font-medium">{{ sessao.num_aulas }} aulas</span>
+      </span>
+      <span class="inline-flex items-center gap-1.5 bg-[#1a1a2e] border border-zinc-800 rounded-full px-4 py-1.5 text-sm text-[#8b8ba7]">
+        Tema: <span class="text-cyan-300 font-medium">{{ sessao.planejamento.tema_central }}</span>
+      </span>
+      <span class="inline-flex items-center gap-1.5 bg-[#1a1a2e] border border-zinc-800 rounded-full px-4 py-1.5 text-sm text-[#8b8ba7]">
+        Fio: <span class="text-[#e4e4f0] font-medium">{{ sessao.planejamento.fio_condutor }}</span>
+      </span>
+    </div>
+
+    {# Observations Box #}
+    {% if sessao.planejamento.observacoes %}
+    <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 text-amber-300 text-sm mb-6">
+      <p class="font-semibold mb-1">⚠️ Observações da IA:</p>
+      <p>{{ sessao.planejamento.observacoes }}</p>
+    </div>
+    {% endif %}
+
+    {# Aulas Form #}
+    <form
+      method="post"
+      action="{% url 'gerador:aprovar' sessao_id=sessao.pk %}"
+      x-data="{ loading: false }"
+      @submit="loading = true"
+    >
+      {% csrf_token %}
+
+      <div class="space-y-3 mb-8">
+        {% for aula in sessao.planejamento.aulas %}
+        <div class="bg-[#1a1a2e] rounded-xl border border-zinc-800 p-6">
+          <div class="flex items-center gap-4 mb-3">
+            {# Number Badge #}
+            <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-300 text-sm font-bold flex items-center justify-center">
+              {{ aula.numero }}
+            </div>
+
+            {# Editable Title #}
+            <input
+              type="text"
+              name="titulo_{{ aula.numero }}"
+              value="{{ aula.titulo }}"
+              class="input-field flex-1"
+            >
+          </div>
+
+          {# Topicos #}
+          {% if aula.topicos_principais %}
+          <p class="text-[#8b8ba7] text-xs ml-12">
+            {{ aula.topicos_principais | join:" · " }}
+          </p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      {# Action Buttons #}
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <a href="{% url 'gerador:index' %}" class="btn-secondary w-full sm:w-auto text-center">
+          ← Ajustar configuração
+        </a>
+        <button type="submit" class="btn-primary w-full sm:w-auto" :disabled="loading">
+          <span x-show="!loading">✅ Aprovar e Gerar Aulas</span>
+          <span x-show="loading" class="inline-flex items-center gap-2">
+            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            Aguarde...
+          </span>
+        </button>
+      </div>
+
+      {# Loading Overlay #}
+      <div
+        x-show="loading"
+        x-transition.opacity
+        class="fixed inset-0 bg-[#0d0d1a]/80 backdrop-blur-sm flex items-center justify-center z-50"
+      >
+        <div class="bg-[#1a1a2e] border border-zinc-800 rounded-xl p-8 flex flex-col items-center gap-4 shadow-2xl">
+          <svg class="animate-spin h-10 w-10 text-cyan-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <p class="text-[#e4e4f0] font-semibold text-lg">Iniciando geração...</p>
+          <p class="text-[#8b8ba7] text-sm">Isso pode levar alguns instantes.</p>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

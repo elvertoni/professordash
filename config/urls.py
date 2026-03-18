@@ -20,6 +20,9 @@ urlpatterns = [
     # Dashboard do professor
     path("painel/", include("core.urls")),
 
+    # Gerador de Aulas com IA (admin only)
+    path("painel/gerador/", include("gerador.urls", namespace="gerador")),
+
     # Todas as URLs de turmas e aulas (admin + portal público) num único include.
     # Os prefixos /painel/turmas/ e /turma/ estão definidos dentro de turmas/urls.py,
     # garantindo um único namespace "turmas" sem ambiguidade.

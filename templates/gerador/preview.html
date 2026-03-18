@@ -1,0 +1,84 @@
+{% extends "base_admin.html" %}
+{% load markdownx %}
+
+{% block title %}Aula {{ aula.numero }} — {{ aula.titulo }} — Gerador{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-[#0d0d1a] text-[#e4e4f0]">
+  <div class="max-w-4xl mx-auto px-4 py-8">
+
+    {# Breadcrumb #}
+    <nav class="flex items-center gap-2 text-sm text-[#8b8ba7] mb-6 overflow-x-auto whitespace-nowrap">
+      <a href="{% url 'gerador:index' %}" class="hover:text-cyan-400 transition-colors shrink-0">Gerador</a>
+      <span class="shrink-0">/</span>
+      <a href="{% url 'gerador:gerar' sessao_id=sessao.pk %}" class="hover:text-cyan-400 transition-colors shrink-0">
+        Sessão #{{ sessao.pk }}
+      </a>
+      <span class="shrink-0">/</span>
+      <span class="text-[#e4e4f0] font-medium shrink-0">Aula {{ aula.numero }}</span>
+    </nav>
+
+    {# Header row #}
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-sm font-bold flex items-center justify-center">
+          {{ aula.numero }}
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-[#e4e4f0]">
+            Aula {{ aula.numero }} &mdash; {{ aula.titulo }}
+          </h1>
+          {% if aula.turma %}
+            <p class="text-sm text-[#8b8ba7] mt-0.5">{{ aula.turma.nome }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Status badge #}
+      <div class="shrink-0">
+        {% if not aula.realizada %}
+          <span class="inline-flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold px-3 py-1.5 rounded-full">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block"></span>
+            Rascunho
+          </span>
+        {% else %}
+          <span class="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold px-3 py-1.5 rounded-full">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+            Publicada
+          </span>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Action buttons #}
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-8">
+      <a href="{% url 'gerador:salvar' sessao_id=sessao.pk %}" class="btn-primary">
+        &#10003; Salvar e publicar
+      </a>
+      <a href="{% url 'gerador:gerar' sessao_id=sessao.pk %}" class="btn-secondary">
+        &larr; Voltar
+      </a>
+    </div>
+
+    {# Lesson content card #}
+    {% if aula.conteudo %}
+      <div class="bg-[#1a1a2e] rounded-xl border border-zinc-800 p-8">
+        <div class="prose-content text-[#e4e4f0] max-w-none">
+          {{ aula.conteudo|markdownify }}
+        </div>
+      </div>
+    {% else %}
+      <div class="bg-[#1a1a2e] rounded-xl border border-dashed border-zinc-700 p-12 text-center">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center">
+          <svg class="w-6 h-6 text-[#8b8ba7]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <p class="text-sm text-[#8b8ba7]">Nenhum conteúdo gerado para esta aula.</p>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

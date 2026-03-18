@@ -44,6 +44,7 @@ LOCAL_APPS = [
     "atividades",
     "avaliacoes",
     "alunos",
+    "gerador",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -144,6 +145,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50 MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
+
+# --- Gerador de Aulas (OpenRouter) ---
+
+OPENROUTER_API_KEY = config("OPENROUTER_API_KEY", default="")
 
 # --- Misc ---
 

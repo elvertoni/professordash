@@ -38,6 +38,18 @@
       <span x-show="!$store.sidebar.collapsed" x-cloak>Turmas</span>
     </a>
 
+    {% if request.user.is_staff %}
+    <a href="{% url 'gerador:index' %}"
+       class="flex items-center gap-3 px-3 py-2.5 rounded-md text-[0.9rem] text-zinc-400 hover:text-cyan-300 hover:bg-zinc-900/50 transition-all duration-200
+              {% if request.resolver_match.namespace == 'gerador' %}bg-cyan-500/10 text-cyan-300 font-medium border-l-2 border-cyan-500{% endif %}">
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+      </svg>
+      <span x-show="!$store.sidebar.collapsed" x-cloak>Gerador de Aulas</span>
+    </a>
+    {% endif %}
+
     <!-- Sub-menu contextual: só aparece quando há uma turma no contexto -->
     {% if turma %}
       <div x-show="!$store.sidebar.collapsed" x-cloak class="space-y-0.5 pt-0.5">

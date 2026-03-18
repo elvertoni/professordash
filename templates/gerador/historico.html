@@ -1,0 +1,205 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Histórico de Gerações — Gerador{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-[#0d0d1a] text-[#e4e4f0]">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+
+    {# Header #}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-[#e4e4f0]">&#128220; Histórico de Gerações</h1>
+        <p class="text-sm text-[#8b8ba7] mt-1">Todas as sessões de geração de aulas com IA</p>
+      </div>
+      <a href="{% url 'gerador:index' %}"
+         class="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shrink-0">
+        Nova geração &rarr;
+      </a>
+    </div>
+
+    {# Empty state #}
+    {% if not sessoes %}
+      <div class="bg-[#1a1a2e] rounded-xl border border-dashed border-zinc-700 p-12 text-center">
+        <div class="w-14 h-14 mx-auto mb-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+          <svg class="w-7 h-7 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+          </svg>
+        </div>
+        <h3 class="text-sm font-semibold text-[#e4e4f0]">Nenhuma sessão de geração ainda.</h3>
+        <p class="mt-1 text-sm text-[#8b8ba7]">Inicie sua primeira geração de aulas com IA.</p>
+        <div class="mt-5">
+          <a href="{% url 'gerador:index' %}"
+             class="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Iniciar geração
+          </a>
+        </div>
+      </div>
+
+    {% else %}
+      {# Sessions table #}
+      <div class="bg-[#1a1a2e] rounded-xl border border-zinc-800 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-zinc-800 text-left">
+                <th class="px-4 py-3 text-xs font-semibold text-[#8b8ba7] uppercase tracking-wide"># / Data</th>
+                <th class="px-4 py-3 text-xs font-semibold text-[#8b8ba7] uppercase tracking-wide">Disciplina</th>
+                <th class="px-4 py-3 text-xs font-semibold text-[#8b8ba7] uppercase tracking-wide">Modo</th>
+                <th class="px-4 py-3 text-xs font-semibold text-[#8b8ba7] uppercase tracking-wide">Status</th>
+                <th class="px-4 py-3 text-xs font-semibold text-[#8b8ba7] uppercase tracking-wide">Aulas</th>
+                <th class="px-4 py-3 text-xs font-semibold text-[#8b8ba7] uppercase tracking-wide">Provider</th>
+                <th class="px-4 py-3 text-xs font-semibold text-[#8b8ba7] uppercase tracking-wide">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in sessoes %}
+              <tr class="border-b border-zinc-800/60 hover:bg-zinc-900/30 transition-colors">
+
+                {# Número e data #}
+                <td class="px-4 py-3">
+                  <span class="font-semibold text-[#e4e4f0]">Sessão #{{ s.pk }}</span>
+                  <br>
+                  <span class="text-xs text-[#8b8ba7]">{{ s.criado_em|date:"d/m/Y H:i" }}</span>
+                </td>
+
+                {# Disciplina #}
+                <td class="px-4 py-3 text-[#e4e4f0]">
+                  {{ s.disciplina.nome }}
+                </td>
+
+                {# Modo badge #}
+                <td class="px-4 py-3">
+                  {% if s.modo == 'rco' %}
+                    <span class="inline-flex items-center bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                      RCO
+                    </span>
+                  {% else %}
+                    <span class="inline-flex items-center bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                      Livre
+                    </span>
+                  {% endif %}
+                </td>
+
+                {# Status badge #}
+                <td class="px-4 py-3">
+                  {% if s.status == 'rascunho' %}
+                    <span class="inline-flex items-center gap-1 bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                      <span class="w-1.5 h-1.5 rounded-full bg-zinc-400 inline-block"></span>
+                      Rascunho
+                    </span>
+                  {% elif s.status == 'planejando' %}
+                    <span class="inline-flex items-center gap-1 bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                      <span class="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block"></span>
+                      Planejando
+                    </span>
+                  {% elif s.status == 'gerando' %}
+                    <span class="inline-flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block animate-pulse"></span>
+                      Gerando
+                    </span>
+                  {% elif s.status == 'concluido' %}
+                    <span class="inline-flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+                      Concluído
+                    </span>
+                  {% elif s.status == 'erro' %}
+                    <span class="inline-flex items-center gap-1 bg-red-500/10 border border-red-500/30 text-red-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                      <span class="w-1.5 h-1.5 rounded-full bg-red-400 inline-block"></span>
+                      Erro
+                    </span>
+                  {% else %}
+                    <span class="inline-flex items-center bg-zinc-800 border border-zinc-700 text-zinc-400 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                      {{ s.status }}
+                    </span>
+                  {% endif %}
+                </td>
+
+                {# Num aulas #}
+                <td class="px-4 py-3 text-[#8b8ba7]">
+                  {{ s.num_aulas }} aula{{ s.num_aulas|pluralize }}
+                </td>
+
+                {# Provider #}
+                <td class="px-4 py-3 text-[#8b8ba7]">
+                  {{ s.get_provider_display }}
+                </td>
+
+                {# Actions #}
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    {% if s.status == 'concluido' %}
+                      <a href="{% url 'turmas:aulas_lista' pk=s.disciplina.turma.pk %}"
+                         class="inline-flex items-center gap-1 text-xs text-cyan-300 hover:text-cyan-200 border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 px-2.5 py-1 rounded-lg transition-colors">
+                        Ver aulas
+                      </a>
+                    {% elif s.status == 'rascunho' or s.status == 'gerando' %}
+                      <a href="{% url 'gerador:gerar' sessao_id=s.pk %}"
+                         class="inline-flex items-center gap-1 text-xs text-violet-300 hover:text-violet-200 border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 px-2.5 py-1 rounded-lg transition-colors">
+                        Continuar
+                      </a>
+                    {% endif %}
+                  </div>
+                </td>
+
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {# Pagination #}
+      {% if page_obj.has_other_pages %}
+        <div class="flex items-center justify-between mt-6">
+          <p class="text-sm text-[#8b8ba7]">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            &mdash; {{ page_obj.paginator.count }} sessão{{ page_obj.paginator.count|pluralize }}
+          </p>
+          <div class="flex items-center gap-2">
+            {% if page_obj.has_previous %}
+              <a href="?page={{ page_obj.previous_page_number }}"
+                 class="inline-flex items-center gap-1.5 text-sm text-[#8b8ba7] hover:text-[#e4e4f0] bg-[#1a1a2e] border border-zinc-800 hover:border-zinc-700 px-3 py-1.5 rounded-lg transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Anterior
+              </a>
+            {% else %}
+              <span class="inline-flex items-center gap-1.5 text-sm text-zinc-600 bg-[#1a1a2e] border border-zinc-800 px-3 py-1.5 rounded-lg cursor-not-allowed">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Anterior
+              </span>
+            {% endif %}
+
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}"
+                 class="inline-flex items-center gap-1.5 text-sm text-[#8b8ba7] hover:text-[#e4e4f0] bg-[#1a1a2e] border border-zinc-800 hover:border-zinc-700 px-3 py-1.5 rounded-lg transition-colors">
+                Próxima
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </a>
+            {% else %}
+              <span class="inline-flex items-center gap-1.5 text-sm text-zinc-600 bg-[#1a1a2e] border border-zinc-800 px-3 py-1.5 rounded-lg cursor-not-allowed">
+                Próxima
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </span>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
