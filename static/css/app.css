@@ -1,5 +1,9 @@
 /* ProfessorDash — custom CSS + Tailwind overrides */
 
+[x-cloak] {
+  display: none !important;
+}
+
 /* Form inputs — dark theme */
 .input-field {
   display: block;

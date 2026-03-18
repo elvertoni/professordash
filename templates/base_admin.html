@@ -28,8 +28,13 @@
             {{ request.user.get_full_name|default:request.user.username|make_list|first|upper }}
           </span>
         </div>
-        <a href="{% url 'logout' %}"
-           class="text-xs text-[#8b8ba7] hover:text-violet-300 transition-colors ml-1">Sair</a>
+        <form method="post" action="{% url 'logout' %}" class="ml-1">
+          {% csrf_token %}
+          <button type="submit"
+                  class="text-xs text-[#8b8ba7] hover:text-violet-300 transition-colors">
+            Sair
+          </button>
+        </form>
       </div>
     </header>
 

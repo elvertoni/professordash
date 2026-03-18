@@ -1,7 +1,9 @@
 from django import forms
 from markdownx.fields import MarkdownxFormField
 
-from .models import Atividade
+from core.validators import TIPOS_PERMITIDOS_ENTREGA, validar_arquivo
+
+from .models import Atividade, Entrega, TipoEntrega
 
 
 class AtividadeForm(forms.ModelForm):
@@ -32,12 +34,18 @@ class AtividadeForm(forms.ModelForm):
             "aula": forms.Select(attrs={"class": "form-select"}),
             "tipo_entrega": forms.Select(attrs={"class": "form-select"}),
             "titulo": forms.TextInput(attrs={"class": "form-input"}),
-            "valor_pontos": forms.NumberInput(attrs={"class": "form-input", "step": "0.1"}),
+            "valor_pontos": forms.NumberInput(
+                attrs={"class": "form-input", "step": "0.1"}
+            ),
             "permitir_reenvio": forms.CheckboxInput(
-                attrs={"class": "rounded border-slate-300 text-brand-600 focus:ring-brand-600"}
+                attrs={
+                    "class": "rounded border-slate-300 text-brand-600 focus:ring-brand-600"
+                }
             ),
             "publicada": forms.CheckboxInput(
-                attrs={"class": "rounded border-slate-300 text-brand-600 focus:ring-brand-600"}
+                attrs={
+                    "class": "rounded border-slate-300 text-brand-600 focus:ring-brand-600"
+                }
             ),
         }
 
@@ -47,31 +55,39 @@ class AtividadeForm(forms.ModelForm):
         if turma_id:
             from turmas.models import Turma
             from aulas.models import Aula
-            
+
             # Limita as turmas à turma atual, se informada
             self.fields["turma"].queryset = Turma.objects.filter(id=turma_id)
             self.fields["turma"].initial = turma_id
-            
+
             # Limita as aulas à turma atual, se informada
             self.fields["aula"].queryset = Aula.objects.filter(turma_id=turma_id)
 
-from core.validators import validar_arquivo
-from .models import Entrega, TipoEntrega, Atividade
 
 class EntregaForm(forms.ModelForm):
     class Meta:
         model = Entrega
         fields = ["arquivo", "texto", "url"]
         widgets = {
-            "texto": forms.Textarea(attrs={"class": "form-input", "rows": 5, "x-show": "tipo_entrega === 'texto'"}),
-            "url": forms.URLInput(attrs={"class": "form-input", "x-show": "tipo_entrega === 'link'"}),
-            "arquivo": forms.FileInput(attrs={"class": "form-input", "x-show": "tipo_entrega === 'arquivo'"}),
+            "texto": forms.Textarea(
+                attrs={
+                    "class": "form-input",
+                    "rows": 5,
+                    "x-show": "tipo_entrega === 'texto'",
+                }
+            ),
+            "url": forms.URLInput(
+                attrs={"class": "form-input", "x-show": "tipo_entrega === 'link'"}
+            ),
+            "arquivo": forms.FileInput(
+                attrs={"class": "form-input", "x-show": "tipo_entrega === 'arquivo'"}
+            ),
         }
 
     def __init__(self, *args, **kwargs):
         self.atividade = kwargs.pop("atividade", None)
         super().__init__(*args, **kwargs)
-        
+
         # Oculta campos que não são do tipo da atividade atual
         if self.atividade:
             if self.atividade.tipo_entrega == TipoEntrega.ARQUIVO:
@@ -89,27 +105,52 @@ class EntregaForm(forms.ModelForm):
 
     def clean_arquivo(self):
         arquivo = self.cleaned_data.get("arquivo")
-        if arquivo and getattr(self, "atividade", None) and self.atividade.tipo_entrega == TipoEntrega.ARQUIVO:
-            # Usando o core.validators.validar_arquivo
-            validar_arquivo(arquivo)
+        if (
+            arquivo
+            and getattr(self, "atividade", None)
+            and self.atividade.tipo_entrega == TipoEntrega.ARQUIVO
+        ):
+            validar_arquivo(arquivo, TIPOS_PERMITIDOS_ENTREGA)
         return arquivo
+
 
 class AvaliacaoForm(forms.ModelForm):
     class Meta:
         model = Entrega
         fields = ["nota", "feedback"]
         widgets = {
-            "nota": forms.NumberInput(attrs={
-                "class": "form-input px-2 py-1 h-8 text-sm w-20", 
-                "step": "0.1", "min": "0", "max": "100", 
-                "placeholder": "Nota"
-            }),
-            "feedback": forms.Textarea(attrs={
-                "class": "form-input px-2 py-1 text-sm w-full", 
-                "rows": 2, 
-                "placeholder": "Feedback (opcional)"
-            }),
+            "nota": forms.NumberInput(
+                attrs={
+                    "class": "form-input px-2 py-1 h-8 text-sm w-20",
+                    "step": "0.1",
+                    "min": "0",
+                    "max": "100",
+                    "placeholder": "Nota",
+                }
+            ),
+            "feedback": forms.Textarea(
+                attrs={
+                    "class": "form-input px-2 py-1 text-sm w-full",
+                    "rows": 2,
+                    "placeholder": "Feedback (opcional)",
+                }
+            ),
         }
+
+    def clean_nota(self):
+        nota = self.cleaned_data.get("nota")
+        if nota is None:
+            return nota
+
+        if nota < 0:
+            raise forms.ValidationError("A nota não pode ser negativa.")
+
+        atividade = getattr(self.instance, "atividade", None)
+        if atividade and nota > atividade.valor_pontos:
+            raise forms.ValidationError(
+                f"A nota não pode ser maior que o valor da atividade ({atividade.valor_pontos})."
+            )
+        return nota
 
 
 class ReabrirPrazoForm(forms.ModelForm):

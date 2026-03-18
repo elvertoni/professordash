@@ -15,33 +15,47 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY requirements/production.txt .
-RUN pip install --no-cache-dir -r production.txt
+COPY requirements/ ./requirements/
+RUN pip install --no-cache-dir -r requirements/production.txt
 
 COPY . .
 RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 ENTRYPOINT ["/app/docker/entrypoint.sh"]
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "60"]
 ```
 
 ### docker-compose.prod.yml
 
 ```yaml
-version: "3.9"
-
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
     env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+    expose:
+      - "8000"
     volumes:
       - /srv/professordash/media:/app/media
       - /srv/professordash/static:/app/staticfiles
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - python -c "import socket; s=socket.create_connection(('127.0.0.1', 8000), 2); s.close()"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
 
   db:
     image: postgres:16-alpine
@@ -49,28 +63,47 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h 127.0.0.1
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli ping | grep -q PONG
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
 
   caddy:
     image: caddy:2-alpine
     ports:
       - "80:80"
       - "443:443"
+      - "443:443/udp"
     volumes:
-      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile
-      - /srv/professordash/media:/srv/professordash/media:ro
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - /srv/professordash/static:/srv/professordash/static:ro
       - caddy_data:/data
+      - caddy_config:/config
     depends_on:
-      - app
+      app:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
   postgres_data:
   caddy_data:
+  caddy_config:
 ```
 
 ---
@@ -81,21 +114,21 @@ volumes:
 
 ```caddyfile
 aulas.tonicoimbra.com {
-    # Arquivos de mídia servidos diretamente (sem passar pelo Django)
-    handle /media/* {
+    # Arquivos estáticos servidos diretamente
+    handle /static/* {
         root * /srv/professordash
         file_server
-        header Content-Disposition "attachment"
     }
 
-    # Demais requests → Gunicorn
+    # Demais requests, incluindo downloads protegidos, vão para o Django
     reverse_proxy app:8000
 }
 ```
 
 - HTTPS automático via Let's Encrypt
 - Certificados salvos em `/data` (volume `caddy_data`)
-- Media servido diretamente com `Content-Disposition: attachment` para forçar download
+- Downloads de materiais restritos e entregas passam pelo Django para respeitar autenticação
+- O Caddy encaminha o restante do tráfego para `app:8000`, então o Gunicorn precisa subir nessa porta.
 
 ---
 
@@ -141,6 +174,9 @@ set -e
 
 echo "Aguardando PostgreSQL..."
 while ! nc -z db 5432; do sleep 0.5; done
+
+echo "Aguardando Redis..."
+while ! nc -z redis 6379; do sleep 0.5; done
 
 echo "Executando migrations..."
 python manage.py migrate --noinput

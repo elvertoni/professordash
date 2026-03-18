@@ -25,8 +25,16 @@ urlpatterns = [
     # ------------------------------------------------------------------
     path("painel/turmas/", turmas_views.TurmaListView.as_view(), name="lista"),
     path("painel/turmas/nova/", turmas_views.TurmaCreateView.as_view(), name="nova"),
-    path("painel/turmas/<int:pk>/", turmas_views.TurmaDetailView.as_view(), name="detalhe"),
-    path("painel/turmas/<int:pk>/editar/", turmas_views.TurmaUpdateView.as_view(), name="editar"),
+    path(
+        "painel/turmas/<int:pk>/",
+        turmas_views.TurmaDetailView.as_view(),
+        name="detalhe",
+    ),
+    path(
+        "painel/turmas/<int:pk>/editar/",
+        turmas_views.TurmaUpdateView.as_view(),
+        name="editar",
+    ),
     path(
         "painel/turmas/<int:pk>/arquivar/",
         turmas_views.TurmaArquivarView.as_view(),
@@ -90,6 +98,11 @@ urlpatterns = [
         name="materiais_editar",
     ),
     path(
+        "painel/turmas/<int:pk>/materiais/<int:material_pk>/download/",
+        materiais_views.MaterialDownloadAdminView.as_view(),
+        name="materiais_download_admin",
+    ),
+    path(
         "painel/turmas/<int:pk>/materiais/<int:material_pk>/excluir/",
         materiais_views.MaterialDeleteView.as_view(),
         name="materiais_excluir",
@@ -114,6 +127,11 @@ urlpatterns = [
         "painel/turmas/<int:pk>/atividades/<int:atividade_pk>/baixar-entregas/",
         atividades_views.DownloadEntregasZipView.as_view(),
         name="atividades_baixar_entregas",
+    ),
+    path(
+        "painel/turmas/<int:pk>/atividades/<int:atividade_pk>/entregas/<int:entrega_pk>/arquivo/",
+        atividades_views.DownloadEntregaArquivoProfessorView.as_view(),
+        name="atividades_download_entrega_admin",
     ),
     path(
         "painel/turmas/<int:pk>/atividades/<int:atividade_pk>/entregas/<int:entrega_pk>/avaliar/",
@@ -200,7 +218,11 @@ urlpatterns = [
     # ------------------------------------------------------------------
     # Portal público (/turma/<uuid:token>/...)
     # ------------------------------------------------------------------
-    path("turma/<uuid:token>/", turmas_views.TurmaPortalPublicoView.as_view(), name="portal"),
+    path(
+        "turma/<uuid:token>/",
+        turmas_views.TurmaPortalPublicoView.as_view(),
+        name="portal",
+    ),
     path(
         "turma/<uuid:token>/entrar/",
         turmas_views.TurmaEntrarView.as_view(),
@@ -232,6 +254,11 @@ urlpatterns = [
         name="portal_materiais_lista",
     ),
     path(
+        "turma/<uuid:token>/materiais/<int:material_pk>/download/",
+        materiais_views.MaterialDownloadPublicoView.as_view(),
+        name="portal_materiais_download",
+    ),
+    path(
         "turma/<uuid:token>/atividades/",
         atividades_views.AtividadeListaPublicaView.as_view(),
         name="portal_atividades_lista",
@@ -245,5 +272,10 @@ urlpatterns = [
         "turma/<uuid:token>/atividades/<int:atividade_id>/entregar/",
         atividades_views.EntregarAtividadeView.as_view(),
         name="portal_entregar_atividade",
+    ),
+    path(
+        "turma/<uuid:token>/entregas/<int:entrega_pk>/arquivo/",
+        atividades_views.DownloadMinhaEntregaArquivoView.as_view(),
+        name="portal_entrega_arquivo",
     ),
 ]

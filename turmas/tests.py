@@ -10,11 +10,11 @@ Cobertura:
 - Token público correto permite ver aulas públicas
 - Token público errado retorna 404
 """
+
 import uuid
 
 import pytest
 from django.urls import reverse
-
 
 # ---------------------------------------------------------------------------
 # 4.13 — Testes de acesso público vs restrito
@@ -108,7 +108,7 @@ class TestAcessoAdminTurmas:
         assert response.status_code == 403
 
     def test_anonimo_nao_acessa_lista_de_turmas(self, client):
-        """Usuário não autenticado deve receber 403 ao tentar listar turmas."""
+        """Usuário não autenticado deve ser redirecionado ao tentar listar turmas."""
         # Arrange
         url = reverse("turmas:lista")
 
@@ -116,7 +116,7 @@ class TestAcessoAdminTurmas:
         response = client.get(url)
 
         # Assert
-        assert response.status_code == 403
+        assert response.status_code == 302
 
     def test_professor_acessa_detalhe_de_turma(self, client_professor, turma):
         """Professor deve conseguir acessar a rota de detalhe de turma sem bloqueio de auth.
@@ -150,7 +150,7 @@ class TestAcessoAdminTurmas:
         assert response.status_code == 403
 
     def test_anonimo_nao_acessa_detalhe_de_turma(self, client, turma):
-        """Usuário anônimo deve receber 403 ao tentar acessar detalhe de turma."""
+        """Usuário anônimo deve ser redirecionado ao tentar acessar detalhe de turma."""
         # Arrange
         url = reverse("turmas:detalhe", kwargs={"pk": turma.pk})
 
@@ -158,7 +158,7 @@ class TestAcessoAdminTurmas:
         response = client.get(url)
 
         # Assert
-        assert response.status_code == 403
+        assert response.status_code == 302
 
     def test_professor_acessa_formulario_nova_turma(self, client_professor):
         """Professor deve acessar o formulário de criação de turma com HTTP 200."""
@@ -190,7 +190,9 @@ class TestAcessoAulasPublicas:
     def test_token_correto_permite_ver_lista_de_aulas(self, client, turma):
         """Token válido deve permitir acesso à lista pública de aulas sem login."""
         # Arrange
-        url = reverse("turmas:portal_aulas_lista", kwargs={"token": turma.token_publico})
+        url = reverse(
+            "turmas:portal_aulas_lista", kwargs={"token": turma.token_publico}
+        )
 
         # Act
         response = client.get(url)
@@ -213,7 +215,9 @@ class TestAcessoAulasPublicas:
     def test_token_correto_permite_ver_lista_de_materiais(self, client, turma):
         """Token válido deve permitir acesso à lista pública de materiais sem login."""
         # Arrange
-        url = reverse("turmas:portal_materiais_lista", kwargs={"token": turma.token_publico})
+        url = reverse(
+            "turmas:portal_materiais_lista", kwargs={"token": turma.token_publico}
+        )
 
         # Act
         response = client.get(url)
@@ -299,13 +303,19 @@ class TestTurmaCreateView:
         # Assert — deve redirecionar após criar
         assert response.status_code == 302
         from turmas.models import Turma
+
         assert Turma.objects.filter(codigo="DS2024B").exists()
 
     def test_aluno_nao_pode_criar_turma(self, client_aluno):
         """Aluno não deve conseguir fazer POST na criação de turma."""
         # Arrange
         url = reverse("turmas:nova")
-        dados = {"nome": "Invasão", "codigo": "INV001", "periodo": "1", "ano_letivo": 2024}
+        dados = {
+            "nome": "Invasão",
+            "codigo": "INV001",
+            "periodo": "1",
+            "ano_letivo": 2024,
+        }
 
         # Act
         response = client_aluno.post(url, dados)
@@ -335,6 +345,7 @@ class TestTurmaArquivarView:
     def test_professor_pode_reativar_turma(self, client_professor, db):
         """POST de professor deve alternar ativa=True em uma turma arquivada."""
         from turmas.models import Turma
+
         # Arrange
         turma_arquivada = Turma.objects.create(
             nome="Turma Arquivada",
@@ -411,7 +422,7 @@ class TestBoletimTurmaView:
         assert response["Content-Type"] == "text/csv"
 
     def test_anonimo_nao_acessa_boletim(self, client, turma):
-        """Usuário anônimo não deve acessar o boletim."""
+        """Usuário anônimo deve ser redirecionado ao tentar acessar o boletim."""
         # Arrange
         url = reverse("turmas:boletim_turma", kwargs={"pk": turma.pk})
 
@@ -419,7 +430,7 @@ class TestBoletimTurmaView:
         response = client.get(url)
 
         # Assert
-        assert response.status_code == 403
+        assert response.status_code == 302
 
 
 @pytest.mark.django_db
@@ -466,7 +477,9 @@ class TestPortalPublicoRota:
     def test_portal_atividades_lista_publica_acessivel(self, client, turma):
         """Lista de atividades públicas deve ser acessível sem login."""
         # Arrange
-        url = reverse("turmas:portal_atividades_lista", kwargs={"token": turma.token_publico})
+        url = reverse(
+            "turmas:portal_atividades_lista", kwargs={"token": turma.token_publico}
+        )
 
         # Act
         response = client.get(url)
@@ -518,7 +531,9 @@ class TestTurmaEntrarView:
 class TestMinhasNotasView:
     """Testes para a view de notas do aluno no portal público."""
 
-    def test_aluno_matriculado_acessa_minhas_notas(self, client, turma, aluno, matricula):
+    def test_aluno_matriculado_acessa_minhas_notas(
+        self, client, turma, aluno, matricula
+    ):
         """Aluno matriculado deve acessar a view de notas com HTTP 200.
 
         Usa client + force_login direto (sem a fixture client_aluno) para evitar
@@ -526,7 +541,9 @@ class TestMinhasNotasView:
         """
         # Arrange — faz login sem disparar o signal de user_logged_in
         client.force_login(aluno.user)
-        url = reverse("turmas:portal_minhas_notas", kwargs={"token": turma.token_publico})
+        url = reverse(
+            "turmas:portal_minhas_notas", kwargs={"token": turma.token_publico}
+        )
 
         # Act
         response = client.get(url)
@@ -535,16 +552,17 @@ class TestMinhasNotasView:
         assert response.status_code == 200
 
     def test_anonimo_acessa_minhas_notas_sem_dados(self, client, turma):
-        """Usuário anônimo pode acessar a view mas vê lista de notas vazia."""
+        """Usuário anônimo deve ser redirecionado ao tentar acessar a view."""
         # Arrange
-        url = reverse("turmas:portal_minhas_notas", kwargs={"token": turma.token_publico})
+        url = reverse(
+            "turmas:portal_minhas_notas", kwargs={"token": turma.token_publico}
+        )
 
         # Act
         response = client.get(url)
 
         # Assert
-        assert response.status_code == 200
-        assert response.context["minhas_notas"] == []
+        assert response.status_code == 302
 
     def test_minhas_notas_token_invalido_retorna_404(self, client):
         """Token inválido em minhas-notas deve retornar 404."""
@@ -556,3 +574,41 @@ class TestMinhasNotasView:
 
         # Assert
         assert response.status_code == 404
+
+
+@pytest.mark.django_db
+class TestPortalAlunoAutorizacao:
+    """Testes do portal do aluno com e sem matrícula ativa."""
+
+    def test_aluno_sem_matricula_acessa_minha_area_com_lista_vazia(
+        self, client_aluno_sem_matricula, turma
+    ):
+        """Aluno autenticado sem matrícula ativa deve ser bloqueado."""
+        url = reverse("turmas:portal_minha_area", kwargs={"token": turma.token_publico})
+
+        response = client_aluno_sem_matricula.get(url)
+
+        assert response.status_code == 403
+
+    def test_aluno_sem_matricula_acessa_minhas_notas_com_lista_vazia(
+        self, client_aluno_sem_matricula, turma
+    ):
+        """Aluno autenticado sem matrícula ativa deve ser bloqueado."""
+        url = reverse(
+            "turmas:portal_minhas_notas", kwargs={"token": turma.token_publico}
+        )
+
+        response = client_aluno_sem_matricula.get(url)
+
+        assert response.status_code == 403
+
+    def test_boletim_deveria_renderizar_sem_no_reverse_match(
+        self, client_professor, turma
+    ):
+        """Regressão do boletim: a view deve renderizar sem quebrar o template."""
+        url = reverse("turmas:boletim_turma", kwargs={"pk": turma.pk})
+
+        response = client_professor.get(url)
+
+        assert response.status_code == 200
+        assert "Boletim" in response.content.decode()

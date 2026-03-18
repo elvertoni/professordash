@@ -6,7 +6,7 @@
 <div class="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
   <div>
     <div class="flex items-center gap-2 mb-2">
-      <a href="{% url 'turmas:turma_detalhe' turma.pk %}" class="text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1 text-sm">
+      <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1 text-sm">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         Voltar para Turma
       </a>

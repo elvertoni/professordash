@@ -38,7 +38,7 @@
         <button type="submit"
                 class="text-sm border px-3 py-2 rounded-lg transition-colors
                        {% if turma.ativa %}border-amber-300 text-amber-700 hover:bg-amber-50{% else %}border-green-300 text-green-700 hover:bg-green-50{% endif %}"
-                onclick="return confirm('{% if turma.ativa %}Arquivar{% else %}Reativar{% endif %} esta turma?')"
+                onclick="return confirm('{% if turma.ativa %}Arquivar{% else %}Reativar{% endif %} esta turma?')">
           {{ turma.ativa|yesno:"Arquivar,Reativar" }}
         </button>
       </form>

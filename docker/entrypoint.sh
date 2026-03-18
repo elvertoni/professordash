@@ -1,23 +1,52 @@
 #!/bin/bash
 set -e
 
-echo "Aguardando PostgreSQL verificar conexao via DATABASE_URL..."
-python -c "
-import os, sys, time, psycopg2
-db_url = os.environ.get('DATABASE_URL')
-if not db_url:
-    print('DATABASE_URL nao configurada, ignorando wait.')
-    sys.exit(0)
-while True:
-    try:
-        conn = psycopg2.connect(db_url)
-        conn.close()
-        break
-    except psycopg2.OperationalError:
-        print('Aguardando banco...')
-        time.sleep(1)
-"
-echo "PostgreSQL disponível."
+echo "Aguardando PostgreSQL e Redis ficarem prontos..."
+python - <<'PY'
+import os
+import time
+
+import psycopg2
+import redis
+
+
+def wait_for_postgres():
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        print("DATABASE_URL nao configurada, ignorando wait do PostgreSQL.")
+        return
+
+    while True:
+        try:
+            conn = psycopg2.connect(db_url)
+            conn.close()
+            print("PostgreSQL disponivel.")
+            return
+        except psycopg2.OperationalError:
+            print("Aguardando PostgreSQL...")
+            time.sleep(1)
+
+
+def wait_for_redis():
+    redis_url = os.environ.get("REDIS_URL")
+    if not redis_url:
+        print("REDIS_URL nao configurada, ignorando wait do Redis.")
+        return
+
+    client = redis.Redis.from_url(redis_url, socket_connect_timeout=2, socket_timeout=2)
+    while True:
+        try:
+            client.ping()
+            print("Redis disponivel.")
+            return
+        except redis.exceptions.RedisError:
+            print("Aguardando Redis...")
+            time.sleep(1)
+
+
+wait_for_postgres()
+wait_for_redis()
+PY
 
 echo "Coletando arquivos estáticos..."
 python manage.py collectstatic --noinput --settings=config.settings.production

@@ -9,6 +9,7 @@ Cobertura:
 - Acesso à rota de download exige is_staff
 - Acesso à rota de entrega exige login
 """
+
 import pytest
 from datetime import timedelta
 from decimal import Decimal
@@ -17,6 +18,80 @@ from django.utils import timezone
 from django.urls import reverse
 
 from atividades.models import Atividade, Entrega, StatusEntrega, TipoEntrega
+
+PNG_MAGIC = bytes(
+    [
+        0x89,
+        0x50,
+        0x4E,
+        0x47,
+        0x0D,
+        0x0A,
+        0x1A,
+        0x0A,
+        0x00,
+        0x00,
+        0x00,
+        0x0D,
+        0x49,
+        0x48,
+        0x44,
+        0x52,
+        0x00,
+        0x00,
+        0x00,
+        0x01,
+        0x00,
+        0x00,
+        0x00,
+        0x01,
+        0x08,
+        0x02,
+        0x00,
+        0x00,
+        0x00,
+        0x90,
+        0x77,
+        0x53,
+        0xDE,
+        0x00,
+        0x00,
+        0x00,
+        0x0C,
+        0x49,
+        0x44,
+        0x41,
+        0x54,
+        0x08,
+        0xD7,
+        0x63,
+        0xF8,
+        0xCF,
+        0xC0,
+        0x00,
+        0x00,
+        0x00,
+        0x02,
+        0x00,
+        0x01,
+        0xE2,
+        0x21,
+        0xBC,
+        0x33,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x49,
+        0x45,
+        0x4E,
+        0x44,
+        0xAE,
+        0x42,
+        0x60,
+        0x82,
+    ]
+)
 
 
 # ---------------------------------------------------------------------------
@@ -54,6 +129,21 @@ def atividade_sem_reenvio(db, turma):
     )
 
 
+@pytest.fixture
+def atividade_arquivo(db, turma):
+    """Atividade do tipo arquivo para exercitar validação de upload."""
+    return Atividade.objects.create(
+        turma=turma,
+        titulo="Atividade Arquivo",
+        descricao="Envio de arquivo.",
+        tipo_entrega=TipoEntrega.ARQUIVO,
+        prazo=timezone.now() + timedelta(days=5),
+        valor_pontos=10.0,
+        permitir_reenvio=True,
+        publicada=True,
+    )
+
+
 # ---------------------------------------------------------------------------
 # 4.12 — Testes do fluxo de entregas
 # ---------------------------------------------------------------------------
@@ -70,7 +160,9 @@ class TestAtividadeEstaAberta:
         # Act / Assert
         assert atividade_aberta.esta_aberta is True
 
-    def test_atividade_publicada_prazo_expirado_nao_esta_aberta(self, atividade_expirada):
+    def test_atividade_publicada_prazo_expirado_nao_esta_aberta(
+        self, atividade_expirada
+    ):
         """Atividade com prazo passado deve retornar esta_aberta=False."""
         assert atividade_expirada.esta_aberta is False
 
@@ -94,7 +186,9 @@ class TestAtividadeEstaAberta:
 class TestStatusEntrega:
     """Testes para o status automático da entrega com base no prazo."""
 
-    def test_entrega_dentro_do_prazo_recebe_status_entregue(self, atividade_aberta, aluno):
+    def test_entrega_dentro_do_prazo_recebe_status_entregue(
+        self, atividade_aberta, aluno
+    ):
         """Entrega criada antes do prazo deve ter status ENTREGUE."""
         # Arrange
         entrega = Entrega(
@@ -106,14 +200,18 @@ class TestStatusEntrega:
         # Act — simula a lógica de form_valid da EntregarAtividadeView
         agora = timezone.now()
         prazo = atividade_aberta.prazo
-        entrega.status = StatusEntrega.ENTREGUE if agora <= prazo else StatusEntrega.ATRASADA
+        entrega.status = (
+            StatusEntrega.ENTREGUE if agora <= prazo else StatusEntrega.ATRASADA
+        )
         entrega.save()
 
         # Assert
         entrega.refresh_from_db()
         assert entrega.status == StatusEntrega.ENTREGUE
 
-    def test_entrega_fora_do_prazo_recebe_status_atrasada(self, atividade_expirada, aluno):
+    def test_entrega_fora_do_prazo_recebe_status_atrasada(
+        self, atividade_expirada, aluno
+    ):
         """Entrega realizada após o prazo deve ter status ATRASADA."""
         # Arrange
         entrega = Entrega(
@@ -125,7 +223,9 @@ class TestStatusEntrega:
         # Act — simula a lógica de form_valid
         agora = timezone.now()
         prazo = atividade_expirada.prazo
-        entrega.status = StatusEntrega.ENTREGUE if agora <= prazo else StatusEntrega.ATRASADA
+        entrega.status = (
+            StatusEntrega.ENTREGUE if agora <= prazo else StatusEntrega.ATRASADA
+        )
         entrega.save()
 
         # Assert
@@ -318,7 +418,7 @@ class TestAcessoDownloadZipView:
     def test_anonimo_nao_pode_acessar_rota_de_download(
         self, client, turma, atividade_aberta
     ):
-        """Usuário não autenticado deve ser bloqueado com 403 na rota de download."""
+        """Usuário não autenticado deve ser redirecionado para login."""
         # Arrange
         url = reverse(
             "turmas:atividades_baixar_entregas",
@@ -329,7 +429,7 @@ class TestAcessoDownloadZipView:
         response = client.get(url)
 
         # Assert
-        assert response.status_code == 403
+        assert response.status_code == 302
 
 
 @pytest.mark.django_db
@@ -453,5 +553,79 @@ class TestAcessoEntregarAtividadeView:
         # Act
         response = client.get(url)
 
-        # Assert — deve redirecionar para login (302) ou retornar 403
-        assert response.status_code in (302, 403)
+        # Assert — deve redirecionar para login (302)
+        assert response.status_code == 302
+
+    def test_usuario_autenticado_sem_matricula_nao_deve_explodir(
+        self, client, turma, atividade_aberta, aluno_sem_matricula
+    ):
+        """Aluno autenticado sem matrícula deveria receber 403, não 500."""
+        client.force_login(aluno_sem_matricula.user)
+        url = reverse(
+            "turmas:portal_entregar_atividade",
+            kwargs={"token": turma.token_publico, "atividade_id": atividade_aberta.pk},
+        )
+
+        response = client.get(url)
+
+        assert response.status_code == 403
+
+    def test_entrega_de_atividade_de_outra_turma_deveria_ser_bloqueada(
+        self, client, aluno, turma, atividade_aberta, db
+    ):
+        """Trocar o activity_id por outra turma não deveria ser aceito."""
+        from turmas.models import Matricula, Turma
+
+        outra_turma = Turma.objects.create(
+            nome="Outra Turma",
+            codigo="OT2024",
+            descricao="Turma paralela",
+            periodo="1",
+            ano_letivo=2024,
+            ativa=True,
+        )
+        outra_atividade = Atividade.objects.create(
+            turma=outra_turma,
+            titulo="Atividade Externa",
+            descricao="Não deveria ser entregue pela turma atual.",
+            tipo_entrega=TipoEntrega.TEXTO,
+            prazo=timezone.now() + timedelta(days=3),
+            valor_pontos=10.0,
+            permitir_reenvio=True,
+            publicada=True,
+        )
+        Matricula.objects.create(aluno=aluno, turma=turma, ativa=True)
+
+        client.force_login(aluno.user)
+        url = reverse(
+            "turmas:portal_entregar_atividade",
+            kwargs={
+                "token": turma.token_publico,
+                "atividade_id": outra_atividade.pk,
+            },
+        )
+
+        response = client.get(url)
+
+        assert response.status_code == 404
+
+    def test_entrega_form_deveria_aceitar_png_quando_tipo_e_arquivo(
+        self, atividade_arquivo
+    ):
+        """Entrega em arquivo deveria aceitar PNG/JPEG/DOCX permitidos para alunos."""
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from atividades.forms import EntregaForm
+
+        png = SimpleUploadedFile(
+            "print.png",
+            PNG_MAGIC,
+            content_type="image/png",
+        )
+
+        form = EntregaForm(
+            data={},
+            files={"arquivo": png},
+            atividade=atividade_arquivo,
+        )
+
+        assert form.is_valid()

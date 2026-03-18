@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   app:
     build:
@@ -8,13 +6,25 @@ services:
     env_file: .env
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.production
+    expose:
+      - "8000"
     volumes:
       - /srv/professordash/media:/app/media
       - /srv/professordash/static:/app/staticfiles
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - python -c "import socket; s=socket.create_connection(('127.0.0.1', 8000), 2); s.close()"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
 
   db:
     image: postgres:16-alpine
@@ -22,10 +32,26 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h 127.0.0.1
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli ping | grep -q PONG
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
 
   caddy:
     image: caddy:2-alpine
@@ -35,12 +61,12 @@ services:
       - "443:443/udp"
     volumes:
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - /srv/professordash/media:/srv/professordash/media:ro
       - /srv/professordash/static:/srv/professordash/static:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - app
+      app:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:

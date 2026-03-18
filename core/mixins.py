@@ -21,20 +21,18 @@ class TurmaPublicaMixin:
         super().setup(request, *args, **kwargs)
         # Import local para evitar dependência circular
         from turmas.models import Turma
-        self.turma = get_object_or_404(
-            Turma, token_publico=kwargs["token"], ativa=True
-        )
+
+        self.turma = get_object_or_404(Turma, token_publico=kwargs["token"], ativa=True)
 
 
 class AlunoAutenticadoMixin(TurmaPublicaMixin, LoginRequiredMixin):
     """Garante que o usuário autenticado possui matrícula ativa na turma."""
 
     def dispatch(self, request, *args, **kwargs):
-        # setup() é chamado antes do dispatch, então self.turma já está disponível
-        response = super().dispatch(request, *args, **kwargs)
         if not request.user.is_authenticated:
-            return response
+            return self.handle_no_permission()
         from turmas.models import Matricula
+
         try:
             self.matricula = Matricula.objects.select_related("aluno").get(
                 aluno__user=request.user,
@@ -43,4 +41,4 @@ class AlunoAutenticadoMixin(TurmaPublicaMixin, LoginRequiredMixin):
             )
         except Matricula.DoesNotExist:
             raise PermissionDenied
-        return response
+        return super().dispatch(request, *args, **kwargs)

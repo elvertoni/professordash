@@ -80,7 +80,7 @@
             </div>
           </div>
           {% if form.instance.arquivo %}
-            <a href="{{ form.instance.arquivo.url }}" target="_blank" class="text-cyan-400 hover:text-cyan-200 text-sm font-medium flex items-center gap-1">
+            <a href="{% url 'turmas:portal_entrega_arquivo' token=turma.token_publico entrega_pk=form.instance.pk %}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-200 text-sm font-medium flex items-center gap-1">
               Ver Arquivo Enviado
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </a>
@@ -88,7 +88,7 @@
         </div>
       {% endif %}
 
-      {% if not form.instance.pk or form.instance.status not in 'avaliada' and atividade.permitir_reenvio or form.instance.status == 'pendente' %}
+      {% if not form.instance.pk or form.instance.status == 'pendente' or atividade.permitir_reenvio and form.instance.status != 'avaliada' %}
         <form method="post" enctype="multipart/form-data" class="space-y-6">
           {% csrf_token %}
           
@@ -117,7 +117,7 @@
                     <div class="flex text-sm text-gray-600 justify-center">
                       <label for="{{ form.arquivo.id_for_label }}" class="relative cursor-pointer rounded-md font-medium text-cyan-400 hover:text-cyan-300 focus-within:outline-none z-10">
                         <span>Fazer upload de arquivo</span>
-                        <input id="{{ form.arquivo.id_for_label }}" name="{{ form.html_name|default:'arquivo' }}" type="file" class="sr-only" x-ref="fileInput" @change="arquivo_nome = $event.target.files[0].name" {% if form.arquivo.field.required %}required{% endif %}>
+                        <input id="{{ form.arquivo.id_for_label }}" name="{{ form.arquivo.html_name }}" type="file" class="sr-only" x-ref="fileInput" @change="arquivo_nome = $event.target.files[0].name" {% if form.arquivo.field.required %}required{% endif %}>
                       </label>
                       <p class="pl-1">ou arraste e solte</p>
                     </div>

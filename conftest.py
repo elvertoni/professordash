@@ -3,6 +3,7 @@ Fixtures globais para todos os testes do ProfessorDash.
 
 Disponíveis automaticamente em todos os módulos de teste via pytest conftest.py.
 """
+
 import pytest
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -46,6 +47,32 @@ def aluno(db, aluno_user):
         nome="João Silva",
         email="joao@escola.pr.gov.br",
         matricula="2024001",
+    )
+
+
+@pytest.fixture
+def aluno_sem_matricula_user(db):
+    """Usuário aluno com vínculo em Aluno, mas sem matrícula ativa."""
+    return User.objects.create_user(
+        username="maria.sem.matricula",
+        email="maria.sem.matricula@escola.pr.gov.br",
+        password="senha123!",
+        is_active=True,
+        first_name="Maria",
+        last_name="Sem Matricula",
+    )
+
+
+@pytest.fixture
+def aluno_sem_matricula(db, aluno_sem_matricula_user):
+    """Aluno sem matrícula em turma alguma."""
+    from alunos.models import Aluno
+
+    return Aluno.objects.create(
+        user=aluno_sem_matricula_user,
+        nome="Maria Sem Matricula",
+        email="maria.sem.matricula@escola.pr.gov.br",
+        matricula="2024999",
     )
 
 
@@ -104,4 +131,11 @@ def client_professor(client, professor):
 def client_aluno(client, aluno_user):
     """Django test client autenticado como aluno_user."""
     client.force_login(aluno_user)
+    return client
+
+
+@pytest.fixture
+def client_aluno_sem_matricula(client, aluno_sem_matricula_user):
+    """Django test client autenticado como aluno sem matrícula ativa."""
+    client.force_login(aluno_sem_matricula_user)
     return client

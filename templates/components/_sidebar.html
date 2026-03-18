@@ -73,7 +73,7 @@
 
         <a href="{% url 'turmas:atividades_lista' pk=turma.pk %}"
            class="flex items-center gap-2 pl-10 pr-3 py-2 rounded-md text-sm transition-all duration-200
-                  {% if request.resolver_match.url_name == 'atividades_lista' or request.resolver_match.url_name == 'atividades_detalhe' %}text-violet-300 bg-violet-500/10{% else %}text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40{% endif %}">
+                  {% if request.resolver_match.url_name == 'atividades_lista' or request.resolver_match.url_name == 'atividade_detalhe' %}text-violet-300 bg-violet-500/10{% else %}text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40{% endif %}">
           <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
@@ -88,7 +88,7 @@
 
   <!-- Footer da sidebar -->
   <div class="px-3 py-4 border-t border-zinc-800/80">
-    <a href="/admin/"
+    <a href="{% url 'admin:index' %}"
        class="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-zinc-500 hover:text-violet-300 hover:bg-zinc-900/50 transition-all duration-200"
        title="Administração Django">
       <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

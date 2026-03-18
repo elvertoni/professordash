@@ -6,6 +6,22 @@ from .models import Aluno
 class AlunoForm(forms.ModelForm):
     """Formulário para criar e editar um aluno."""
 
+    def __init__(self, *args, **kwargs):
+        self.allow_existing_email = kwargs.pop("allow_existing_email", False)
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.allow_existing_email:
+            self._validate_unique = False
+        return cleaned_data
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip().lower()
+        if self.allow_existing_email:
+            return email
+        return email
+
     class Meta:
         model = Aluno
         fields = ["nome", "email", "matricula", "avatar", "ativo"]
