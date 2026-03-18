@@ -1,26 +1,26 @@
-<div class="bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-300 transition-colors flex items-start gap-4">
+<div class="bg-zinc-900 rounded-lg border border-zinc-700 p-4 hover:border-cyan-600 transition-colors flex items-start gap-4">
   <!-- Ícone conforme tipo -->
   <div class="shrink-0 pt-1">
     {% if material.tipo == 'pdf' %}
-      <div class="bg-red-50 text-red-600 p-2 rounded-lg">
+      <div class="bg-rose-500/10 text-rose-300 border border-rose-500/20 p-2 rounded-lg">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
       </div>
     {% elif material.tipo == 'zip' or material.tipo == 'arquivo' %}
-      <div class="bg-blue-50 text-blue-600 p-2 rounded-lg">
+      <div class="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 p-2 rounded-lg">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
         </svg>
       </div>
     {% elif material.tipo == 'markdown' %}
-      <div class="bg-purple-50 text-purple-600 p-2 rounded-lg">
+      <div class="bg-sky-500/10 text-sky-300 border border-sky-500/20 p-2 rounded-lg">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
       </div>
     {% else %}
-      <div class="bg-indigo-50 text-indigo-600 p-2 rounded-lg">
+      <div class="bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 p-2 rounded-lg">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
         </svg>
@@ -29,30 +29,30 @@
   </div>
 
   <div class="flex-1 min-w-0">
-    <h3 class="text-base font-semibold text-gray-900">
-      <a href="{% if material.arquivo %}{% if request.user.is_staff %}{% url 'turmas:materiais_download_admin' pk=turma.pk material_pk=material.pk %}{% else %}{% url 'turmas:portal_materiais_download' token=turma.token_publico material_pk=material.pk %}{% endif %}{% elif material.url_externa %}{{ material.url_externa }}{% else %}#{% endif %}" target="_blank" rel="noopener noreferrer" class="hover:text-blue-600">
+    <h3 class="text-base font-semibold text-zinc-100">
+      <a href="{% if material.arquivo %}{% if request.user.is_staff %}{% url 'turmas:materiais_download_admin' pk=turma.pk material_pk=material.pk %}{% else %}{% url 'turmas:portal_materiais_download' token=turma.token_publico material_pk=material.pk %}{% endif %}{% elif material.url_externa %}{{ material.url_externa }}{% else %}#{% endif %}" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-400 transition-colors">
         {{ material.titulo }}
       </a>
     </h3>
 
     <div class="flex flex-wrap items-center gap-2 mt-1.5 text-xs">
-      <span class="font-medium text-gray-500">Tipo: {{ material.get_tipo_display }}</span>
-      <span class="text-gray-300">&bull;</span>
-      <span class="font-medium text-gray-500">Visibilidade: {{ material.get_visibilidade_display }}</span>
+      <span class="font-medium text-zinc-400">Tipo: {{ material.get_tipo_display }}</span>
+      <span class="text-zinc-600">&bull;</span>
+      <span class="font-medium text-zinc-400">Visibilidade: {{ material.get_visibilidade_display }}</span>
       {% if material.aula %}
-        <span class="text-gray-300">&bull;</span>
-        <span class="text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Aula {{ material.aula.numero }}</span>
+        <span class="text-zinc-600">&bull;</span>
+        <span class="text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded-full">Aula {{ material.aula.numero }}</span>
       {% endif %}
     </div>
 
     {% if material.descricao and not compact %}
-      <p class="text-sm text-gray-600 mt-2 line-clamp-2">{{ material.descricao }}</p>
+      <p class="text-sm text-zinc-400 mt-2 line-clamp-2">{{ material.descricao }}</p>
     {% endif %}
   </div>
 
   <div class="flex items-center gap-1 shrink-0 ml-4">
     <a href="{% url 'turmas:materiais_editar' pk=turma.pk material_pk=material.pk %}"
-       class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar">
+       class="p-1.5 text-zinc-400 hover:text-cyan-300 hover:bg-cyan-500/10 rounded-lg transition-colors" title="Editar">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
       </svg>
@@ -71,7 +71,7 @@
               confirmLabel: 'Excluir',
               formId: 'form-excluir-material-{{ material.pk }}'
             })"
-            class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            class="p-1.5 text-zinc-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition-colors"
             title="Excluir">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>

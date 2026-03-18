@@ -65,6 +65,19 @@ class TestAlunoViews:
         assert response.status_code == 200
         assert list(response.context["matriculas"]) == [matricula]
 
+    def test_lista_alunos_nao_renderiza_div_dentro_de_table(
+        self, client_professor, turma, matricula
+    ):
+        url = reverse("turmas:alunos_lista", kwargs={"pk": turma.pk})
+
+        response = client_professor.get(url)
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert 'id="tabela-alunos-container"' in html
+        assert "<table" in html
+        assert "<table" not in html.split('id="tabela-alunos-container"', 1)[0]
+
     def test_criar_aluno_matricula_novo_aluno_e_vinculo(self, client_professor, turma):
         url = reverse("turmas:alunos_novo", kwargs={"pk": turma.pk})
         data = {
@@ -152,6 +165,19 @@ class TestAlunoViews:
         assert response.status_code == 200
         assert "Carlos Pereira" in response.content.decode()
         assert "João Silva" not in response.content.decode()
+
+    def test_busca_htmx_retorna_tabela_completa_em_container_seguro(
+        self, client_professor, turma, aluno, matricula
+    ):
+        url = reverse("turmas:alunos_busca_htmx", kwargs={"pk": turma.pk})
+
+        response = client_professor.get(url, {"q": aluno.nome})
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "<table" in html
+        assert 'id="tabela-alunos-body"' in html
+        assert "hover:bg-zinc-800/70" in html
 
     def test_mover_turma_altera_matricula(
         self, client_professor, turma, aluno, matricula, outra_turma

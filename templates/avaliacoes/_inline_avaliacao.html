@@ -7,15 +7,15 @@
     {% csrf_token %}
     <div class="flex items-center gap-2">
       {{ form.nota }}
-      <span class="text-sm font-medium text-gray-500">/ {{ entrega.atividade.valor_pontos }}</span>
+      <span class="text-sm font-medium text-zinc-500">/ {{ entrega.atividade.valor_pontos }}</span>
     </div>
     {% if form.nota.errors %}
-      <div class="text-xs text-red-600">{{ form.nota.errors.0 }}</div>
+      <div class="text-xs text-rose-400">{{ form.nota.errors.0 }}</div>
     {% endif %}
     
     {{ form.feedback }}
     {% if form.feedback.errors %}
-      <div class="text-xs text-red-600">{{ form.feedback.errors.0 }}</div>
+      <div class="text-xs text-rose-400">{{ form.feedback.errors.0 }}</div>
     {% endif %}
     
     <div class="flex items-center gap-2 justify-end">
@@ -23,7 +23,7 @@
               hx-get="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}?cancel=1"
               hx-target="#avaliacao-{{ entrega.pk }}"
               hx-swap="outerHTML"
-              class="text-xs text-gray-500 hover:text-gray-700 font-medium">
+              class="text-xs text-zinc-500 hover:text-zinc-300 font-medium">
         Cancelar
       </button>
       <button type="submit" class="btn-primary py-1 px-3 text-xs w-auto">
@@ -35,13 +35,13 @@
   <div id="avaliacao-{{ entrega.pk }}" class="flex flex-col items-end gap-1">
     {% if entrega.nota is not None %}
       <div class="flex items-center gap-2">
-        <span class="text-lg font-bold {% if entrega.nota >= entrega.atividade.valor_pontos|add:"-0.01"|floatformat:2|add:"/2" %}text-green-600{% else %}text-cyan-400{% endif %}">
+        <span class="text-lg font-bold {% if entrega.nota >= entrega.atividade.valor_pontos|add:"-0.01"|floatformat:2|add:"/2" %}text-emerald-300{% else %}text-cyan-400{% endif %}">
           {{ entrega.nota }}
         </span>
-        <span class="text-sm text-gray-500">/ {{ entrega.atividade.valor_pontos }}</span>
+        <span class="text-sm text-zinc-500">/ {{ entrega.atividade.valor_pontos }}</span>
       </div>
       {% if entrega.feedback %}
-        <div class="text-xs text-gray-500 max-w-[200px] truncate" title="{{ entrega.feedback }}">
+        <div class="text-xs text-zinc-500 max-w-[200px] truncate" title="{{ entrega.feedback }}">
           {{ entrega.feedback }}
         </div>
       {% endif %}

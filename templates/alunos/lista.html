@@ -64,29 +64,13 @@
       </div>
     </div>
 
-    {# Tabela #}
-    <div class="bg-zinc-900 rounded-xl border border-zinc-700 overflow-hidden shadow-sm">
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left">
-          <thead class="bg-zinc-950 text-zinc-400 text-xs uppercase tracking-wide border-b border-zinc-700">
-            <tr>
-              <th class="px-6 py-4 font-medium">Aluno</th>
-              <th class="px-6 py-4 font-medium">E-mail</th>
-              <th class="px-6 py-4 font-medium hidden sm:table-cell">Matrícula</th>
-              <th class="px-6 py-4 font-medium text-center">Status</th>
-              <th class="px-6 py-4 font-medium text-right">Ações</th>
-            </tr>
-          </thead>
-          <div id="tabela-alunos-container"
-               hx-get="{% url 'turmas:alunos_busca_htmx' pk=turma.pk %}?q={{ q }}"
-               hx-trigger="load"
-               hx-swap="innerHTML"
-               hx-target="this">
-            {# carregado via HTMX; fallback SSR abaixo #}
-            {% include "alunos/_tabela_alunos.html" with matriculas=matriculas turma=turma q=q %}
-          </div>
-        </table>
-      </div>
+    {# Resultado da busca / tabela #}
+    <div id="tabela-alunos-container"
+         hx-get="{% url 'turmas:alunos_busca_htmx' pk=turma.pk %}?q={{ q }}"
+         hx-trigger="load"
+         hx-swap="innerHTML"
+         hx-target="this">
+      {% include "alunos/_tabela_alunos.html" with matriculas=matriculas turma=turma q=q %}
     </div>
 
   {% else %}

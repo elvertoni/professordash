@@ -6,23 +6,23 @@
 <div class="max-w-5xl mx-auto">
 
   <!-- Breadcrumb -->
-  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-blue-600">Turmas</a>
+  <nav class="flex items-center gap-2 text-sm text-zinc-500 mb-6">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-cyan-400 transition-colors">Turmas</a>
     <span>/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-blue-600">{{ turma.nome }}</a>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-cyan-400 transition-colors">{{ turma.nome }}</a>
     <span>/</span>
-    <a href="{% url 'turmas:alunos_lista' pk=turma.pk %}" class="hover:text-blue-600">Alunos</a>
+    <a href="{% url 'turmas:alunos_lista' pk=turma.pk %}" class="hover:text-cyan-400 transition-colors">Alunos</a>
     <span>/</span>
-    <span class="text-gray-900 font-medium">{{ aluno.nome }}</span>
+    <span class="text-zinc-100 font-medium">{{ aluno.nome }}</span>
   </nav>
 
   <!-- Cabeçalho -->
-  <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6 shadow-sm flex flex-col sm:flex-row items-center sm:items-start gap-6">
+  <div class="bg-zinc-900 rounded-xl border border-zinc-700 p-6 mb-6 shadow-sm flex flex-col sm:flex-row items-center sm:items-start gap-6">
     <div class="shrink-0">
       {% if aluno.avatar %}
-        <img src="{{ aluno.avatar.url }}" alt="{{ aluno.nome }}" class="w-24 h-24 rounded-full object-cover border-4 border-gray-50">
+        <img src="{{ aluno.avatar.url }}" alt="{{ aluno.nome }}" class="w-24 h-24 rounded-full object-cover border-4 border-zinc-800">
       {% else %}
-        <div class="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-3xl uppercase border-4 border-blue-50">
+        <div class="w-24 h-24 rounded-full bg-cyan-950 flex items-center justify-center text-cyan-300 font-bold text-3xl uppercase border-4 border-cyan-500/10">
           {{ aluno.nome|slice:":2" }}
         </div>
       {% endif %}
@@ -31,13 +31,13 @@
     <div class="flex-1 text-center sm:text-left">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900 flex items-center justify-center sm:justify-start gap-2">
+          <h1 class="text-2xl font-bold text-zinc-100 flex items-center justify-center sm:justify-start gap-2">
             {{ aluno.nome }}
             {% if not aluno.ativo %}
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Inativo</span>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-300 border border-rose-500/20">Inativo</span>
             {% endif %}
           </h1>
-          <div class="mt-2 text-sm text-gray-500 space-y-1">
+          <div class="mt-2 text-sm text-zinc-400 space-y-1">
             <p class="flex items-center justify-center sm:justify-start gap-1.5">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               {{ aluno.email }}
@@ -52,7 +52,7 @@
         </div>
         <div class="shrink-0 flex gap-2 justify-center sm:justify-start">
           <a href="{% url 'turmas:alunos_editar' pk=turma.pk aluno_pk=aluno.pk %}"
-             class="text-sm border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors">
+             class="text-sm border border-zinc-700 bg-zinc-950 hover:bg-zinc-800 text-zinc-200 px-4 py-2 rounded-lg font-medium transition-colors">
             Editar aluno
           </a>
         </div>
@@ -62,12 +62,12 @@
 
   <!-- Resumo de Entregas -->
   <div class="mb-6">
-    <h2 class="text-lg font-bold text-gray-900 mb-4">Entregas de Atividades</h2>
+    <h2 class="text-lg font-bold text-zinc-100 mb-4">Entregas de Atividades</h2>
     
     {% if entregas %}
-      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+      <div class="bg-zinc-900 rounded-xl border border-zinc-700 overflow-hidden shadow-sm">
         <table class="w-full text-sm text-left whitespace-nowrap">
-          <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+          <thead class="bg-zinc-950 text-zinc-400 text-xs uppercase tracking-wide">
             <tr>
               <th class="px-6 py-4 font-medium">Atividade</th>
               <th class="px-6 py-4 font-medium">Status</th>
@@ -75,31 +75,31 @@
               <th class="px-6 py-4 font-medium">Nota / Avaliação</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100">
+          <tbody class="divide-y divide-zinc-800">
             {% for entrega in entregas %}
-              <tr class="hover:bg-gray-50 transition-colors">
+              <tr class="hover:bg-zinc-800/70 transition-colors">
                 <td class="px-6 py-4">
-                  <span class="font-medium text-gray-900">{{ entrega.atividade.titulo }}</span>
+                  <span class="font-medium text-zinc-100">{{ entrega.atividade.titulo }}</span>
                 </td>
                 <td class="px-6 py-4">
                   {% if entrega.status == 'pendente' %}
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Pendente</span>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20">Pendente</span>
                   {% elif entrega.status == 'entregue' %}
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Entregue</span>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">Entregue</span>
                   {% elif entrega.status == 'atrasada' %}
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Atrasado</span>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-300 border border-rose-500/20">Atrasado</span>
                   {% elif entrega.status == 'avaliada' %}
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Avaliado</span>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Avaliado</span>
                   {% endif %}
                 </td>
-                <td class="px-6 py-4 text-gray-500">
+                <td class="px-6 py-4 text-zinc-400">
                   {{ entrega.data_envio|date:"d/m/Y H:i"|default:"—" }}
                 </td>
-                <td class="px-6 py-4 font-medium text-gray-900">
+                <td class="px-6 py-4 font-medium text-zinc-100">
                   {% if entrega.nota is not None %}
                     {{ entrega.nota }} / {{ entrega.atividade.valor_pontos }}
                   {% else %}
-                    <span class="text-gray-400 font-normal">Não avaliado</span>
+                    <span class="text-zinc-500 font-normal">Não avaliado</span>
                   {% endif %}
                 </td>
               </tr>
@@ -108,9 +108,9 @@
         </table>
       </div>
     {% else %}
-      <div class="bg-white rounded-xl border border-dashed border-gray-300 p-8 text-center">
-        <p class="text-sm text-gray-500">O aluno ainda não tem entregas registradas nesta turma.</p>
-        <p class="text-xs text-gray-400 mt-1">Isso será preenchido automaticamente quando houver atividades resolvidas (Sprint 3).</p>
+      <div class="bg-zinc-900 rounded-xl border border-dashed border-zinc-700 p-8 text-center">
+        <p class="text-sm text-zinc-400">O aluno ainda não tem entregas registradas nesta turma.</p>
+        <p class="text-xs text-zinc-500 mt-1">Isso será preenchido automaticamente quando houver atividades resolvidas.</p>
       </div>
     {% endif %}
   </div>

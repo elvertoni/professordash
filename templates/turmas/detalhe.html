@@ -18,9 +18,9 @@
       <div class="flex items-center gap-3">
         <h1 class="text-2xl font-bold text-zinc-100">{{ turma.nome }}</h1>
         {% if turma.ativa %}
-          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Ativa</span>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Ativa</span>
         {% else %}
-          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-300">Arquivada</span>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">Arquivada</span>
         {% endif %}
       </div>
       <p class="text-sm text-zinc-400 mt-1">{{ turma.codigo }} &middot; {{ turma.periodo }} &middot; {{ turma.ano_letivo }}</p>
@@ -36,8 +36,8 @@
       <form method="post" action="{% url 'turmas:arquivar' pk=turma.pk %}" class="inline">
         {% csrf_token %}
         <button type="submit"
-                class="text-sm border px-3 py-2 rounded-lg transition-colors
-                       {% if turma.ativa %}border-amber-300 text-amber-700 hover:bg-amber-50{% else %}border-green-300 text-green-700 hover:bg-green-50{% endif %}"
+                class="inline-flex items-center justify-center text-sm font-medium border px-3 py-2 rounded-lg transition-colors
+                       {% if turma.ativa %}border-amber-500/30 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20 hover:border-amber-400/50{% else %}border-emerald-500/30 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20 hover:border-emerald-400/50{% endif %}"
                 onclick="return confirm('{% if turma.ativa %}Arquivar{% else %}Reativar{% endif %} esta turma?')">
           {{ turma.ativa|yesno:"Arquivar,Reativar" }}
         </button>
@@ -54,8 +54,8 @@
     </div>
     <button @click="navigator.clipboard.writeText(document.getElementById('link-publico').textContent); copiado = true; setTimeout(() => copiado = false, 2000)"
             class="shrink-0 text-xs font-medium text-cyan-400 hover:text-cyan-200 bg-zinc-900 border border-cyan-700 px-3 py-1.5 rounded-lg transition-colors">
-      <span x-show="!copiado">Copiar</span>
-      <span x-show="copiado" class="text-green-600">Copiado!</span>
+      <span x-show="!copiado" x-cloak>Copiar</span>
+      <span x-show="copiado" x-cloak class="text-emerald-300">Copiado!</span>
     </button>
   </div>
 
@@ -66,11 +66,11 @@
       <p class="text-xs text-zinc-400 mt-1">Aulas</p>
     </div>
     <div class="bg-zinc-900 rounded-xl border border-zinc-700 p-4 text-center">
-      <p class="text-2xl font-bold text-green-600">{{ aulas|length|add:"0" }}</p>
+      <p class="text-2xl font-bold text-emerald-300">{{ aulas|length|add:"0" }}</p>
       <p class="text-xs text-zinc-400 mt-1">Realizadas</p>
     </div>
     <div class="bg-zinc-900 rounded-xl border border-zinc-700 p-4 text-center">
-      <p class="text-2xl font-bold text-purple-600">{{ matriculas.count }}</p>
+      <p class="text-2xl font-bold text-sky-300">{{ matriculas.count }}</p>
       <p class="text-xs text-zinc-400 mt-1">Alunos</p>
     </div>
     <div class="bg-zinc-900 rounded-xl border border-zinc-700 p-4 text-center">
@@ -106,7 +106,7 @@
   </div>
 
   <!-- Aba: Aulas -->
-  <div x-show="tab === 'aulas'">
+  <div x-show="tab === 'aulas'" x-cloak>
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-base font-semibold text-zinc-100">Aulas</h2>
       <a href="{% url 'turmas:aulas_nova' pk=turma.pk %}"
@@ -122,7 +122,7 @@
         {% for aula in aulas %}
           <div class="bg-zinc-900 rounded-lg border border-zinc-700 px-4 py-3 flex items-center gap-3 hover:border-cyan-700 transition-colors">
             <span class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold
-                         {% if aula.realizada %}bg-green-100 text-green-700{% else %}bg-zinc-800 text-zinc-400{% endif %}">
+                         {% if aula.realizada %}bg-emerald-500/10 text-emerald-300 border border-emerald-500/20{% else %}bg-zinc-800 text-zinc-400 border border-zinc-700{% endif %}">
               {{ aula.numero }}
             </span>
             <div class="flex-1 min-w-0">
@@ -135,7 +135,7 @@
               {% endif %}
             </div>
             {% if aula.realizada %}
-              <span class="text-xs text-green-600 font-medium">Realizada</span>
+              <span class="text-xs text-emerald-300 font-medium">Realizada</span>
             {% endif %}
           </div>
         {% endfor %}
@@ -150,7 +150,7 @@
   </div>
 
   <!-- Aba: Alunos -->
-  <div x-show="tab === 'alunos'">
+  <div x-show="tab === 'alunos'" x-cloak>
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-base font-semibold text-zinc-100">Alunos matriculados</h2>
     </div>
@@ -195,7 +195,7 @@
   </div>
 
   <!-- Aba: Materiais -->
-  <div x-show="tab === 'materiais'">
+  <div x-show="tab === 'materiais'" x-cloak>
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-base font-semibold text-zinc-100">Materiais da Turma</h2>
       <a href="{% url 'turmas:materiais_novo' pk=turma.pk %}"
@@ -228,7 +228,7 @@
   </div>
 
   <!-- Aba: Atividades -->
-  <div x-show="tab === 'atividades'">
+  <div x-show="tab === 'atividades'" x-cloak>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
       <h2 class="text-base font-semibold text-zinc-100">Atividades e Avaliações</h2>
       <div class="flex flex-wrap items-center gap-2">

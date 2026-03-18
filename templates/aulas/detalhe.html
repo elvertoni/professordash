@@ -7,14 +7,14 @@
 <div class="max-w-4xl mx-auto">
 
   <!-- Breadcrumb -->
-  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-blue-600">Turmas</a>
+  <nav class="flex items-center gap-2 text-sm text-zinc-500 mb-6">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-cyan-400 transition-colors">Turmas</a>
     <span>/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-blue-600">{{ turma.nome }}</a>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-cyan-400 transition-colors">{{ turma.nome }}</a>
     <span>/</span>
-    <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}" class="hover:text-blue-600">Aulas</a>
+    <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}" class="hover:text-cyan-400 transition-colors">Aulas</a>
     <span>/</span>
-    <span class="text-gray-900 font-medium">Aula {{ aula.numero }}</span>
+    <span class="text-zinc-100 font-medium">Aula {{ aula.numero }}</span>
   </nav>
 
   <!-- Cabeçalho -->
@@ -22,13 +22,13 @@
     <div>
       <div class="flex items-center gap-3">
         <span class="w-10 h-10 flex items-center justify-center rounded-full text-sm font-bold
-                     {% if aula.realizada %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-500{% endif %}">
+                     {% if aula.realizada %}bg-emerald-500/10 text-emerald-300 border border-emerald-500/20{% else %}bg-zinc-800 text-zinc-300 border border-zinc-700{% endif %}">
           {{ aula.numero }}
         </span>
-        <h1 class="text-2xl font-bold text-gray-900">{{ aula.titulo }}</h1>
+        <h1 class="text-2xl font-bold text-zinc-100">{{ aula.titulo }}</h1>
       </div>
       {% if aula.data %}
-        <p class="text-sm text-gray-500 mt-1 ml-3">{{ aula.data|date:"d \d\e F \d\e Y" }}</p>
+        <p class="text-sm text-zinc-500 mt-1 ml-3">{{ aula.data|date:"d \d\e F \d\e Y" }}</p>
       {% endif %}
     </div>
     <div class="flex items-center gap-2 shrink-0">
@@ -39,15 +39,15 @@
               hx-swap="none"
               hx-on::after-request="location.reload()"
               class="text-sm border px-3 py-2 rounded-lg transition-colors
-                     {% if aula.realizada %}border-green-300 text-green-700 bg-green-50 hover:bg-green-100{% else %}border-gray-300 text-gray-500 hover:bg-gray-100{% endif %}">
+                     {% if aula.realizada %}border-emerald-500/20 text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20{% else %}border-zinc-700 text-zinc-300 bg-zinc-900 hover:bg-zinc-800{% endif %}">
         {% if aula.realizada %}Marcar como pendente{% else %}Marcar como realizada{% endif %}
       </button>
       <a href="{% url 'turmas:aulas_editar' pk=turma.pk aula_pk=aula.pk %}"
-         class="text-sm text-gray-600 hover:text-gray-900 border border-gray-300 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+         class="text-sm text-zinc-300 hover:text-zinc-100 border border-zinc-700 px-3 py-2 rounded-lg hover:bg-zinc-800 transition-colors">
         Editar
       </a>
       <a href="{% url 'turmas:aulas_excluir' pk=turma.pk aula_pk=aula.pk %}"
-         class="text-sm text-red-600 hover:text-red-800 border border-red-300 px-3 py-2 rounded-lg hover:bg-red-50 transition-colors">
+         class="text-sm text-rose-300 hover:text-rose-200 border border-rose-500/20 bg-rose-500/10 px-3 py-2 rounded-lg hover:bg-rose-500/20 transition-colors">
         Excluir
       </a>
     </div>
@@ -55,23 +55,23 @@
 
   <!-- Conteúdo Markdown -->
   {% if aula.conteudo %}
-    <div class="bg-white rounded-xl border border-gray-200 p-6">
-      <article class="prose prose-gray max-w-none">
+    <div class="bg-zinc-900 rounded-xl border border-zinc-700 p-6">
+      <article class="prose-content max-w-none text-zinc-300">
         {{ aula.conteudo|markdownify }}
       </article>
     </div>
   {% else %}
-    <div class="bg-white rounded-xl border border-dashed border-gray-300 p-10 text-center">
-      <p class="text-gray-400 text-sm">Nenhum conteúdo cadastrado para esta aula.</p>
+    <div class="bg-zinc-900 rounded-xl border border-dashed border-zinc-700 p-10 text-center">
+      <p class="text-zinc-400 text-sm">Nenhum conteúdo cadastrado para esta aula.</p>
       <a href="{% url 'turmas:aulas_editar' pk=turma.pk aula_pk=aula.pk %}"
-         class="mt-2 inline-block text-blue-600 hover:underline text-sm">Adicionar conteúdo</a>
+         class="mt-2 inline-block text-cyan-400 hover:underline text-sm">Adicionar conteúdo</a>
     </div>
   {% endif %}
 
   <!-- Materiais (Sprint 2) -->
   <div class="mt-6">
-    <h2 class="text-base font-semibold text-gray-900 mb-3">Materiais</h2>
-    <p class="text-sm text-gray-400">Módulo de materiais disponível na Sprint 2.</p>
+    <h2 class="text-base font-semibold text-zinc-100 mb-3">Materiais</h2>
+    <p class="text-sm text-zinc-500">Módulo de materiais disponível nesta aula.</p>
   </div>
 
 </div>
