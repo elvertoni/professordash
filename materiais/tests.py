@@ -128,3 +128,18 @@ class TestMaterialListaPublicaView:
             material_publico,
             material_restrito,
         ]
+
+
+@pytest.mark.django_db
+class TestMaterialListaAdminView:
+    def test_professor_ve_empty_state_na_lista_admin_sem_materiais(
+        self, client_professor, turma
+    ):
+        url = reverse("turmas:materiais_lista", kwargs={"pk": turma.pk})
+
+        response = client_professor.get(url)
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "Nenhum material cadastrado" in html
+        assert "Novo material" in html

@@ -75,10 +75,7 @@
 
   {% else %}
     {# Estado vazio #}
-    {% include "components/_empty_state.html" with
-       title="Nenhum aluno matriculado"
-       subtitle="Comece adicionando um novo aluno ou importando via CSV."
-    %}
+    {% include "components/_empty_state.html" with title="Nenhum aluno matriculado" subtitle="Comece adicionando um novo aluno ou importando via CSV." %}
     <div class="mt-6 flex flex-col sm:flex-row justify-center gap-3">
       <a href="{% url 'turmas:alunos_importar' pk=turma.pk %}"
          class="inline-flex items-center justify-center gap-2 bg-zinc-900 border border-zinc-700 text-zinc-300 text-sm font-medium px-4 py-2 rounded-lg hover:bg-zinc-950 transition-colors">

@@ -446,6 +446,18 @@ class TestAtividadeViewsAdmin:
         response = client_professor.get(url)
         assert response.status_code == 200
 
+    def test_lista_atividades_vazia_renderiza_empty_state(
+        self, client_professor, turma
+    ):
+        url = reverse("turmas:atividades_lista", kwargs={"pk": turma.pk})
+
+        response = client_professor.get(url)
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "Nenhuma atividade cadastrada" in html
+        assert "Nova atividade" in html
+
     def test_criar_atividade_get_retorna_200(self, client_professor, turma):
         url = reverse("turmas:atividades_nova", kwargs={"pk": turma.pk})
         response = client_professor.get(url)
@@ -534,6 +546,35 @@ class TestAtividadeViewsAdmin:
         assert response.status_code == 200
         atividades = response.context["atividades"]
         assert hasattr(atividades[0], "total_entregas")
+
+    def test_detalhe_publico_usa_container_de_markdown_compartilhado(
+        self, client, turma, atividade_aberta
+    ):
+        url = reverse(
+            "turmas:portal_atividade_detalhe",
+            kwargs={"token": turma.token_publico, "atividade_id": atividade_aberta.pk},
+        )
+
+        response = client.get(url)
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "prose-content max-w-none text-gray-700" in html
+
+    def test_lista_publica_usa_cta_legivel_em_superficie_clara(
+        self, client, turma, atividade_aberta
+    ):
+        url = reverse(
+            "turmas:portal_atividades_lista",
+            kwargs={"token": turma.token_publico},
+        )
+
+        response = client.get(url)
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "text-cyan-700 group-hover:text-cyan-800" in html
+        assert "btn-secondary" not in html
 
 
 @pytest.mark.django_db

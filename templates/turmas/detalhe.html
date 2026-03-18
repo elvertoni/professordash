@@ -187,10 +187,7 @@
         </div>
       </div>
     {% else %}
-      {% include "components/_empty_state.html" with
-         title="Nenhum aluno matriculado"
-         subtitle="Adicione alunos para que eles possam acessar os materiais e atividades."
-      %}
+      {% include "components/_empty_state.html" with title="Nenhum aluno matriculado" subtitle="Adicione alunos para que eles possam acessar os materiais e atividades." %}
     {% endif %}
   </div>
 
@@ -218,12 +215,7 @@
       </div>
     {% else %}
       {% url 'turmas:materiais_novo' pk=turma.pk as url_novo_material_detalhe %}
-      {% include "components/_empty_state.html" with
-         title="Nenhum material cadastrado"
-         subtitle="Adicione arquivos, links ou conteúdo Markdown para esta turma."
-         action_url=url_novo_material_detalhe
-         action_label="Novo material"
-      %}
+      {% include "components/_empty_state.html" with title="Nenhum material cadastrado" subtitle="Adicione arquivos, links ou conteúdo Markdown para esta turma." action_url=url_novo_material_detalhe action_label="Novo material" %}
     {% endif %}
   </div>
 
@@ -256,12 +248,7 @@
       </div>
     {% else %}
       {% url 'turmas:atividades_nova' pk=turma.pk as url_nova_atividade_detalhe %}
-      {% include "components/_empty_state.html" with
-         title="Nenhuma atividade cadastrada"
-         subtitle="Crie a primeira atividade para esta turma."
-         action_url=url_nova_atividade_detalhe
-         action_label="Nova atividade"
-      %}
+      {% include "components/_empty_state.html" with title="Nenhuma atividade cadastrada" subtitle="Crie a primeira atividade para esta turma." action_url=url_nova_atividade_detalhe action_label="Nova atividade" %}
     {% endif %}
   </div>
 

@@ -33,7 +33,7 @@
         </div>
       </div>
 
-      <div class="prose max-w-none text-gray-700">
+      <div class="prose-content max-w-none text-gray-700">
         {{ atividade.descricao|markdownify }}
       </div>
     </div>
@@ -80,7 +80,7 @@
             </div>
           </div>
           {% if form.instance.arquivo %}
-            <a href="{% url 'turmas:portal_entrega_arquivo' token=turma.token_publico entrega_pk=form.instance.pk %}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-200 text-sm font-medium flex items-center gap-1">
+            <a href="{% url 'turmas:portal_entrega_arquivo' token=turma.token_publico entrega_pk=form.instance.pk %}" target="_blank" rel="noopener noreferrer" class="text-cyan-700 hover:text-cyan-800 text-sm font-medium flex items-center gap-1">
               Ver Arquivo Enviado
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </a>
@@ -104,18 +104,18 @@
             {% if atividade.tipo_entrega == 'arquivo' %}
               <div x-show="tipo_entrega === 'arquivo'">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Selecione o arquivo para envio</label>
-                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-cyan-500 hover:bg-cyan-950 transition-colors relative"
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-cyan-500 hover:bg-cyan-50 transition-colors relative"
                      x-data="{ dragging: false }"
                      @dragover.prevent="dragging = true"
                      @dragleave.prevent="dragging = false"
                      @drop.prevent="dragging = false; const files = $event.dataTransfer.files; if(files.length > 0) { $refs.fileInput.files = files; arquivo_nome = files[0].name }"
-                     :class="{'border-cyan-500 bg-cyan-950': dragging}">
+                     :class="{'border-cyan-500 bg-cyan-50 ring-2 ring-cyan-100': dragging}">
                   <div class="space-y-1 text-center">
                     <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                       <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     <div class="flex text-sm text-gray-600 justify-center">
-                      <label for="{{ form.arquivo.id_for_label }}" class="relative cursor-pointer rounded-md font-medium text-cyan-400 hover:text-cyan-300 focus-within:outline-none z-10">
+                      <label for="{{ form.arquivo.id_for_label }}" class="relative cursor-pointer rounded-md font-medium text-cyan-700 hover:text-cyan-800 focus-within:outline-none z-10">
                         <span>Fazer upload de arquivo</span>
                         <input id="{{ form.arquivo.id_for_label }}" name="{{ form.arquivo.html_name }}" type="file" class="sr-only" x-ref="fileInput" @change="arquivo_nome = $event.target.files[0].name" {% if form.arquivo.field.required %}required{% endif %}>
                       </label>
@@ -123,7 +123,7 @@
                     </div>
                     <p class="text-xs text-gray-500">PDF, DOCX, ZIP, JPG, PNG até 10MB</p>
                     
-                    <div x-show="arquivo_nome" class="mt-4 p-2 bg-cyan-900 text-cyan-200 rounded text-sm font-medium flex items-center justify-center gap-2" style="display: none;">
+                    <div x-show="arquivo_nome" class="mt-4 p-2 bg-cyan-50 text-cyan-800 border border-cyan-200 rounded text-sm font-medium flex items-center justify-center gap-2" style="display: none;">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                       <span x-text="arquivo_nome"></span>
                     </div>

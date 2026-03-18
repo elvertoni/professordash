@@ -14,6 +14,7 @@ Cobertura:
 import uuid
 
 import pytest
+from django.template.loader import render_to_string
 from django.urls import reverse
 
 # ---------------------------------------------------------------------------
@@ -159,6 +160,20 @@ class TestAcessoAdminTurmas:
 
         # Assert
         assert response.status_code == 302
+
+    def test_detalhe_turma_renderiza_empty_states_sem_template_bruto(
+        self, client_professor, turma
+    ):
+        """Detalhe da turma deve renderizar os estados vazios sem expor tags DTL."""
+        url = reverse("turmas:detalhe", kwargs={"pk": turma.pk})
+
+        response = client_professor.get(url)
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "Nenhum aluno matriculado" in html
+        assert "Nenhum material cadastrado" in html
+        assert "Nenhuma atividade cadastrada" in html
 
     def test_professor_acessa_formulario_nova_turma(self, client_professor):
         """Professor deve acessar o formulário de criação de turma com HTTP 200."""
@@ -497,6 +512,24 @@ class TestPortalPublicoRota:
 
         # Assert
         assert response.status_code == 404
+
+
+@pytest.mark.django_db
+class TestSharedTemplatePartials:
+    def test_empty_state_partial_renderiza_sem_template_syntax_error(self):
+        html = render_to_string(
+            "components/_empty_state.html",
+            {
+                "title": "Sem itens",
+                "subtitle": "Cadastre o primeiro item.",
+                "action_url": "/destino/",
+                "action_label": "Criar",
+            },
+        )
+
+        assert "Sem itens" in html
+        assert "Cadastre o primeiro item." in html
+        assert "Criar" in html
 
 
 @pytest.mark.django_db
