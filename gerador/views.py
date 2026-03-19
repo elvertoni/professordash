@@ -7,6 +7,7 @@ Todas as views requerem ProfessorRequiredMixin (is_staff=True).
 import json
 import logging
 
+from django.contrib import messages
 from django.http import JsonResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
@@ -23,6 +24,49 @@ from .prompts import SYSTEM_PROMPT, prompt_planejar
 from .providers import gerar_planejamento, validar_planejamento
 
 logger = logging.getLogger(__name__)
+
+
+def _parse_num_aulas(valor: str | None) -> int:
+    """Normaliza o campo num_aulas para evitar ValueError em POST inválido."""
+    try:
+        num_aulas = int(valor or 1)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Informe um número de aulas válido.") from exc
+
+    if num_aulas < 1 or num_aulas > 20:
+        raise ValueError("O número de aulas deve estar entre 1 e 20.")
+
+    return num_aulas
+
+
+def _gerar_planejamento_para_sessao(sessao: SessaoGeracao) -> None:
+    """Gera e persiste o planejamento da sessão no modo livre."""
+    conteudo = juntar_conteudo(sessao.materiais.all())
+    user_prompt = prompt_planejar(
+        conteudo=conteudo,
+        num_aulas=sessao.num_aulas,
+        disciplina=sessao.disciplina.nome,
+        nivel=sessao.nivel,
+        foco=sessao.foco,
+        instrucoes=sessao.instrucoes,
+    )
+
+    sessao.status = "planejando"
+    sessao.save(update_fields=["status"])
+
+    planejamento, uso = gerar_planejamento(
+        system=SYSTEM_PROMPT,
+        user=user_prompt,
+        provider=sessao.provider,
+    )
+
+    from .tokens import registrar_uso_na_sessao
+
+    registrar_uso_na_sessao(sessao, uso)
+
+    sessao.planejamento = planejamento
+    sessao.status = "rascunho"
+    sessao.save(update_fields=["planejamento", "status"])
 
 
 # ── Tela principal ────────────────────────────────────────────────────────────
@@ -53,33 +97,50 @@ class UploadMaterialView(ProfessorRequiredMixin, View):
     """
 
     def post(self, request):
-        modo       = request.POST.get("modo", "rco")
-        turma_id   = request.POST.get("turma")
-        num_aulas  = int(request.POST.get("num_aulas", 1))
-        nivel      = request.POST.get("nivel", "tecnico")
-        foco       = request.POST.get("foco", "equilibrado")
-        provider   = request.POST.get("provider", "claude")
+        modo = request.POST.get("modo", "rco")
+        turma_id = request.POST.get("turma")
+        nivel = request.POST.get("nivel", "tecnico")
+        foco = request.POST.get("foco", "equilibrado")
+        provider = request.POST.get("provider", "claude")
         instrucoes = request.POST.get("instrucoes", "")
+
+        try:
+            num_aulas = _parse_num_aulas(request.POST.get("num_aulas"))
+        except ValueError as e:
+            messages.error(request, str(e))
+            return redirect("gerador:index")
+
+        if not turma_id:
+            messages.error(request, "Selecione uma turma antes de gerar a aula.")
+            return redirect("gerador:index")
 
         turma = get_object_or_404(Turma, pk=turma_id)
 
         sessao = SessaoGeracao.objects.create(
-            disciplina = turma,
-            modo       = modo,
-            num_aulas  = num_aulas,
-            nivel      = nivel,
-            foco       = foco,
-            provider   = provider,
-            instrucoes = instrucoes,
-            status     = "rascunho",
+            disciplina=turma,
+            modo=modo,
+            num_aulas=num_aulas,
+            nivel=nivel,
+            foco=foco,
+            provider=provider,
+            instrucoes=instrucoes,
+            status="rascunho",
         )
 
-        if modo == "rco":
-            self._processar_rco(request, sessao)
-            return redirect("gerador:gerar", sessao_id=sessao.id)
-        else:
+        try:
+            if modo == "rco":
+                self._processar_rco(request, sessao)
+                return redirect("gerador:gerar", sessao_id=sessao.id)
+
             self._processar_livre(request, sessao)
+            _gerar_planejamento_para_sessao(sessao)
             return redirect("gerador:planejar", sessao_id=sessao.id)
+        except Exception as e:
+            sessao.status = "erro"
+            sessao.save(update_fields=["status"])
+            logger.exception("Erro ao iniciar sessão do gerador %s", sessao.id)
+            messages.error(request, f"Não foi possível iniciar a geração: {e}")
+            return redirect("gerador:index")
 
     def _processar_rco(self, request, sessao):
         """Detecta papéis RCO, extrai conteúdo e persiste MaterialEntrada."""
@@ -158,6 +219,15 @@ class PlanejarView(ProfessorRequiredMixin, View):
 
     def get(self, request, sessao_id):
         sessao = get_object_or_404(SessaoGeracao, pk=sessao_id)
+        if sessao.modo == "livre" and not sessao.planejamento:
+            try:
+                _gerar_planejamento_para_sessao(sessao)
+            except Exception as e:
+                sessao.status = "erro"
+                sessao.save(update_fields=["status"])
+                logger.exception("Erro ao gerar planejamento na sessão %s", sessao.id)
+                messages.error(request, f"Não foi possível analisar o material: {e}")
+                return redirect("gerador:index")
         return render(request, "gerador/planejamento.html", {"sessao": sessao})
 
     def post(self, request):
@@ -165,37 +235,16 @@ class PlanejarView(ProfessorRequiredMixin, View):
         sessao_id = request.POST.get("sessao_id")
         sessao = get_object_or_404(SessaoGeracao, pk=sessao_id)
 
-        conteudo = juntar_conteudo(sessao.materiais.all())
-        user_prompt = prompt_planejar(
-            conteudo   = conteudo,
-            num_aulas  = sessao.num_aulas,
-            disciplina = sessao.disciplina.nome,
-            nivel      = sessao.nivel,
-            foco       = sessao.foco,
-            instrucoes = sessao.instrucoes,
-        )
-
-        sessao.status = "planejando"
-        sessao.save(update_fields=["status"])
-
         try:
-            planejamento, uso = gerar_planejamento(
-                system   = SYSTEM_PROMPT,
-                user     = user_prompt,
-                provider = sessao.provider,
-            )
+            _gerar_planejamento_para_sessao(sessao)
         except Exception as e:
             sessao.status = "erro"
             sessao.save(update_fields=["status"])
-            logger.error(f"Erro no planejamento (sessão {sessao.id}): {e}")
-            return JsonResponse({"erro": str(e)}, status=500)
-
-        from .tokens import registrar_uso_na_sessao
-        registrar_uso_na_sessao(sessao, uso)
-
-        sessao.planejamento = planejamento
-        sessao.status = "rascunho"
-        sessao.save(update_fields=["planejamento", "status"])
+            logger.exception("Erro no planejamento da sessão %s", sessao.id)
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse({"erro": str(e)}, status=500)
+            messages.error(request, f"Não foi possível analisar o material: {e}")
+            return redirect("gerador:index")
 
         return redirect("gerador:planejar", sessao_id=sessao.id)
 
@@ -226,7 +275,8 @@ class AprovarPlanejamentoView(ProfessorRequiredMixin, View):
         try:
             validar_planejamento(planejamento)
         except ValueError as e:
-            return JsonResponse({"erro": str(e)}, status=400)
+            messages.error(request, str(e))
+            return redirect("gerador:planejar", sessao_id=sessao.id)
 
         sessao.planejamento = planejamento
         sessao.save(update_fields=["planejamento"])

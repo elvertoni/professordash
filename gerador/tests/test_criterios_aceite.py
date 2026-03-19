@@ -14,7 +14,7 @@ import pytest
 from gerador.extractors import extrair_arquivo
 from gerador.extractors.base import TipoArquivo
 from gerador.extractors.rco import detectar_papel_rco
-from gerador.models import SessaoGeracao
+from gerador.models import MaterialEntrada, SessaoGeracao
 from gerador.pipeline import executar_modo_livre
 from gerador.prompts import SYSTEM_PROMPT, prompt_rco
 from gerador.providers import MODELOS
@@ -296,6 +296,84 @@ class TestCriterioLivreTitulosEditaveis:
         aulas = sessao.planejamento["aulas"]
         assert aulas[0]["titulo"] == "Novo Título 1"
         assert aulas[1]["titulo"] == "Novo Título 2"
+
+
+class TestCriterioLivrePlanejamento:
+    """
+    Critério: modo livre já chega na tela de planejamento com proposta gerada.
+    """
+
+    @pytest.mark.django_db
+    def test_upload_livre_gera_planejamento_antes_do_redirect(self, client_professor, turma):
+        planejamento = {
+            "tema_central": "Algoritmos",
+            "fio_condutor": "Resolução de problemas",
+            "observacoes": "",
+            "aulas": [
+                {"numero": 1, "titulo": "Introdução aos algoritmos", "topicos_principais": ["variáveis"]},
+            ],
+        }
+        uso_mock = _make_uso_mock()
+
+        with patch("gerador.views.gerar_planejamento", return_value=(planejamento, uso_mock)):
+            with patch("gerador.tokens.registrar_uso_na_sessao"):
+                resp = client_professor.post(
+                    "/painel/gerador/upload/",
+                    {
+                        "modo": "livre",
+                        "turma": str(turma.pk),
+                        "num_aulas": "1",
+                        "nivel": "tecnico",
+                        "provider": "claude",
+                        "texto_livre": "Conteúdo base para testar o planejamento.",
+                    },
+                )
+
+        assert resp.status_code == 302
+
+        sessao = SessaoGeracao.objects.latest("id")
+        sessao.refresh_from_db()
+
+        assert resp.url == f"/painel/gerador/{sessao.pk}/planejar/"
+        assert sessao.planejamento == planejamento
+        assert sessao.status == "rascunho"
+
+    @pytest.mark.django_db
+    def test_get_planejamento_recupera_sessao_sem_planejamento(self, client_professor, turma):
+        sessao = SessaoGeracao.objects.create(
+            disciplina=turma,
+            modo="livre",
+            num_aulas=1,
+            nivel="tecnico",
+            foco="equilibrado",
+            provider="claude",
+            planejamento=None,
+        )
+        MaterialEntrada.objects.create(
+            sessao=sessao,
+            tipo="texto",
+            texto_livre="Base sobre lógica de programação",
+            conteudo_extraido="Base sobre lógica de programação",
+        )
+        planejamento = {
+            "tema_central": "Lógica",
+            "fio_condutor": "Pensamento computacional",
+            "observacoes": "",
+            "aulas": [
+                {"numero": 1, "titulo": "Conceitos iniciais", "topicos_principais": ["algoritmo"]},
+            ],
+        }
+        uso_mock = _make_uso_mock()
+
+        with patch("gerador.views.gerar_planejamento", return_value=(planejamento, uso_mock)):
+            with patch("gerador.tokens.registrar_uso_na_sessao"):
+                resp = client_professor.get(f"/painel/gerador/{sessao.pk}/planejar/")
+
+        assert resp.status_code == 200
+
+        sessao.refresh_from_db()
+        assert sessao.planejamento == planejamento
+        assert "Conceitos iniciais" in resp.content.decode()
 
 
 class TestCriterioLivreSSEProgresso:
