@@ -20,3 +20,7 @@ pdfplumber==0.11.4
 newspaper3k==0.2.8
 beautifulsoup4==4.12.3
 openai==1.51.0
+# openai 1.51.0 ainda instancia httpx.Client(..., proxies=...),
+# removido no httpx 0.28.0. Mantemos a faixa compatível para evitar
+# "Client.__init__() got an unexpected keyword argument 'proxies'".
+httpx==0.27.2
