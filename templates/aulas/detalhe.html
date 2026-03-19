@@ -68,10 +68,35 @@
     </div>
   {% endif %}
 
-  <!-- Materiais (Sprint 2) -->
+  <!-- Materiais vinculados à aula -->
   <div class="mt-6">
-    <h2 class="text-base font-semibold text-zinc-100 mb-3">Materiais</h2>
-    <p class="text-sm text-zinc-500">Módulo de materiais disponível nesta aula.</p>
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-base font-semibold text-zinc-100">Materiais</h2>
+      <a href="{% url 'turmas:materiais_novo' pk=turma.pk %}?aula={{ aula.pk }}"
+         class="text-xs text-cyan-400 hover:text-cyan-300 border border-zinc-700 px-3 py-1.5 rounded-lg hover:bg-zinc-800 transition-colors">
+        + Adicionar material
+      </a>
+    </div>
+    {% with materiais=aula.materiais.all %}
+      {% if materiais %}
+        <ul class="space-y-2">
+          {% for mat in materiais %}
+            <li class="flex items-center justify-between bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="text-xs font-medium text-zinc-500 uppercase shrink-0">{{ mat.get_tipo_display }}</span>
+                <span class="text-sm text-zinc-200 truncate">{{ mat.titulo }}</span>
+              </div>
+              <a href="{% url 'turmas:materiais_editar' pk=turma.pk material_pk=mat.pk %}"
+                 class="text-xs text-zinc-400 hover:text-zinc-200 shrink-0 ml-4">Editar</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="bg-zinc-900 rounded-xl border border-dashed border-zinc-700 p-8 text-center">
+          <p class="text-zinc-500 text-sm">Nenhum material vinculado a esta aula.</p>
+        </div>
+      {% endif %}
+    {% endwith %}
   </div>
 
 </div>

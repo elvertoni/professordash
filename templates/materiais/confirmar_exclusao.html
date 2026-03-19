@@ -6,35 +6,35 @@
 <div class="max-w-lg mx-auto">
 
   <!-- Breadcrumb -->
-  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6 overflow-x-auto whitespace-nowrap">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-blue-600 shrink-0">Turmas</a>
+  <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-cyan-400 shrink-0">Turmas</a>
     <span>/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-blue-600 shrink-0">{{ turma.nome }}</a>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-cyan-400 shrink-0">{{ turma.nome }}</a>
     <span>/</span>
-    <a href="{% url 'turmas:materiais_lista' pk=turma.pk %}" class="hover:text-blue-600 shrink-0">Materiais</a>
+    <a href="{% url 'turmas:materiais_lista' pk=turma.pk %}" class="hover:text-cyan-400 shrink-0">Materiais</a>
     <span>/</span>
-    <span class="text-gray-900 font-medium">Excluir</span>
+    <span class="text-zinc-100 font-medium">Excluir</span>
   </nav>
 
-  <div class="bg-white rounded-xl border border-red-200 shadow-sm">
-    <div class="px-6 py-5 border-b border-red-100 bg-red-50 rounded-t-xl">
-      <h1 class="text-xl font-bold text-red-700">Confirmar exclusão</h1>
+  <div class="bg-zinc-800 rounded-xl border border-red-500/30 shadow-sm">
+    <div class="px-6 py-5 border-b border-red-500/20 bg-red-500/10 rounded-t-xl">
+      <h1 class="text-xl font-bold text-red-400">Confirmar exclusão</h1>
     </div>
 
     <div class="p-6">
       <div class="flex items-start gap-4 mb-6">
-        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-          <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
           </svg>
         </div>
         <div>
-          <p class="text-sm text-gray-700">
+          <p class="text-sm text-zinc-300">
             Tem certeza que deseja excluir o material
-            <strong class="text-gray-900">{{ material.titulo }}</strong>?
+            <strong class="text-zinc-100">{{ material.titulo }}</strong>?
           </p>
-          <p class="text-sm text-red-600 mt-1">Esta ação não pode ser desfeita.</p>
+          <p class="text-sm text-red-400 mt-1">Esta ação não pode ser desfeita.</p>
         </div>
       </div>
 
@@ -46,7 +46,7 @@
             Sim, excluir
           </button>
           <a href="{% url 'turmas:materiais_lista' pk=turma.pk %}"
-             class="text-sm text-gray-500 hover:text-gray-700 px-4 py-2.5 rounded-lg hover:bg-gray-100 transition-colors">
+             class="text-sm text-zinc-400 hover:text-zinc-200 px-4 py-2.5 rounded-lg hover:bg-zinc-700 transition-colors">
             Cancelar
           </a>
         </div>

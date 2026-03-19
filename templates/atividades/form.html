@@ -4,92 +4,88 @@
   {% if form.instance.pk %}Editar Atividade: {{ form.instance.titulo }}{% else %}Nova Atividade{% endif %} | {{ block.super }}
 {% endblock %}
 
-{% block page_title %}
-  {% if form.instance.pk %}Editar Atividade{% else %}Nova Atividade{% endif %}
-{% endblock %}
-
 {% block content %}
 <div class="max-w-4xl mx-auto">
   <div class="mb-6 flex items-center justify-between">
-    <a href="{% if form.instance.pk %}{% url 'turmas:atividade_detalhe' pk=turma.pk atividade_pk=form.instance.pk %}{% else %}{% url 'turmas:atividades_lista' pk=turma.pk %}{% endif %}" class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1">
+    <a href="{% if form.instance.pk %}{% url 'turmas:atividade_detalhe' pk=turma.pk atividade_pk=form.instance.pk %}{% else %}{% url 'turmas:atividades_lista' pk=turma.pk %}{% endif %}" class="text-sm font-medium text-zinc-400 hover:text-zinc-100 flex items-center gap-1">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
       Voltar
     </a>
   </div>
 
-  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+  <div class="bg-zinc-800 rounded-lg border border-zinc-700 overflow-hidden">
     <form method="post" enctype="multipart/form-data" class="p-6">
       {% csrf_token %}
-      
+
       <!-- Campos Iniciais Embutidos (Escondidos) -->
       {{ form.turma.as_hidden }}
 
       <div class="space-y-6">
         <div>
-          <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Informações da Atividade</h3>
+          <h3 class="text-lg font-medium text-zinc-100 border-b border-zinc-700 pb-2">Informações da Atividade</h3>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="md:col-span-2">
-            <label for="{{ form.titulo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Título da Atividade *</label>
+            <label for="{{ form.titulo.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Título da Atividade *</label>
             {{ form.titulo }}
-            {% if form.titulo.errors %}<p class="mt-1 text-sm text-red-600">{{ form.titulo.errors.0 }}</p>{% endif %}
+            {% if form.titulo.errors %}<p class="mt-1 text-sm text-red-400">{{ form.titulo.errors.0 }}</p>{% endif %}
           </div>
-          
+
           <div>
-            <label for="{{ form.tipo_entrega.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Entrega *</label>
+            <label for="{{ form.tipo_entrega.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Tipo de Entrega *</label>
             {{ form.tipo_entrega }}
-            {% if form.tipo_entrega.errors %}<p class="mt-1 text-sm text-red-600">{{ form.tipo_entrega.errors.0 }}</p>{% endif %}
+            {% if form.tipo_entrega.errors %}<p class="mt-1 text-sm text-red-400">{{ form.tipo_entrega.errors.0 }}</p>{% endif %}
           </div>
-          
+
           <div>
-            <label for="{{ form.prazo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Prazo de Entrega *</label>
+            <label for="{{ form.prazo.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Prazo de Entrega *</label>
             {{ form.prazo }}
-            {% if form.prazo.errors %}<p class="mt-1 text-sm text-red-600">{{ form.prazo.errors.0 }}</p>{% endif %}
-            <p class="mt-1 text-xs text-gray-500">Data e hora limite para envio.</p>
+            {% if form.prazo.errors %}<p class="mt-1 text-sm text-red-400">{{ form.prazo.errors.0 }}</p>{% endif %}
+            <p class="mt-1 text-xs text-zinc-500">Data e hora limite para envio.</p>
           </div>
-          
+
           <div>
-            <label for="{{ form.valor_pontos.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Valor em Pontos *</label>
+            <label for="{{ form.valor_pontos.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Valor em Pontos *</label>
             {{ form.valor_pontos }}
-            {% if form.valor_pontos.errors %}<p class="mt-1 text-sm text-red-600">{{ form.valor_pontos.errors.0 }}</p>{% endif %}
+            {% if form.valor_pontos.errors %}<p class="mt-1 text-sm text-red-400">{{ form.valor_pontos.errors.0 }}</p>{% endif %}
           </div>
-          
+
           <div>
-            <label for="{{ form.aula.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Vincular a uma Aula (Opcional)</label>
+            <label for="{{ form.aula.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Vincular a uma Aula (Opcional)</label>
             {{ form.aula }}
-            {% if form.aula.errors %}<p class="mt-1 text-sm text-red-600">{{ form.aula.errors.0 }}</p>{% endif %}
+            {% if form.aula.errors %}<p class="mt-1 text-sm text-red-400">{{ form.aula.errors.0 }}</p>{% endif %}
           </div>
         </div>
 
         <div class="md:col-span-2">
-          <label for="{{ form.descricao.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Descrição e Instruções *</label>
+          <label for="{{ form.descricao.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Descrição e Instruções *</label>
           {{ form.descricao }}
           {{ form.descricao.media }}
-          {% if form.descricao.errors %}<p class="mt-1 text-sm text-red-600">{{ form.descricao.errors.0 }}</p>{% endif %}
-          <p class="mt-1 text-xs text-gray-500">{{ form.descricao.help_text }}</p>
+          {% if form.descricao.errors %}<p class="mt-1 text-sm text-red-400">{{ form.descricao.errors.0 }}</p>{% endif %}
+          <p class="mt-1 text-xs text-zinc-500">{{ form.descricao.help_text }}</p>
         </div>
 
-        <div class="border-t border-gray-200 pt-4 space-y-4">
-          <h3 class="text-md font-medium text-gray-900 border-b border-gray-200 pb-2">Configurações Base</h3>
-          
+        <div class="border-t border-zinc-700 pt-4 space-y-4">
+          <h3 class="text-md font-medium text-zinc-100 border-b border-zinc-700 pb-2">Configurações Base</h3>
+
           <div class="flex items-center">
             {{ form.permitir_reenvio }}
-            <label for="{{ form.permitir_reenvio.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+            <label for="{{ form.permitir_reenvio.id_for_label }}" class="ml-2 block text-sm text-zinc-300">
               Permitir reenvio de arquivos (até o limite de prazo)?
             </label>
           </div>
-          
+
           <div class="flex items-center">
             {{ form.publicada }}
-            <label for="{{ form.publicada.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+            <label for="{{ form.publicada.id_for_label }}" class="ml-2 block text-sm text-zinc-300">
               Publicar atividade agora (ficará visível aos alunos)?
             </label>
           </div>
         </div>
-        
-        <div class="pt-6 border-t border-gray-200 flex items-center justify-end gap-3">
-          <a href="{% if form.instance.pk %}{% url 'turmas:atividade_detalhe' pk=turma.pk atividade_pk=form.instance.pk %}{% else %}{% url 'turmas:atividades_lista' pk=turma.pk %}{% endif %}" class="btn border-gray-300 text-gray-700 bg-white hover:bg-gray-50">
+
+        <div class="pt-6 border-t border-zinc-700 flex items-center justify-end gap-3">
+          <a href="{% if form.instance.pk %}{% url 'turmas:atividade_detalhe' pk=turma.pk atividade_pk=form.instance.pk %}{% else %}{% url 'turmas:atividades_lista' pk=turma.pk %}{% endif %}" class="btn border-zinc-600 text-zinc-300 hover:bg-zinc-700">
             Cancelar
           </a>
           <button type="submit" class="btn-primary">

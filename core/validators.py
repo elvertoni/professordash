@@ -14,6 +14,7 @@ TIPOS_PERMITIDOS_MATERIAL = [
     "text/plain",
     "text/html",
     "text/markdown",
+    "text/x-markdown",
     "text/x-python",
     "text/javascript",
     "text/css",

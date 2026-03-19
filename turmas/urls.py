@@ -184,11 +184,6 @@ urlpatterns = [
         alunos_views.AlunoRemoverView.as_view(),
         name="alunos_remover",
     ),
-    path(
-        "painel/turmas/<int:pk>/alunos/<int:aluno_pk>/excluir/",
-        alunos_views.AlunoRemoverView.as_view(),
-        name="alunos_excluir",
-    ),
     # Boletim
     path(
         "painel/turmas/<int:pk>/boletim/",

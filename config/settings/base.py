@@ -43,6 +43,9 @@ LOCAL_APPS = [
     "aulas",
     "materiais",
     "atividades",
+    # avaliacoes: app sem models/views próprias; mantido em INSTALLED_APPS apenas para
+    # que o Django resolva os templates em templates/avaliacoes/ (boletim, minhas_notas).
+    # As views que renderizam esses templates estão em turmas/views.py.
     "avaliacoes",
     "alunos",
     "gerador",
@@ -166,6 +169,16 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50 MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
+
+# --- Markdownx ---
+
+MARKDOWNX_MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.tables',
+    'markdown.extensions.fenced_code',
+    'markdown.extensions.codehilite',
+    'markdown.extensions.toc',
+    'markdown.extensions.nl2br',
+]
 
 # --- Gerador de Aulas (OpenRouter) ---
 
