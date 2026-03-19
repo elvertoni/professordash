@@ -153,6 +153,22 @@
   <div x-show="tab === 'alunos'" x-cloak>
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-base font-semibold text-zinc-100">Alunos matriculados</h2>
+      <div class="flex items-center gap-2">
+        <a href="{% url 'turmas:alunos_importar' pk=turma.pk %}"
+           class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-1.5 rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+          </svg>
+          Importar CSV
+        </a>
+        <a href="{% url 'turmas:alunos_novo' pk=turma.pk %}"
+           class="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-700 px-3 py-1.5 rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Novo aluno
+        </a>
+      </div>
     </div>
     {% if matriculas %}
       <div class="bg-zinc-900 rounded-xl border border-zinc-700 overflow-hidden">
