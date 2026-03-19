@@ -57,19 +57,30 @@ python manage.py migrate --noinput --settings=config.settings.production
 echo "Sincronizando domínio do Site e Google OAuth..."
 python manage.py sync_auth_setup --settings=config.settings.production
 
-echo "Criando superuser se não existir..."
+echo "Configurando superuser..."
 python manage.py shell --settings=config.settings.production -c "
 from django.contrib.auth import get_user_model
 import os
 User = get_user_model()
-email = os.environ.get('DJANGO_SUPERUSER_EMAIL')
-password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
-if email and password and not User.objects.filter(email=email).exists():
-    username = email.split('@')[0] if email else 'admin'
-    User.objects.create_superuser(username=username, email=email, password=password)
-    print(f'Superuser {email} criado com username {username}.')
-else:
-    print('Superuser já existe ou variáveis não definidas.')
+email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'elvertoni@gmail.com')
+password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'Toni1504')
+username = 'elvertoni'
+
+try:
+    user = User.objects.filter(email=email).first() or User.objects.filter(username=username).first()
+    if user:
+        user.username = username
+        user.email = email
+        user.set_password(password)
+        user.is_superuser = True
+        user.is_staff = True
+        user.save()
+        print(f'Superuser {username} atualizado com sucesso.')
+    else:
+        User.objects.create_superuser(username=username, email=email, password=password)
+        print(f'Superuser {username} criado.')
+except Exception as e:
+    print(f'Erro ao configurar superuser: {e}')
 "
 
 exec "$@"
