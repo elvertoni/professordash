@@ -7,7 +7,9 @@ Todos os testes mocam a chamada ao OpenRouter — sem API calls reais.
 import json
 from unittest.mock import MagicMock, patch
 
+import httpx
 import pytest
+from openai import APITimeoutError, AuthenticationError
 
 from gerador.providers import (
     MODELOS,
@@ -121,6 +123,29 @@ class TestGerarAula:
         with patch("django.conf.settings.OPENROUTER_API_KEY", ""):
             with pytest.raises(ValueError, match="OPENROUTER_API_KEY"):
                 gerar_aula("sys", "usr")
+
+    def test_erro_de_autenticacao_retorna_mensagem_acionavel(self):
+        cliente_mock = MagicMock()
+        request = httpx.Request("POST", "https://openrouter.ai/api/v1/chat/completions")
+        response = httpx.Response(401, request=request)
+        cliente_mock.chat.completions.create.side_effect = AuthenticationError(
+            "unauthorized",
+            response=response,
+            body={"error": {"message": "User not found."}},
+        )
+
+        with patch("gerador.providers._get_client", return_value=cliente_mock):
+            with pytest.raises(ValueError, match="Falha de autenticação no OpenRouter"):
+                gerar_aula("sys", "usr", provider="claude")
+
+    def test_timeout_do_provider_retorna_mensagem_clara(self):
+        cliente_mock = MagicMock()
+        request = httpx.Request("POST", "https://openrouter.ai/api/v1/chat/completions")
+        cliente_mock.chat.completions.create.side_effect = APITimeoutError(request=request)
+
+        with patch("gerador.providers._get_client", return_value=cliente_mock):
+            with pytest.raises(ValueError, match="demorou mais que o tempo limite"):
+                gerar_aula("sys", "usr", provider="claude")
 
 
 # ── Testes: gerar_planejamento ────────────────────────────────────────────────

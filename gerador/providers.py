@@ -39,6 +39,8 @@ def _get_client():
     return OpenAI(
         base_url="https://openrouter.ai/api/v1",
         api_key=api_key,
+        timeout=float(getattr(settings, "OPENROUTER_TIMEOUT_SECONDS", 180)),
+        max_retries=1,
     )
 
 
@@ -70,18 +72,36 @@ def gerar_aula(
             f"Provider '{provider}' inválido. Use: {providers_validos}"
         )
 
+    from openai import APIStatusError, APITimeoutError, AuthenticationError
+
     client = _get_client()
 
     logger.info(f"Gerando aula via {modelo_id} | sessão={sessao_id} aula={aula_numero}")
 
-    resposta = client.chat.completions.create(
-        model=modelo_id,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user",   "content": user},
-        ],
-        max_tokens=max_tokens,
-    )
+    try:
+        resposta = client.chat.completions.create(
+            model=modelo_id,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user",   "content": user},
+            ],
+            max_tokens=max_tokens,
+        )
+    except AuthenticationError as exc:
+        raise ValueError(
+            "Falha de autenticação no OpenRouter. "
+            "Revise a OPENROUTER_API_KEY configurada na VPS."
+        ) from exc
+    except APITimeoutError as exc:
+        raise ValueError(
+            "A geração demorou mais que o tempo limite do provedor. "
+            "Tente novamente ou reduza o volume do material enviado."
+        ) from exc
+    except APIStatusError as exc:
+        raise ValueError(
+            f"OpenRouter retornou erro HTTP {exc.status_code}. "
+            "Verifique disponibilidade do provedor e limites da conta."
+        ) from exc
 
     conteudo = resposta.choices[0].message.content or ""
     uso = extrair_uso_da_resposta(
