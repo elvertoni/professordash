@@ -1,6 +1,12 @@
-aulas.tonicoimbra.com {
+{$APP_DOMAIN:aulas.tonicoimbra.com} {
     # Arquivos estáticos: servidos diretamente pelo Caddy
     handle /static/* {
+        root * /srv/professordash
+        file_server
+    }
+
+    # Uploads: servidos diretamente pelo Caddy
+    handle /media/* {
         root * /srv/professordash
         file_server
     }

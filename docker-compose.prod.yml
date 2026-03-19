@@ -43,11 +43,20 @@ services:
 
   redis:
     image: redis:7-alpine
+    env_file: .env
+    command:
+      - /bin/sh
+      - -c
+      - |
+        if [ -n "$$REDIS_PASSWORD" ]; then
+          exec redis-server --requirepass "$$REDIS_PASSWORD"
+        fi
+        exec redis-server
     restart: unless-stopped
     healthcheck:
       test:
         - CMD-SHELL
-        - redis-cli ping | grep -q PONG
+        - if [ -n "$$REDIS_PASSWORD" ]; then redis-cli -a "$$REDIS_PASSWORD" ping | grep -q PONG; else redis-cli ping | grep -q PONG; fi
       interval: 10s
       timeout: 5s
       retries: 6
@@ -55,12 +64,14 @@ services:
 
   caddy:
     image: caddy:2-alpine
+    env_file: .env
     ports:
       - "80:80"
       - "443:443"
       - "443:443/udp"
     volumes:
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - /srv/professordash/media:/srv/professordash/media:ro
       - /srv/professordash/static:/srv/professordash/static:ro
       - caddy_data:/data
       - caddy_config:/config

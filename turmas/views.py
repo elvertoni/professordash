@@ -1,5 +1,6 @@
 import logging
 import csv
+from urllib.parse import urlencode
 from decimal import Decimal
 
 from django.contrib import messages
@@ -143,8 +144,8 @@ class TurmaEntrarView(TurmaPublicaMixin, View):
 
     def get(self, request, token):
         request.session["turma_token"] = str(token)
-        next_url = f"/turma/{token}/minha-area/"
-        return redirect(reverse("google_login") + f"?next={next_url}")
+        next_url = reverse("turmas:portal_minha_area", kwargs={"token": token})
+        return redirect(f"{reverse('google_login')}?{urlencode({'next': next_url})}")
 
 
 class BoletimTurmaView(ProfessorRequiredMixin, DetailView):

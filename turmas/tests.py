@@ -12,6 +12,7 @@ Cobertura:
 """
 
 import uuid
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 from django.template.loader import render_to_string
@@ -547,6 +548,11 @@ class TestTurmaEntrarView:
 
         # Assert — deve redirecionar para o OAuth (302)
         assert response.status_code == 302
+        assert response.url.startswith(reverse("google_login"))
+        next_url = parse_qs(urlparse(response.url).query)["next"][0]
+        assert next_url == reverse(
+            "turmas:portal_minha_area", kwargs={"token": turma.token_publico}
+        )
 
     def test_entrar_token_invalido_retorna_404(self, client):
         """GET com token inválido deve retornar 404."""

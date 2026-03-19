@@ -21,23 +21,35 @@ USE_X_FORWARDED_HOST = True
 # --- Banco de dados ---
 
 db_url = config("DATABASE_URL", default="")
-db_host = "db"
-db_port = 5432
 if db_url:
     parsed_db = urllib.parse.urlparse(db_url)
-    db_host = parsed_db.hostname or db_host
-    db_port = parsed_db.port or db_port
+    db_options = {}
+    db_query = urllib.parse.parse_qs(parsed_db.query)
+    if "sslmode" in db_query:
+        db_options["sslmode"] = db_query["sslmode"][-1]
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("POSTGRES_DB"),
-        "USER": config("POSTGRES_USER"),
-        "PASSWORD": config("POSTGRES_PASSWORD"),
-        "HOST": config("DB_HOST", default=db_host),
-        "PORT": config("DB_PORT", default=db_port, cast=int),
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": urllib.parse.unquote(parsed_db.path.lstrip("/")),
+            "USER": urllib.parse.unquote(parsed_db.username or ""),
+            "PASSWORD": urllib.parse.unquote(parsed_db.password or ""),
+            "HOST": parsed_db.hostname or "db",
+            "PORT": parsed_db.port or 5432,
+            **({"OPTIONS": db_options} if db_options else {}),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("POSTGRES_DB"),
+            "USER": config("POSTGRES_USER"),
+            "PASSWORD": config("POSTGRES_PASSWORD"),
+            "HOST": config("DB_HOST", default="db"),
+            "PORT": config("DB_PORT", default=5432, cast=int),
+        }
+    }
 
 # --- Cache e sessões com Redis ---
 

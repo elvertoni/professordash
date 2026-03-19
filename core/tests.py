@@ -12,8 +12,12 @@ Cobertura:
 import io
 
 import pytest
+from allauth.socialaccount.models import SocialApp
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.management import call_command
+from django.urls import reverse
 
 from core.validators import (
     MAX_UPLOAD_SIZE,
@@ -209,3 +213,57 @@ class TestValidarArquivoTiposBloqueados:
 
         # Act / Assert — não deve lançar exceção
         validar_arquivo(arquivo, tipos_permitidos=TIPOS_PERMITIDOS_MATERIAL)
+
+
+@pytest.mark.django_db
+class TestAuthBootstrap:
+    def test_sync_auth_setup_sincroniza_site_e_remove_socialapp_google_duplicado(
+        self, monkeypatch
+    ):
+        monkeypatch.setenv("APP_DOMAIN", "aulas.tonicoimbra.com")
+        monkeypatch.setenv("APP_SITE_NAME", "ProfessorDash")
+        monkeypatch.setenv("GOOGLE_CLIENT_ID", "google-client-id")
+        monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "google-client-secret")
+
+        app = SocialApp.objects.create(
+            provider="google",
+            name="Google OAuth",
+            client_id="db-client-id",
+            secret="db-client-secret",
+        )
+        app.sites.add(Site.objects.get_current())
+
+        call_command("sync_auth_setup")
+
+        site = Site.objects.get(id=1)
+
+        assert site.domain == "aulas.tonicoimbra.com"
+        assert site.name == "ProfessorDash"
+        assert not SocialApp.objects.filter(provider="google").exists()
+
+    def test_sync_auth_setup_nao_quebra_com_google_parcial(self, monkeypatch):
+        monkeypatch.setenv("GOOGLE_CLIENT_ID", "google-client-id")
+        monkeypatch.delenv("GOOGLE_CLIENT_SECRET", raising=False)
+
+        call_command("sync_auth_setup")
+
+        assert not SocialApp.objects.filter(provider="google").exists()
+
+    def test_login_page_expoe_link_de_google(self, client, monkeypatch):
+        monkeypatch.setenv("GOOGLE_CLIENT_ID", "google-client-id")
+        monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "google-client-secret")
+        call_command("sync_auth_setup")
+
+        response = client.get(reverse("login"))
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert reverse("google_login") in html
+        assert "Entrar com Google" in html
+
+    def test_login_page_nao_quebra_sem_google_configurado(self, client):
+        response = client.get(reverse("login"))
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "Entrar com Google" not in html

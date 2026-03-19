@@ -320,9 +320,8 @@ def get_drive_client_do_usuario(user) -> Optional[DriveClient]:
             return JsonResponse({'erro': 'Conta Google não conectada.'}, status=400)
     """
     try:
-        from allauth.socialaccount.models import SocialToken, SocialApp
+        from allauth.socialaccount.models import SocialToken
 
-        app   = SocialApp.objects.get(provider='google')
         token = SocialToken.objects.get(
             account__user=user,
             account__provider='google',

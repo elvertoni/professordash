@@ -81,6 +81,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.context_processors.auth_flags",
             ],
         },
     },
@@ -106,13 +107,32 @@ AUTHENTICATION_BACKENDS = [
 
 # --- django-allauth ---
 
+GOOGLE_CLIENT_ID = config("GOOGLE_CLIENT_ID", default="")
+GOOGLE_CLIENT_SECRET = config("GOOGLE_CLIENT_SECRET", default="")
+GOOGLE_DRIVE_OAUTH_ENABLED = config(
+    "GOOGLE_DRIVE_OAUTH_ENABLED", default=False, cast=bool
+)
+
+google_scopes = ["profile", "email"]
+google_auth_params = {"access_type": "online"}
+if GOOGLE_DRIVE_OAUTH_ENABLED:
+    google_scopes.append("https://www.googleapis.com/auth/drive.readonly")
+    google_auth_params = {"access_type": "offline", "prompt": "consent"}
+
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
-        "SCOPE": ["profile", "email"],
-        "AUTH_PARAMS": {"access_type": "online"},
+        "SCOPE": google_scopes,
+        "AUTH_PARAMS": google_auth_params,
         "OAUTH_PKCE_ENABLED": True,
     }
 }
+
+if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
+    SOCIALACCOUNT_PROVIDERS["google"]["APP"] = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "secret": GOOGLE_CLIENT_SECRET,
+        "key": "",
+    }
 
 SOCIALACCOUNT_ONLY = True
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
