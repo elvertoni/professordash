@@ -1,131 +1,131 @@
 {% load static %}
-<aside class="fixed top-0 left-0 h-full bg-[#0d0d1a] border-r border-zinc-800 z-30 flex flex-col"
-       :class="$store.sidebar.collapsed ? 'w-16' : 'w-64'"
-       style="transition: width 0.2s">
+<aside class="fixed top-0 left-0 h-full bg-[#050505] border-r border-white/[0.07] z-30 flex flex-col"
+       :class="$store.sidebar.collapsed ? 'w-14' : 'w-64'"
+       style="transition: width 0.2s ease">
 
-  <!-- Logo / título -->
-  <div class="flex items-center gap-3 px-4 py-5 border-b border-zinc-800/80">
-    <div class="w-9 h-9 bg-cyan-500/10 border border-cyan-500/40 rounded-md flex items-center justify-center shrink-0">
-      <span class="text-cyan-300 font-bold text-sm tracking-tight" style="text-shadow: 0 0 10px rgba(34, 211, 238, 0.35)">TC</span>
-    </div>
-    <span class="font-bold text-zinc-100 tracking-wide truncate"
-          x-show="!$store.sidebar.collapsed"
-          x-cloak>Prof Toni Coimbra</span>
+  <!-- Logo -->
+  <div class="flex items-center gap-3 px-4 h-14 border-b border-white/[0.07] shrink-0">
+    {% include "components/_logo.html" with size="w-8 h-8 shrink-0" %}
+    <span class="font-semibold text-white/90 text-sm tracking-tight truncate"
+          x-show="!$store.sidebar.collapsed" x-cloak>Prof Toni Coimbra</span>
   </div>
 
   <!-- Navegação -->
-  <nav class="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+  <nav class="flex-1 px-2 py-3 overflow-y-auto space-y-0.5">
+
+    <div class="px-3 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25"
+         x-show="!$store.sidebar.collapsed" x-cloak>Navegação</div>
 
     <a href="{% url 'core:dashboard' %}"
-       class="flex items-center gap-3 px-3 py-2.5 rounded-md text-[0.9rem] text-zinc-400 hover:text-cyan-300 hover:bg-zinc-900/50 transition-all duration-200
-              {% if request.resolver_match.namespace == 'core' %}bg-cyan-500/10 text-cyan-300 font-medium border-l-2 border-cyan-500{% endif %}">
-      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3
-                 m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-      </svg>
-      <span x-show="!$store.sidebar.collapsed" x-cloak>Dashboard</span>
+       class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
+              {% if request.resolver_match.namespace == 'core' %}bg-white/[0.07] text-white{% else %}text-white/50 hover:bg-white/[0.04] hover:text-white/80{% endif %}">
+      <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 transition-colors
+                   {% if request.resolver_match.namespace == 'core' %}bg-cyan-500/15 text-cyan-300{% else %}bg-white/[0.05] text-white/40 group-hover:text-white/60{% endif %}">
+        <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+      </span>
+      <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">Dashboard</span>
     </a>
 
     <a href="{% url 'turmas:lista' %}"
-       class="flex items-center gap-3 px-3 py-2.5 rounded-md text-[0.9rem] text-zinc-400 hover:text-cyan-300 hover:bg-zinc-900/50 transition-all duration-200
-              {% if request.resolver_match.namespace == 'turmas' %}bg-cyan-500/10 text-cyan-300 font-medium border-l-2 border-cyan-500{% endif %}">
-      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9
-                 a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-      </svg>
-      <span x-show="!$store.sidebar.collapsed" x-cloak>Turmas</span>
+       class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
+              {% if request.resolver_match.namespace == 'turmas' and not turma %}bg-white/[0.07] text-white{% else %}text-white/50 hover:bg-white/[0.04] hover:text-white/80{% endif %}">
+      <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 transition-colors
+                   {% if request.resolver_match.namespace == 'turmas' and not turma %}bg-cyan-500/15 text-cyan-300{% else %}bg-white/[0.05] text-white/40 group-hover:text-white/60{% endif %}">
+        <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+        </svg>
+      </span>
+      <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">Turmas</span>
     </a>
-
-    {% if request.user.is_staff %}
-    <a href="{% url 'gerador:index' %}"
-       class="flex items-center gap-3 px-3 py-2.5 rounded-md text-[0.9rem] text-zinc-400 hover:text-cyan-300 hover:bg-zinc-900/50 transition-all duration-200
-              {% if request.resolver_match.namespace == 'gerador' %}bg-cyan-500/10 text-cyan-300 font-medium border-l-2 border-cyan-500{% endif %}">
-      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-      </svg>
-      <span x-show="!$store.sidebar.collapsed" x-cloak>Gerador de Aulas</span>
-    </a>
-    {% endif %}
 
     <!-- Sub-menu contextual: só aparece quando há uma turma no contexto -->
     {% if turma %}
-      <div x-show="!$store.sidebar.collapsed" x-cloak class="space-y-0.5 pt-0.5">
+      <div x-show="!$store.sidebar.collapsed" x-cloak class="pt-2 pb-1">
+        <div class="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25 truncate">
+          {{ turma.nome|truncatechars:20 }}
+        </div>
 
         <a href="{% url 'turmas:alunos_lista' pk=turma.pk %}"
-           class="flex items-center gap-2 pl-10 pr-3 py-2 rounded-md text-sm transition-all duration-200
-                  {% if request.resolver_match.url_name == 'alunos_lista' or request.resolver_match.url_name == 'alunos_detalhe' %}text-cyan-300 bg-cyan-500/10{% else %}text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40{% endif %}">
-          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
+           class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
+                  {% if request.resolver_match.url_name == 'alunos_lista' or request.resolver_match.url_name == 'alunos_detalhe' %}bg-white/[0.07] text-white{% else %}text-white/50 hover:bg-white/[0.04] hover:text-white/80{% endif %}">
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 bg-white/[0.05] text-white/40 group-hover:text-white/60 transition-colors">
+            <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </span>
           Alunos
         </a>
 
         <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}"
-           class="flex items-center gap-2 pl-10 pr-3 py-2 rounded-md text-sm transition-all duration-200
-                  {% if request.resolver_match.url_name == 'aulas_lista' or request.resolver_match.url_name == 'aulas_detalhe' %}text-cyan-300 bg-cyan-500/10{% else %}text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40{% endif %}">
-          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-          </svg>
+           class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
+                  {% if request.resolver_match.url_name == 'aulas_lista' or request.resolver_match.url_name == 'aulas_detalhe' %}bg-white/[0.07] text-white{% else %}text-white/50 hover:bg-white/[0.04] hover:text-white/80{% endif %}">
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 bg-white/[0.05] text-white/40 group-hover:text-white/60 transition-colors">
+            <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+          </span>
           Aulas
         </a>
 
         <a href="{% url 'turmas:materiais_lista' pk=turma.pk %}"
-           class="flex items-center gap-2 pl-10 pr-3 py-2 rounded-md text-sm transition-all duration-200
-                  {% if request.resolver_match.url_name == 'materiais_lista' %}text-cyan-300 bg-cyan-500/10{% else %}text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40{% endif %}">
-          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
+           class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
+                  {% if request.resolver_match.url_name == 'materiais_lista' %}bg-white/[0.07] text-white{% else %}text-white/50 hover:bg-white/[0.04] hover:text-white/80{% endif %}">
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 bg-white/[0.05] text-white/40 group-hover:text-white/60 transition-colors">
+            <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </span>
           Materiais
         </a>
 
         <a href="{% url 'turmas:atividades_lista' pk=turma.pk %}"
-           class="flex items-center gap-2 pl-10 pr-3 py-2 rounded-md text-sm transition-all duration-200
-                  {% if request.resolver_match.url_name == 'atividades_lista' or request.resolver_match.url_name == 'atividade_detalhe' %}text-cyan-300 bg-cyan-500/10{% else %}text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40{% endif %}">
-          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-          </svg>
+           class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
+                  {% if request.resolver_match.url_name == 'atividades_lista' or request.resolver_match.url_name == 'atividade_detalhe' %}bg-white/[0.07] text-white{% else %}text-white/50 hover:bg-white/[0.04] hover:text-white/80{% endif %}">
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 bg-white/[0.05] text-white/40 group-hover:text-white/60 transition-colors">
+            <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+          </span>
           Atividades
         </a>
-
       </div>
     {% endif %}
 
   </nav>
 
-  <!-- Footer da sidebar -->
-  <div class="px-3 py-4 border-t border-zinc-800/80">
+  <!-- Footer -->
+  <div class="px-2 py-3 border-t border-white/[0.07] space-y-0.5">
+    <div class="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25"
+         x-show="!$store.sidebar.collapsed" x-cloak>Sistema</div>
+
     <a href="{% url 'admin:index' %}"
-       class="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-zinc-500 hover:text-cyan-300 hover:bg-zinc-900/50 transition-all duration-200"
+       class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium text-white/40 hover:bg-white/[0.04] hover:text-white/70 transition-all duration-150"
        title="Administração Django">
-      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826
-                 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0
-                 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426
-                 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724
-                 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31
-                 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-      </svg>
-      <span class="text-sm font-medium uppercase tracking-wider truncate"
-            x-show="!$store.sidebar.collapsed"
-            x-cloak>Configurações</span>
+      <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.05] text-white/30 group-hover:text-white/50 shrink-0 transition-colors">
+        <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </span>
+      <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">Configurações</span>
     </a>
-    <div class="flex items-center gap-3 px-3 py-3" x-show="!$store.sidebar.collapsed" x-cloak>
-      <div class="w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center shrink-0">
-        <span class="text-cyan-300 text-xs font-bold">T</span>
+
+    <div class="flex items-center gap-3 px-2 py-1.5" x-show="!$store.sidebar.collapsed" x-cloak>
+      <div class="shrink-0">
+        {% include "components/_logo.html" with size="w-7 h-7" %}
       </div>
       <div class="min-w-0">
-        <p class="text-xs font-semibold text-[#e4e4f0] truncate">Prof. Toni Coimbra</p>
-        <p class="text-[10px] text-[#8b8ba7] truncate">SEED-PR</p>
+        <p class="text-xs font-semibold text-white/80 truncate">Prof. Toni Coimbra</p>
+        <p class="text-[10px] text-white/30 truncate">SEED-PR</p>
       </div>
     </div>
   </div>

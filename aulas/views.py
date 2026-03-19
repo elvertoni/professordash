@@ -1,9 +1,10 @@
 import json
 import logging
+import re
 
 from django.contrib import messages
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, View
 
@@ -125,6 +126,37 @@ class AulaDeleteView(ProfessorRequiredMixin, AulaMixin, DeleteView):
         ctx = super().get_context_data(**kwargs)
         ctx["turma"] = self.turma
         return ctx
+
+
+class AulaImportarMdView(ProfessorRequiredMixin, AulaMixin, View):
+    """Importa um arquivo .md como uma nova Aula. O título vem do primeiro H1."""
+
+    def get(self, request, pk):
+        return render(request, "aulas/importar_md.html", {"turma": self.turma})
+
+    def post(self, request, pk):
+        arquivo = request.FILES.get("arquivo")
+        if not arquivo:
+            messages.error(request, "Nenhum arquivo enviado.")
+            return render(request, "aulas/importar_md.html", {"turma": self.turma})
+
+        if not arquivo.name.endswith(".md"):
+            messages.error(request, "Apenas arquivos .md são aceitos.")
+            return render(request, "aulas/importar_md.html", {"turma": self.turma})
+
+        conteudo = arquivo.read().decode("utf-8", errors="replace")
+
+        # Extrair título do primeiro H1
+        match = re.search(r"^#\s+(.+)$", conteudo, re.MULTILINE)
+        if match:
+            titulo = match.group(1).strip()
+        else:
+            titulo = arquivo.name.removesuffix(".md")
+
+        aula = Aula.objects.create(turma=self.turma, titulo=titulo, conteudo=conteudo)
+        logger.info(f"Aula importada de .md: '{titulo}' na turma pk={self.turma.pk}")
+        messages.success(request, f'Aula "{titulo}" importada com sucesso.')
+        return redirect("turmas:aulas_editar", pk=self.turma.pk, aula_pk=aula.pk)
 
 
 class AulaReordenarView(ProfessorRequiredMixin, AulaMixin, View):

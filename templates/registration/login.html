@@ -3,20 +3,23 @@
 {% block title %}Entrar — Prof Toni Coimbra{% endblock %}
 
 {% block body %}
-<div class="min-h-screen flex items-center justify-center bg-zinc-950 px-4">
+<div class="min-h-screen flex items-center justify-center bg-[#080808] px-4">
   <div class="w-full max-w-sm">
 
     <!-- Logo / título -->
     <div class="text-center mb-8">
-      <h1 class="text-2xl font-bold tracking-tight text-zinc-100">Prof Toni Coimbra</h1>
-      <p class="mt-1 text-sm text-zinc-400">Acesso restrito ao professor</p>
+      <div class="flex justify-center mb-4">
+        {% include "components/_logo.html" with size="w-14 h-14" %}
+      </div>
+      <h1 class="text-xl font-bold tracking-tight text-white/90">Prof Toni Coimbra</h1>
+      <p class="mt-1 text-[13px] text-white/35">Acesso restrito ao professor</p>
     </div>
 
     <!-- Card -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-8 shadow-xl">
+    <div class="bg-[#111] border border-white/[0.07] rounded-2xl p-8 shadow-2xl">
 
       {% if form.errors %}
-      <div class="mb-4 rounded-lg bg-red-900/40 border border-red-700 px-4 py-3 text-sm text-red-300">
+      <div class="mb-5 rounded-xl bg-rose-500/8 border border-rose-500/20 px-4 py-3 text-[13px] text-rose-300">
         Usuário ou senha incorretos. Tente novamente.
       </div>
       {% endif %}
@@ -28,9 +31,7 @@
         <div class="space-y-4">
           <!-- Email / usuário -->
           <div>
-            <label for="id_username" class="block text-sm font-medium text-zinc-400 mb-1">
-              Usuário ou E-mail
-            </label>
+            <label for="id_username" class="form-label">Usuário ou E-mail</label>
             <input
               id="id_username"
               name="username"
@@ -38,27 +39,21 @@
               autocomplete="username"
               required
               autofocus
-              class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-zinc-100
-                     placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent
-                     transition"
+              class="input-field"
               placeholder="professor@seed.pr.gov.br"
             >
           </div>
 
           <!-- Senha -->
           <div>
-            <label for="id_password" class="block text-sm font-medium text-zinc-400 mb-1">
-              Senha
-            </label>
+            <label for="id_password" class="form-label">Senha</label>
             <input
               id="id_password"
               name="password"
               type="password"
               autocomplete="current-password"
               required
-              class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-zinc-100
-                     placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent
-                     transition"
+              class="input-field"
               placeholder="••••••••"
             >
           </div>
@@ -66,9 +61,8 @@
 
         <button
           type="submit"
-          class="mt-6 w-full rounded-lg bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700
-                 px-4 py-2 text-sm font-semibold text-white transition-colors focus:outline-none
-                 focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-zinc-900">
+          class="mt-6 w-full rounded-xl bg-white/[0.08] hover:bg-white/[0.13] border border-white/[0.1] hover:border-white/[0.18]
+                 px-4 py-2.5 text-[13px] font-semibold text-white/80 hover:text-white transition-all focus:outline-none">
           Entrar
         </button>
       </form>
@@ -76,17 +70,17 @@
 
     <!-- Divider -->
     <div class="my-6 flex items-center gap-3">
-      <div class="flex-1 h-px bg-zinc-800"></div>
-      <span class="text-xs text-zinc-600">ou</span>
-      <div class="flex-1 h-px bg-zinc-800"></div>
+      <div class="flex-1 h-px bg-white/[0.05]"></div>
+      <span class="text-[11px] text-white/20">ou</span>
+      <div class="flex-1 h-px bg-white/[0.05]"></div>
     </div>
 
     {% if google_oauth_configured %}
     <!-- Google OAuth (alunos) -->
     <a href="{% url 'google_login' %}"
-       class="flex items-center justify-center gap-2 w-full rounded-lg border border-zinc-700
-              bg-zinc-900 hover:bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-300
-              transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500">
+       class="flex items-center justify-center gap-2 w-full rounded-xl border border-white/[0.08]
+              bg-white/[0.04] hover:bg-white/[0.07] px-4 py-2.5 text-[13px] font-medium text-white/50 hover:text-white/70
+              transition-all focus:outline-none">
       <svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>

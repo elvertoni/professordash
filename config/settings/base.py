@@ -48,7 +48,6 @@ LOCAL_APPS = [
     # As views que renderizam esses templates estão em turmas/views.py.
     "avaliacoes",
     "alunos",
-    "gerador",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -179,10 +178,6 @@ MARKDOWNX_MARKDOWN_EXTENSIONS = [
     'markdown.extensions.toc',
     'markdown.extensions.nl2br',
 ]
-
-# --- Gerador de Aulas (OpenRouter) ---
-
-OPENROUTER_API_KEY = config("OPENROUTER_API_KEY", default="")
 
 # --- Misc ---
 

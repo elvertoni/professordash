@@ -1,17 +1,25 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Prof Toni Coimbra{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['Geist Mono', 'ui-monospace', 'monospace'],
+          },
           colors: {
-            surface: '#1a1a2e',
-            'surface-high': '#22223b',
+            surface: '#111111',
+            'surface-high': '#1a1a1a',
           }
         }
       }
@@ -23,7 +31,7 @@
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-[#0f0f17] text-zinc-100 antialiased selection:bg-violet-500/30">
+<body class="bg-[#080808] text-zinc-100 antialiased selection:bg-cyan-500/20">
   {% block body %}{% endblock %}
   <script src="{% static 'js/app.js' %}"></script>
   {% block extra_js %}{% endblock %}

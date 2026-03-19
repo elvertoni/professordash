@@ -6,13 +6,14 @@
 <div class="max-w-6xl mx-auto">
 
   <!-- Cabeçalho -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
     <div>
-      <h1 class="text-xl sm:text-2xl font-bold text-[#e4e4f0]">Turmas</h1>
-      <p class="text-sm text-[#8b8ba7] mt-1">Gerencie suas turmas e disciplinas</p>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/25 mb-1">Painel</p>
+      <h1 class="text-xl font-bold text-white/90">Turmas</h1>
+      <p class="text-[13px] text-white/35 mt-0.5">Gerencie suas turmas e disciplinas</p>
     </div>
     <a href="{% url 'turmas:nova' %}"
-       class="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shrink-0">
+       class="inline-flex items-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.1] hover:border-white/[0.18] text-white/80 hover:text-white text-[13px] font-medium px-4 py-2.5 rounded-xl transition-all shrink-0">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
       </svg>
@@ -24,32 +25,20 @@
   {% url 'turmas:nova' as url_nova_turma %}
   {% if turmas_ativas %}
     <section class="mb-10">
-      <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-3">Ativas</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="flex items-center gap-2 mb-4">
+        <div class="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Ativas</div>
+        <div class="flex-1 h-px bg-white/[0.05]"></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {% for turma in turmas_ativas %}
           {% include "components/_card_turma.html" %}
         {% endfor %}
       </div>
     </section>
   {% else %}
-    <div class="mb-10 bg-[#1a1a2e] rounded-xl border border-dashed border-zinc-700 p-12 text-center">
-      <div class="w-14 h-14 mx-auto mb-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-        <svg class="w-7 h-7 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-        </svg>
-      </div>
-      <h3 class="text-sm font-semibold text-[#e4e4f0]">Nenhuma turma ativa</h3>
-      <p class="mt-1 text-sm text-[#8b8ba7]">Crie a sua primeira turma para começar.</p>
-      <div class="mt-5">
-        <a href="{{ url_nova_turma }}"
-           class="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-          </svg>
-          Nova turma
-        </a>
-      </div>
+    <div class="mb-10">
+      {% url 'turmas:nova' as url_nova_turma %}
+      {% include "components/_empty_state.html" with icon_path="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" title="Nenhuma turma ativa" subtitle="Crie a sua primeira turma para começar." action_url=url_nova_turma action_label="Nova turma" %}
     </div>
   {% endif %}
 
@@ -57,14 +46,14 @@
   {% if turmas_arquivadas %}
     <section x-data="{ aberto: false }">
       <button @click="aberto = !aberto"
-              class="flex items-center gap-2 text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-3 hover:text-zinc-300">
-        <svg class="w-4 h-4 transition-transform" :class="aberto ? 'rotate-90' : ''"
+              class="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/25 hover:text-white/45 mb-4 transition-colors">
+        <svg class="w-3.5 h-3.5 transition-transform" :class="aberto ? 'rotate-90' : ''"
              fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
         </svg>
         Arquivadas ({{ turmas_arquivadas.count }})
       </button>
-      <div x-show="aberto" x-cloak x-transition class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div x-show="aberto" x-cloak x-transition class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {% for turma in turmas_arquivadas %}
           {% include "components/_card_turma.html" %}
         {% endfor %}

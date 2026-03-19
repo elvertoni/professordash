@@ -3,20 +3,20 @@
 {% block title %}Dashboard | Prof Toni Coimbra{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
+<div class="space-y-6 max-w-7xl">
 
   {# ── Greeting ──────────────────────────────────────────────────────────── #}
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-[#e4e4f0]">
-        Bem-vindo, <span class="text-violet-400 italic">Prof. {{ request.user.get_full_name|default:request.user.username }}</span>.
-      </h1>
-      <p class="text-sm text-[#8b8ba7] mt-1">
-        {% now "l, d \d\e F \d\e Y" %} &mdash; Painel do professor
+      <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/25 mb-1">
+        {% now "l, d \d\e F \d\e Y" %}
       </p>
+      <h1 class="text-2xl font-bold text-white/90">
+        Bem-vindo, <span class="text-cyan-300">{{ request.user.get_full_name|default:request.user.username }}</span>.
+      </h1>
     </div>
     <a href="{% url 'turmas:nova' %}"
-       class="hidden sm:inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors shadow-lg shadow-violet-500/20">
+       class="hidden sm:inline-flex items-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.1] hover:border-white/[0.18] text-white/80 hover:text-white text-[13px] font-medium px-4 py-2.5 rounded-xl transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
       </svg>
@@ -25,62 +25,58 @@
   </div>
 
   {# ── KPI Cards ──────────────────────────────────────────────────────────── #}
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
     <a href="{% url 'turmas:lista' %}"
-       class="bg-[#1a1a2e] rounded-xl border border-zinc-800 p-5 flex items-center gap-4
-              hover:border-violet-500/40 hover:shadow-[0_0_20px_rgba(139,92,246,0.1)] transition-all duration-300 group">
-      <div class="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center shrink-0 border border-violet-500/20 group-hover:bg-violet-500/20 transition-colors">
-        <svg class="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+       class="bg-[#111] rounded-xl border border-white/[0.07] hover:border-white/[0.14] p-5 flex items-center gap-4 transition-all duration-200 group">
+      <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center shrink-0 border border-cyan-500/20 group-hover:bg-cyan-500/15 transition-colors">
+        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
         </svg>
       </div>
       <div>
-        <p class="text-3xl font-bold text-[#e4e4f0]">{{ kpi_turmas }}</p>
-        <p class="text-xs font-medium text-[#8b8ba7] mt-0.5">Turmas ativas</p>
+        <p class="text-2xl font-bold text-white/90">{{ kpi_turmas }}</p>
+        <p class="text-[11px] font-medium text-white/35 mt-0.5">Turmas ativas</p>
       </div>
     </a>
 
-    <div class="bg-[#1a1a2e] rounded-xl border border-zinc-800 p-5 flex items-center gap-4
-                hover:border-cyan-500/30 hover:shadow-[0_0_20px_rgba(6,182,212,0.08)] transition-all duration-300 group">
-      <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center shrink-0 border border-cyan-500/20 group-hover:bg-cyan-500/20 transition-colors">
-        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-[#111] rounded-xl border border-white/[0.07] hover:border-white/[0.14] p-5 flex items-center gap-4 transition-all duration-200 group">
+      <div class="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center shrink-0 border border-violet-500/20 group-hover:bg-violet-500/15 transition-colors">
+        <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
         </svg>
       </div>
       <div>
-        <p class="text-3xl font-bold text-[#e4e4f0]">{{ kpi_alunos }}</p>
-        <p class="text-xs font-medium text-[#8b8ba7] mt-0.5">Alunos matric.</p>
+        <p class="text-2xl font-bold text-white/90">{{ kpi_alunos }}</p>
+        <p class="text-[11px] font-medium text-white/35 mt-0.5">Alunos matr.</p>
       </div>
     </div>
 
-    <div class="bg-[#1a1a2e] rounded-xl border border-zinc-800 p-5 flex items-center gap-4
-                hover:border-emerald-500/30 transition-all duration-300 group">
-      <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20 group-hover:bg-emerald-500/20 transition-colors">
-        <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-[#111] rounded-xl border border-white/[0.07] hover:border-white/[0.14] p-5 flex items-center gap-4 transition-all duration-200 group">
+      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20 group-hover:bg-emerald-500/15 transition-colors">
+        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
         </svg>
       </div>
       <div>
-        <p class="text-3xl font-bold text-[#e4e4f0]">{{ kpi_atividades_abertas }}</p>
-        <p class="text-xs font-medium text-[#8b8ba7] mt-0.5">Ativ. abertas</p>
+        <p class="text-2xl font-bold text-white/90">{{ kpi_atividades_abertas }}</p>
+        <p class="text-[11px] font-medium text-white/35 mt-0.5">Ativ. abertas</p>
       </div>
     </div>
 
-    <div class="bg-[#1a1a2e] rounded-xl border border-zinc-800 p-5 flex items-center gap-4
-                hover:border-rose-500/30 transition-all duration-300 group">
-      <div class="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center shrink-0 border border-rose-500/20 group-hover:bg-rose-500/20 transition-colors">
-        <svg class="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-[#111] rounded-xl border border-white/[0.07] hover:border-white/[0.14] p-5 flex items-center gap-4 transition-all duration-200 group">
+      <div class="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center shrink-0 border border-rose-500/20 group-hover:bg-rose-500/15 transition-colors">
+        <svg class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
         </svg>
       </div>
       <div>
-        <p class="text-3xl font-bold text-[#e4e4f0]">{{ kpi_entregas_pendentes }}</p>
-        <p class="text-xs font-medium text-[#8b8ba7] mt-0.5">Para avaliar</p>
+        <p class="text-2xl font-bold text-white/90">{{ kpi_entregas_pendentes }}</p>
+        <p class="text-[11px] font-medium text-white/35 mt-0.5">Para avaliar</p>
       </div>
     </div>
 
@@ -88,20 +84,18 @@
 
   {# ── Alunos Recentes ──────────────────────────────────────────────────── #}
   {% if alunos_recentes %}
-  <div class="bg-[#1a1a2e] rounded-xl border border-zinc-800 p-5">
+  <div class="bg-[#111] rounded-xl border border-white/[0.07] p-5">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-sm font-semibold text-[#e4e4f0]">Meus Alunos</h2>
-      <a href="{% url 'turmas:lista' %}" class="text-xs text-violet-400 hover:text-violet-300 transition-colors">Ver turmas &rarr;</a>
+      <h2 class="text-[13px] font-semibold text-white/70">Alunos recentes</h2>
+      <a href="{% url 'turmas:lista' %}" class="text-[12px] text-white/30 hover:text-white/60 transition-colors">Ver turmas →</a>
     </div>
-    <div class="flex items-center gap-4 overflow-x-auto pb-1">
+    <div class="flex items-center gap-3 overflow-x-auto pb-1">
       {% for aluno in alunos_recentes %}
-      <div class="flex flex-col items-center gap-2 min-w-[60px] group cursor-pointer">
-        <div class="w-12 h-12 rounded-full bg-gradient-to-br
-          {% cycle 'from-violet-500/30 to-violet-700/30 border-violet-500/40' 'from-cyan-500/30 to-cyan-700/30 border-cyan-500/40' 'from-emerald-500/30 to-emerald-700/30 border-emerald-500/40' 'from-amber-500/30 to-amber-700/30 border-amber-500/40' 'from-rose-500/30 to-rose-700/30 border-rose-500/40' %}
-          border flex items-center justify-center transition-transform group-hover:scale-110">
-          <span class="text-sm font-bold text-[#e4e4f0]">{{ aluno.nome|make_list|first|upper }}</span>
+      <div class="flex flex-col items-center gap-1.5 min-w-[52px]">
+        <div class="w-10 h-10 rounded-full bg-white/[0.06] border border-white/[0.08] flex items-center justify-center">
+          <span class="text-sm font-bold text-white/60">{{ aluno.nome|make_list|first|upper }}</span>
         </div>
-        <span class="text-[10px] text-[#8b8ba7] text-center leading-tight truncate w-full text-center">{{ aluno.nome|truncatechars:10 }}</span>
+        <span class="text-[10px] text-white/30 text-center leading-tight truncate w-full text-center">{{ aluno.nome|truncatechars:9 }}</span>
       </div>
       {% endfor %}
     </div>
@@ -109,28 +103,28 @@
   {% endif %}
 
   {# ── Layout principal: alertas (2/3) + feed (1/3) ───────────────────── #}
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
     {# Coluna principal (2/3) #}
     <div class="lg:col-span-2 space-y-4">
 
       {% if alertas_prazo %}
-      <div class="bg-[#1a1a2e] rounded-xl border border-amber-500/30 overflow-hidden">
-        <div class="px-5 py-3 bg-amber-500/5 border-b border-amber-500/20 flex items-center gap-2">
+      <div class="bg-[#111] rounded-xl border border-amber-500/20 overflow-hidden">
+        <div class="px-5 py-3 border-b border-amber-500/15 flex items-center gap-2">
           <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <h2 class="text-sm font-semibold text-amber-400">Prazos fechando nas próximas 48h</h2>
-          <span class="ml-auto text-xs font-bold text-amber-900 bg-amber-400 px-2 py-0.5 rounded-full">{{ alertas_prazo|length }}</span>
+          <h2 class="text-[13px] font-semibold text-amber-400/90">Prazos fechando nas próximas 48h</h2>
+          <span class="ml-auto text-[11px] font-bold text-amber-900 bg-amber-400 px-2 py-0.5 rounded-full">{{ alertas_prazo|length }}</span>
         </div>
-        <ul class="divide-y divide-zinc-800/60">
+        <ul class="divide-y divide-white/[0.04]">
           {% for ativ in alertas_prazo %}
-          <li class="px-5 py-3.5 flex items-center justify-between hover:bg-zinc-800/20 transition-colors">
+          <li class="px-5 py-3 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
             <div>
-              <p class="text-sm font-medium text-[#e4e4f0]">{{ ativ.titulo }}</p>
-              <p class="text-xs text-[#8b8ba7] mt-0.5">{{ ativ.turma.nome }}</p>
+              <p class="text-[13px] font-medium text-white/80">{{ ativ.titulo }}</p>
+              <p class="text-[11px] text-white/35 mt-0.5">{{ ativ.turma.nome }}</p>
             </div>
-            <span class="text-xs font-mono font-semibold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2.5 py-1 rounded-md whitespace-nowrap">
+            <span class="text-[11px] font-mono font-semibold text-amber-400 bg-amber-400/8 border border-amber-400/20 px-2.5 py-1 rounded-lg whitespace-nowrap">
               {{ ativ.prazo|date:"d/m H:i" }}
             </span>
           </li>
@@ -140,30 +134,30 @@
       {% endif %}
 
       {% if alertas_avaliacao %}
-      <div class="bg-[#1a1a2e] rounded-xl border border-zinc-800 overflow-hidden">
-        <div class="px-5 py-3 border-b border-zinc-800 flex items-center gap-2">
+      <div class="bg-[#111] rounded-xl border border-white/[0.07] overflow-hidden">
+        <div class="px-5 py-3 border-b border-white/[0.06] flex items-center gap-2">
           <svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
           </svg>
-          <h2 class="text-sm font-semibold text-[#e4e4f0]">Entregas aguardando avaliação</h2>
-          <span class="ml-auto text-xs font-bold bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded-full border border-rose-500/30">{{ kpi_entregas_pendentes }}</span>
+          <h2 class="text-[13px] font-semibold text-white/70">Entregas aguardando avaliação</h2>
+          <span class="ml-auto text-[11px] font-bold bg-rose-500/15 text-rose-400 px-2 py-0.5 rounded-full border border-rose-500/20">{{ kpi_entregas_pendentes }}</span>
         </div>
-        <ul class="divide-y divide-zinc-800/60">
+        <ul class="divide-y divide-white/[0.04]">
           {% for entrega in alertas_avaliacao %}
-          <li class="px-5 py-3.5 flex items-center justify-between hover:bg-zinc-800/20 transition-colors">
+          <li class="px-5 py-3 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
-                <span class="text-xs font-bold text-violet-300">{{ entrega.aluno.nome|make_list|first|upper }}</span>
+              <div class="w-8 h-8 rounded-full bg-white/[0.05] border border-white/[0.08] flex items-center justify-center shrink-0">
+                <span class="text-[11px] font-bold text-white/50">{{ entrega.aluno.nome|make_list|first|upper }}</span>
               </div>
               <div>
-                <p class="text-sm font-medium text-[#e4e4f0]">{{ entrega.aluno.nome }}</p>
-                <p class="text-xs text-[#8b8ba7] mt-0.5">{{ entrega.atividade.titulo }} &mdash; {{ entrega.atividade.turma.nome }}</p>
+                <p class="text-[13px] font-medium text-white/80">{{ entrega.aluno.nome }}</p>
+                <p class="text-[11px] text-white/35 mt-0.5">{{ entrega.atividade.titulo }} · {{ entrega.atividade.turma.nome }}</p>
               </div>
             </div>
             <a href="{% url 'turmas:atividade_detalhe' pk=entrega.atividade.turma.pk atividade_pk=entrega.atividade.pk %}"
-               class="text-xs font-medium text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 px-3 py-1.5 rounded-lg border border-violet-500/20 transition-all whitespace-nowrap ml-3">
-              Avaliar &rarr;
+               class="text-[12px] font-medium text-white/50 hover:text-white/80 bg-white/[0.05] hover:bg-white/[0.09] px-3 py-1.5 rounded-lg border border-white/[0.07] transition-all whitespace-nowrap ml-3">
+              Avaliar →
             </a>
           </li>
           {% endfor %}
@@ -172,14 +166,14 @@
       {% endif %}
 
       {% if not alertas_prazo and not alertas_avaliacao %}
-      <div class="bg-[#1a1a2e] rounded-xl border border-zinc-800 p-10 text-center">
-        <div class="w-14 h-14 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center mb-4 border border-emerald-500/20">
-          <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="bg-[#111] rounded-xl border border-white/[0.07] p-10 text-center">
+        <div class="w-12 h-12 mx-auto rounded-xl bg-emerald-500/8 flex items-center justify-center mb-3 border border-emerald-500/20">
+          <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </div>
-        <p class="text-sm font-semibold text-[#e4e4f0]">Tudo em dia</p>
-        <p class="text-xs text-[#8b8ba7] mt-1">Nenhum alerta crítico no momento.</p>
+        <p class="text-[13px] font-semibold text-white/70">Tudo em dia</p>
+        <p class="text-[12px] text-white/35 mt-1">Nenhum alerta crítico no momento.</p>
       </div>
       {% endif %}
 
@@ -188,13 +182,13 @@
            hx-get="{% url 'core:htmx_stats_turmas' %}"
            hx-trigger="load"
            hx-swap="innerHTML">
-        <div class="bg-[#1a1a2e] rounded-xl border border-zinc-800 p-8 flex items-center justify-center h-28">
-          <div class="flex items-center gap-2 text-sm text-violet-400">
+        <div class="bg-[#111] rounded-xl border border-white/[0.07] p-8 flex items-center justify-center h-28">
+          <div class="flex items-center gap-2 text-[12px] text-white/30">
             <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span class="animate-pulse text-xs tracking-widest font-mono">CARREGANDO ESTATÍSTICAS...</span>
+            <span class="font-mono uppercase tracking-widest text-[10px]">Carregando...</span>
           </div>
         </div>
       </div>
@@ -203,10 +197,10 @@
 
     {# Feed lateral (1/3) #}
     <div>
-      <div class="bg-[#1a1a2e] rounded-xl border border-zinc-800 overflow-hidden sticky top-6">
-        <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-[#8b8ba7]">Feed de Entregas</h2>
-          <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20">
+      <div class="bg-[#111] rounded-xl border border-white/[0.07] overflow-hidden sticky top-20">
+        <div class="px-5 py-3.5 border-b border-white/[0.06] flex items-center justify-between">
+          <h2 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/35">Feed de Entregas</h2>
+          <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-400/8 px-2 py-0.5 rounded border border-emerald-400/20">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             Live
           </span>
@@ -217,12 +211,12 @@
              hx-swap="innerHTML"
              class="min-h-[200px]">
           <div class="p-8 flex items-center justify-center">
-            <div class="flex items-center gap-2 text-sm text-violet-400">
+            <div class="flex items-center gap-2 text-[12px] text-white/30">
               <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <span class="animate-pulse text-xs tracking-widest font-mono">CONECTANDO...</span>
+              <span class="font-mono uppercase tracking-widest text-[10px]">Conectando...</span>
             </div>
           </div>
         </div>

@@ -1,0 +1,69 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Importar .md — {{ turma.nome }} — Prof Toni Coimbra{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-cyan-400 shrink-0">Turmas</a>
+    <span>/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-cyan-400 shrink-0">{{ turma.nome }}</a>
+    <span>/</span>
+    <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}" class="hover:text-cyan-400 shrink-0">Aulas</a>
+    <span>/</span>
+    <span class="text-zinc-100 font-medium">Importar .md</span>
+  </nav>
+
+  <h1 class="text-xl font-bold text-zinc-100 mb-2">Importar arquivo Markdown</h1>
+  <p class="text-sm text-zinc-400 mb-6">
+    Selecione um arquivo <code class="text-cyan-400 bg-zinc-800 px-1 rounded">.md</code>.
+    O título da aula será extraído do primeiro cabeçalho <code class="text-cyan-400 bg-zinc-800 px-1 rounded"># H1</code>
+    ou, se não houver, do nome do arquivo.
+  </p>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="mb-4 px-4 py-3 rounded-lg text-sm
+                  {% if message.tags == 'error' %}bg-rose-500/10 border border-rose-500/30 text-rose-300
+                  {% else %}bg-emerald-500/10 border border-emerald-500/30 text-emerald-300{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data"
+        class="bg-zinc-900 border border-zinc-700 rounded-xl p-6 space-y-5">
+    {% csrf_token %}
+
+    <div>
+      <label for="arquivo" class="form-label block mb-2">Arquivo .md</label>
+      <input type="file" id="arquivo" name="arquivo" accept=".md"
+             class="block w-full text-sm text-zinc-300
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-lg file:border-0
+                    file:text-sm file:font-medium
+                    file:bg-cyan-600 file:text-white
+                    hover:file:bg-cyan-700
+                    file:cursor-pointer cursor-pointer">
+    </div>
+
+    <div class="flex items-center gap-3 pt-2">
+      <button type="submit"
+              class="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+        Importar
+      </button>
+      <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}"
+         class="text-sm text-zinc-400 hover:text-zinc-200 transition-colors">
+        Cancelar
+      </a>
+    </div>
+  </form>
+
+</div>
+{% endblock %}

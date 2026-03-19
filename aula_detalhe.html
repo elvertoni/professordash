@@ -1,0 +1,584 @@
+{% load markdownify static %}
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ aula.titulo }} — {{ aula.turma.nome }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ── Reset ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Tokens ─────────────────────────────────────────────────────── */
+:root {
+  --bg:        #F7F5F0;
+  --surface:   #FFFFFF;
+  --surface2:  #F0EDE6;
+  --border:    #E4DFD5;
+  --border2:   #CBC4B8;
+  --text:      #1A1814;
+  --text2:     #5C574F;
+  --text3:     #9A9590;
+  --accent:    #2D6A4F;
+  --accent-bg: #EBF5EF;
+  --amber:     #92400E;
+  --amber-bg:  #FEF3C7;
+  --blue:      #1E40AF;
+  --blue-bg:   #EFF6FF;
+  --violet:    #5B21B6;
+  --violet-bg: #F5F3FF;
+  --coral:     #9B2C2C;
+  --coral-bg:  #FFF5F5;
+  --shadow:    0 1px 3px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
+  --radius:    10px;
+  --radius-lg: 16px;
+  --max-w:     780px;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-head: 'Lora', Georgia, serif;
+  --font-mono: 'DM Mono', monospace;
+  --ease:      cubic-bezier(.4,0,.2,1);
+}
+
+[data-theme="dark"] {
+  --bg:        #111110;
+  --surface:   #1C1B19;
+  --surface2:  #252420;
+  --border:    #2E2D29;
+  --border2:   #3E3C37;
+  --text:      #F0EDE6;
+  --text2:     #A8A39B;
+  --text3:     #6B6660;
+  --accent:    #4ADE80;
+  --accent-bg: #052E16;
+  --amber:     #FCD34D;
+  --amber-bg:  #1C1204;
+  --blue:      #93C5FD;
+  --blue-bg:   #0C1A3A;
+  --violet:    #C4B5FD;
+  --violet-bg: #1A0B3B;
+  --coral:     #FCA5A5;
+  --coral-bg:  #2D0808;
+  --shadow:    0 1px 3px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.4);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.85;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  transition: background .3s var(--ease), color .3s var(--ease);
+}
+
+/* ── Progress bar ─────────────────────────────────────────────── */
+#progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 100;
+  transition: width .1s linear;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── Toolbar ──────────────────────────────────────────────────── */
+#toolbar {
+  position: fixed;
+  top: 12px; right: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 99;
+}
+
+.tb-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: var(--shadow);
+  transition: background .2s, transform .15s;
+  color: var(--text2);
+  text-decoration: none;
+}
+.tb-btn:hover { background: var(--surface2); transform: translateY(-1px); }
+
+/* ── Layout ───────────────────────────────────────────────────── */
+.page {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 3.5rem 2rem 6rem;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+.aula-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--text3);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 3px 11px;
+}
+
+.tag-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+h1.titulo {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 4vw, 2.6rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+  letter-spacing: -.02em;
+}
+
+.intro-text {
+  font-size: 1.1rem;
+  color: var(--text2);
+  line-height: 1.8;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+}
+
+hr.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+/* ── Markdown rendering ───────────────────────────────────────── */
+.md-content h1 {
+  font-family: var(--font-head);
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text);
+  margin: 2.5rem 0 1rem;
+  letter-spacing: -.02em;
+}
+
+.md-content h2 {
+  font-family: var(--font-head);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 2.75rem 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -.01em;
+}
+
+.md-content h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 1.1em;
+  background: var(--accent);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.md-content h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  margin: 1.5rem 0 .5rem;
+}
+
+.md-content p {
+  color: var(--text2);
+  margin-bottom: .85rem;
+}
+
+.md-content strong { color: var(--text); font-weight: 500; }
+.md-content em { font-style: italic; }
+
+.md-content a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color .2s;
+}
+.md-content a:hover { text-decoration-color: var(--accent); }
+
+.md-content ul, .md-content ol {
+  padding-left: 1.4rem;
+  margin: .75rem 0 1rem;
+  color: var(--text2);
+}
+.md-content li { margin-bottom: 5px; line-height: 1.75; }
+
+.md-content blockquote {
+  border-left: 3px solid var(--border2);
+  margin: 1.75rem 0;
+  padding: .75rem 0 .75rem 1.25rem;
+  color: var(--text2);
+  font-family: var(--font-head);
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.md-content code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 6px;
+  color: var(--text);
+}
+
+.md-content pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+  box-shadow: var(--shadow);
+}
+
+.md-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+.md-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+.md-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 14.5px;
+}
+.md-content th {
+  text-align: left;
+  padding: 8px 14px;
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text3);
+  border-bottom: 2px solid var(--border);
+}
+.md-content td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  vertical-align: top;
+}
+.md-content tr:last-child td { border-bottom: none; }
+.md-content tr:hover td { background: var(--surface2); }
+
+/* ── Callouts customizados no MD ──────────────────────────────── */
+/* Uso no .md: > [!blue] Título \n > Texto */
+.callout {
+  display: flex;
+  gap: 14px;
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+  border: 1px solid;
+}
+.callout-icon { font-size: 19px; line-height: 1.6; flex-shrink: 0; }
+.callout-body { flex: 1; }
+.callout-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.callout-text  { font-size: 14.5px; line-height: 1.75; margin: 0; color: var(--text2); }
+
+.c-blue   { background: var(--blue-bg);   border-color: var(--blue);   border-left: 3px solid var(--blue); }
+.c-blue   .callout-title { color: var(--blue); }
+.c-green  { background: var(--accent-bg); border-color: var(--accent); border-left: 3px solid var(--accent); }
+.c-green  .callout-title { color: var(--accent); }
+.c-amber  { background: var(--amber-bg);  border-color: var(--amber);  border-left: 3px solid var(--amber); }
+.c-amber  .callout-title { color: var(--amber); }
+.c-violet { background: var(--violet-bg); border-color: var(--violet); border-left: 3px solid var(--violet); }
+.c-violet .callout-title { color: var(--violet); }
+.c-coral  { background: var(--coral-bg);  border-color: var(--coral);  border-left: 3px solid var(--coral); }
+.c-coral  .callout-title { color: var(--coral); }
+
+/* ── Roteiro de fala ──────────────────────────────────────────── */
+.roteiro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin: 1.75rem 0;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.roteiro::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--violet) 0%, var(--blue) 100%);
+}
+.roteiro-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 1rem;
+}
+.roteiro-texto {
+  font-family: var(--font-head);
+  font-style: italic;
+  font-size: 15.5px;
+  line-height: 1.85;
+  color: var(--text2);
+}
+
+/* ── Questão interativa ───────────────────────────────────────── */
+.questao {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
+  box-shadow: var(--shadow);
+}
+.questao-num {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+.questao-enunciado {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.alternativas { list-style: none; }
+.alt {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  margin: 4px 0;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text2);
+  border: 1px solid transparent;
+  transition: all .18s var(--ease);
+  user-select: none;
+}
+.alt:hover:not(.selected):not(.wrong) { background: var(--surface2); border-color: var(--border); }
+.alt.selected { background: var(--accent-bg); border-color: var(--accent); color: var(--text); }
+.alt.selected .alt-badge { background: var(--accent); color: #fff; border-color: var(--accent); }
+.alt.wrong { background: var(--coral-bg); border-color: var(--coral); opacity: .65; }
+.alt-badge {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11.5px; font-weight: 500;
+  flex-shrink: 0;
+  transition: all .18s;
+  color: var(--text2);
+}
+.gabarito {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--accent);
+  display: none;
+  padding: 8px 12px;
+  background: var(--accent-bg);
+  border-radius: 7px;
+  border-left: 3px solid var(--accent);
+  line-height: 1.6;
+}
+.gabarito.show { display: block; }
+
+/* ── Resumo ───────────────────────────────────────────────────── */
+.resumo-list { list-style: none; margin: .5rem 0; }
+.resumo-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; font-size: 15px;
+  border-bottom: 1px solid var(--border); color: var(--text2);
+}
+.resumo-list li:last-child { border-bottom: none; }
+.resumo-check { color: var(--accent); flex-shrink: 0; }
+
+/* ── Referências ──────────────────────────────────────────────── */
+.refs-toggle {
+  display: flex; align-items: center; gap: 8px;
+  background: none; border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 14px;
+  font-size: 13px; color: var(--text3);
+  cursor: pointer; margin-top: 1rem;
+  font-family: var(--font-body);
+  transition: border-color .2s, color .2s;
+}
+.refs-toggle:hover { border-color: var(--border2); color: var(--text2); }
+.refs-content {
+  font-size: 13px; color: var(--text3);
+  line-height: 2; margin-top: 8px; display: none;
+}
+.refs-content.open { display: block; }
+
+/* ── Animações ────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page > * { animation: fadeUp .5s var(--ease) both; }
+.page > *:nth-child(1) { animation-delay: .05s; }
+.page > *:nth-child(2) { animation-delay: .10s; }
+.page > *:nth-child(3) { animation-delay: .15s; }
+.page > *:nth-child(4) { animation-delay: .20s; }
+
+/* ── Modo TV ──────────────────────────────────────────────────── */
+body.tv-mode { font-size: 22px; }
+body.tv-mode h1.titulo, body.tv-mode .md-content h1 { font-size: 3rem; }
+body.tv-mode .md-content h2, body.tv-mode h2.section-title { font-size: 1.7rem; }
+body.tv-mode .page { max-width: 1100px; }
+</style>
+</head>
+
+<body>
+<div id="progress"></div>
+
+<div id="toolbar">
+  {% if user.is_staff %}
+  <a href="{% url 'aulas:editar' aula.id %}" class="tb-btn" title="Editar aula">✏️</a>
+  {% endif %}
+  <button class="tb-btn" title="Modo TV" onclick="toggleTV()">📺</button>
+  <button class="tb-btn" id="theme-btn" title="Alternar tema" onclick="toggleTheme()">🌙</button>
+</div>
+
+<main class="page">
+
+  <!-- Meta -->
+  <div class="aula-meta">
+    <span class="tag"><span class="tag-dot"></span>{{ aula.turma.nome }}</span>
+    {% if aula.data %}<span class="tag">{{ aula.data|date:"d/m/Y" }}</span>{% endif %}
+    <span class="tag">Aula {{ aula.numero }}</span>
+  </div>
+
+  <!-- Título -->
+  <h1 class="titulo">{{ aula.titulo }}</h1>
+
+  <!-- Conteúdo principal renderizado do Markdown -->
+  <div class="md-content">
+    {{ aula.conteudo|markdownify }}
+  </div>
+
+  {% if aula.atividades.exists %}
+  <hr class="divider">
+  <p style="font-size:13px;color:var(--text3);text-align:center;">
+    📎 Esta aula tem
+    <a href="{% url 'turmas:portal' aula.turma.token_publico %}#atividades" style="color:var(--accent);">
+      {{ aula.atividades.count }} atividade{{ aula.atividades.count|pluralize }}
+    </a>
+    associada{{ aula.atividades.count|pluralize }}.
+  </p>
+  {% endif %}
+
+</main>
+
+<script>
+/* Progress */
+window.addEventListener('scroll', () => {
+  const el = document.documentElement;
+  const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+  document.getElementById('progress').style.width = Math.min(pct, 100) + '%';
+});
+
+/* Theme */
+function toggleTheme() {
+  const html = document.documentElement;
+  const dark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = dark ? '🌙' : '☀️';
+  localStorage.setItem('theme', dark ? 'light' : 'dark');
+}
+
+/* TV mode */
+function toggleTV() {
+  document.body.classList.toggle('tv-mode');
+}
+
+/* Questões interativas */
+const answered = {};
+function responder(el) {
+  const ul = el.closest('.alternativas');
+  const questao = ul.closest('.questao');
+  const idx = questao.dataset.idx;
+  if (answered[idx]) return;
+  const correct = ul.dataset.correct;
+  const gabarito = ul.dataset.gabarito;
+  const letra = el.querySelector('.alt-badge').textContent.trim();
+  ul.querySelectorAll('.alt').forEach(a => {
+    const l = a.querySelector('.alt-badge').textContent.trim();
+    if (l === correct) a.classList.add('selected');
+    else if (l === letra && l !== correct) a.classList.add('wrong');
+  });
+  const gab = questao.querySelector('.gabarito');
+  if (gab) { gab.querySelector('.gab-texto').textContent = gabarito; gab.classList.add('show'); }
+  answered[idx] = true;
+}
+
+/* Refs toggle */
+function toggleRefs(btn) {
+  const c = document.getElementById('refs-content');
+  c.classList.toggle('open');
+  btn.querySelector('.arr').textContent = c.classList.contains('open') ? '▲' : '▼';
+}
+
+/* Preferência de tema salva */
+const savedTheme = localStorage.getItem('theme') ||
+  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+document.documentElement.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+</script>
+</body>
+</html>

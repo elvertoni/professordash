@@ -57,6 +57,11 @@ urlpatterns = [
         name="aulas_nova",
     ),
     path(
+        "painel/turmas/<int:pk>/aulas/importar-md/",
+        aulas_views.AulaImportarMdView.as_view(),
+        name="aulas_importar_md",
+    ),
+    path(
         "painel/turmas/<int:pk>/aulas/reordenar/",
         aulas_views.AulaReordenarView.as_view(),
         name="aulas_reordenar",

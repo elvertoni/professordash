@@ -6,61 +6,72 @@
 <div class="max-w-4xl mx-auto" x-data>
 
   <!-- Breadcrumb -->
-  <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6 overflow-x-auto whitespace-nowrap">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-cyan-400 shrink-0">Turmas</a>
-    <span>/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-cyan-400 shrink-0">{{ turma.nome }}</a>
-    <span>/</span>
-    <span class="text-zinc-100 font-medium">Aulas</span>
+  <nav class="flex items-center gap-2 text-[12px] text-white/30 mb-6 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-white/60 shrink-0 transition-colors">Turmas</a>
+    <span class="text-white/15">/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-white/60 shrink-0 transition-colors">{{ turma.nome }}</a>
+    <span class="text-white/15">/</span>
+    <span class="text-white/60 font-medium">Aulas</span>
   </nav>
 
   <!-- Cabeçalho -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
     <div>
-      <h1 class="text-xl sm:text-2xl font-bold text-zinc-100">Aulas</h1>
-      <p class="text-sm text-zinc-400 mt-1">{{ turma.nome }}</p>
+      <h1 class="text-xl font-bold text-white/90">Aulas</h1>
+      <p class="text-[13px] text-white/35 mt-0.5">{{ turma.nome }}</p>
     </div>
-    <a href="{% url 'turmas:aulas_nova' pk=turma.pk %}"
-       class="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shrink-0">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-      </svg>
-      Nova aula
-    </a>
+    <div class="flex items-center gap-2 shrink-0">
+      <a href="{% url 'turmas:aulas_importar_md' pk=turma.pk %}"
+         class="inline-flex items-center gap-2 bg-white/[0.05] hover:bg-white/[0.09] border border-white/[0.08] hover:border-white/[0.14] text-white/50 hover:text-white/80 text-[13px] font-medium px-3.5 py-2 rounded-xl transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+        Importar .md
+      </a>
+      <a href="{% url 'turmas:aulas_nova' pk=turma.pk %}"
+         class="inline-flex items-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.1] hover:border-white/[0.18] text-white/80 hover:text-white text-[13px] font-medium px-3.5 py-2 rounded-xl transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nova aula
+      </a>
+    </div>
   </div>
 
-  <!-- Lista de aulas (sortable via HTMX) -->
+  <!-- Lista de aulas -->
   {% if aulas %}
     <div id="aulas-sortable"
-         class="space-y-2"
+         class="space-y-1.5"
          hx-post="{% url 'turmas:aulas_reordenar' pk=turma.pk %}"
          hx-trigger="end"
          hx-swap="none"
          hx-include="[name='ids[]']">
       {% for aula in aulas %}
-        <div class="aula-item bg-zinc-900 rounded-lg border border-zinc-700 px-4 py-3 flex items-center gap-3 cursor-grab hover:border-cyan-600 transition-colors group"
+        <div class="aula-item bg-[#111] rounded-xl border border-white/[0.07] hover:border-white/[0.12] px-4 py-3 flex items-center gap-3 transition-all duration-150 group"
              data-id="{{ aula.pk }}">
+
           <!-- Handle de arrasto -->
-          <div class="shrink-0 text-zinc-600 group-hover:text-zinc-500 cursor-grab">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <div class="shrink-0 text-white/15 group-hover:text-white/30 cursor-grab transition-colors">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z"/>
             </svg>
           </div>
 
           <!-- Número -->
-          <span class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold shrink-0
-                       {% if aula.realizada %}bg-emerald-500/10 text-emerald-300 border border-emerald-500/20{% else %}bg-zinc-800 text-zinc-300 border border-zinc-700{% endif %}">
+          <span class="w-7 h-7 flex items-center justify-center rounded-lg text-[11px] font-bold shrink-0 border
+                       {% if aula.realizada %}bg-emerald-500/10 text-emerald-300 border-emerald-500/20{% else %}bg-white/[0.04] text-white/40 border-white/[0.07]{% endif %}">
             {{ aula.numero }}
           </span>
 
           <!-- Título e data -->
           <div class="flex-1 min-w-0">
             <a href="{% url 'turmas:aulas_detalhe' pk=turma.pk aula_pk=aula.pk %}"
-               class="text-sm font-medium text-zinc-100 hover:text-cyan-400 block truncate">
+               class="text-[13px] font-medium text-white/80 hover:text-white block truncate transition-colors">
               {{ aula.titulo }}
             </a>
             {% if aula.data %}
-              <p class="text-xs text-zinc-500">{{ aula.data|date:"d/m/Y" }}</p>
+              <p class="text-[11px] text-white/30">{{ aula.data|date:"d/m/Y" }}</p>
             {% endif %}
           </div>
 
@@ -69,21 +80,20 @@
                   hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                   hx-swap="none"
                   hx-on::after-request="htmx.trigger(document.body, 'refresh-page')"
-                  class="shrink-0 text-xs font-medium px-3 py-2 rounded-lg border transition-colors
-                         {% if aula.realizada %}border-emerald-500/20 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20{% else %}border-zinc-700 text-zinc-300 hover:bg-zinc-800{% endif %}">
+                  class="shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-lg border transition-colors
+                         {% if aula.realizada %}border-emerald-500/20 bg-emerald-500/8 text-emerald-400 hover:bg-emerald-500/15{% else %}border-white/[0.07] text-white/35 hover:bg-white/[0.05] hover:text-white/60{% endif %}">
             {% if aula.realizada %}Realizada{% else %}Pendente{% endif %}
           </button>
 
           <!-- Ações -->
-          <div class="flex items-center gap-1 shrink-0">
+          <div class="flex items-center gap-0.5 shrink-0">
             <a href="{% url 'turmas:aulas_editar' pk=turma.pk aula_pk=aula.pk %}"
-               class="p-2 text-zinc-500 hover:text-cyan-400 hover:bg-cyan-950 rounded-lg transition-colors">
+               class="p-2 text-white/25 hover:text-white/70 hover:bg-white/[0.05] rounded-lg transition-colors">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
               </svg>
             </a>
-            {# Formulário oculto para exclusão via modal #}
             <form id="form-excluir-aula-{{ aula.pk }}"
                   method="post"
                   action="{% url 'turmas:aulas_excluir' pk=turma.pk aula_pk=aula.pk %}"
@@ -97,7 +107,7 @@
                       confirmLabel: 'Excluir',
                       formId: 'form-excluir-aula-{{ aula.pk }}'
                     })"
-                    class="p-2 text-zinc-500 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition-colors"
+                    class="p-2 text-white/25 hover:text-rose-400 hover:bg-rose-500/8 rounded-lg transition-colors"
                     title="Excluir aula">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -106,7 +116,6 @@
             </button>
           </div>
 
-          <!-- Input hidden para sortable -->
           <input type="hidden" name="ids[]" value="{{ aula.pk }}">
         </div>
       {% endfor %}
@@ -118,13 +127,11 @@
 
 </div>
 
-{# Modal de confirmação global #}
 {% include "components/_modal_confirm.html" %}
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Drag-and-drop simples usando a API nativa HTML5
 (function() {
   const list = document.getElementById('aulas-sortable');
   if (!list) return;
@@ -133,7 +140,7 @@
 
   list.addEventListener('dragstart', function(e) {
     dragging = e.target.closest('.aula-item');
-    if (dragging) dragging.style.opacity = '0.5';
+    if (dragging) dragging.style.opacity = '0.4';
   });
 
   list.addEventListener('dragend', function(e) {
@@ -154,7 +161,6 @@
       } else {
         list.insertBefore(dragging, target.nextSibling);
       }
-      // Atualizar inputs hidden na ordem atual
       updateOrderInputs();
     }
   });
@@ -167,12 +173,10 @@
     });
   }
 
-  // Habilitar draggable em cada item
   list.querySelectorAll('.aula-item').forEach(function(item) {
     item.setAttribute('draggable', 'true');
   });
 
-  // Enviar nova ordem via fetch ao soltar
   list.addEventListener('dragend', function() {
     const ids = Array.from(list.querySelectorAll('.aula-item')).map(el => el.dataset.id);
     fetch('{% url "turmas:aulas_reordenar" pk=turma.pk %}', {
