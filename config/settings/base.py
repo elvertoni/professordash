@@ -33,7 +33,6 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "markdownx",
-    "markdownify",
     "import_export",
     "whitenoise.runserver_nostatic",
 ]
@@ -179,21 +178,6 @@ MARKDOWNX_MARKDOWN_EXTENSIONS = [
     'markdown.extensions.toc',
     'markdown.extensions.nl2br',
 ]
-
-# --- Markdownify ---
-
-MARKDOWNIFY = {
-    "default": {
-        "WHITELIST_TAGS": [
-            "a", "abbr", "acronym", "b", "blockquote", "br", "code",
-            "em", "h1", "h2", "h3", "h4", "h5", "h6", "hr",
-            "i", "li", "ol", "p", "pre", "strong", "table",
-            "tbody", "td", "th", "thead", "tr", "ul",
-        ],
-        "WHITELIST_ATTRS": ["href", "src", "alt", "class", "id"],
-        "MARKDOWN_EXTENSIONS": ["fenced_code", "tables", "nl2br"],
-    }
-}
 
 # --- Misc ---
 
