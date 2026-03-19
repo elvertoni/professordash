@@ -103,27 +103,27 @@
 
             {% if atividade.tipo_entrega == 'arquivo' %}
               <div x-show="tipo_entrega === 'arquivo'">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Selecione o arquivo para envio</label>
-                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-cyan-500 hover:bg-cyan-50 transition-colors relative"
+                <label class="block text-sm font-medium text-zinc-400 mb-2">Selecione o arquivo para envio</label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-zinc-600 border-dashed rounded-lg hover:border-cyan-500 hover:bg-cyan-900/10 transition-colors relative"
                      x-data="{ dragging: false }"
                      @dragover.prevent="dragging = true"
                      @dragleave.prevent="dragging = false"
                      @drop.prevent="dragging = false; const files = $event.dataTransfer.files; if(files.length > 0) { $refs.fileInput.files = files; arquivo_nome = files[0].name }"
                      :class="{'border-cyan-500 bg-cyan-50 ring-2 ring-cyan-100': dragging}">
                   <div class="space-y-1 text-center">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                    <svg class="mx-auto h-12 w-12 text-zinc-500" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                       <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-                    <div class="flex text-sm text-gray-600 justify-center">
+                    <div class="flex text-sm text-zinc-400 justify-center">
                       <label for="{{ form.arquivo.id_for_label }}" class="relative cursor-pointer rounded-md font-medium text-cyan-700 hover:text-cyan-800 focus-within:outline-none z-10">
                         <span>Fazer upload de arquivo</span>
                         <input id="{{ form.arquivo.id_for_label }}" name="{{ form.arquivo.html_name }}" type="file" class="sr-only" x-ref="fileInput" @change="arquivo_nome = $event.target.files[0].name" {% if form.arquivo.field.required %}required{% endif %}>
                       </label>
                       <p class="pl-1">ou arraste e solte</p>
                     </div>
-                    <p class="text-xs text-gray-500">PDF, DOCX, ZIP, JPG, PNG até 10MB</p>
+                    <p class="text-xs text-zinc-500">PDF, DOCX, ZIP, JPG, PNG até 10MB</p>
                     
-                    <div x-show="arquivo_nome" class="mt-4 p-2 bg-cyan-50 text-cyan-800 border border-cyan-200 rounded text-sm font-medium flex items-center justify-center gap-2" style="display: none;">
+                    <div x-show="arquivo_nome" class="mt-4 p-2 bg-cyan-900/20 text-cyan-300 border border-cyan-700/40 rounded text-sm font-medium flex items-center justify-center gap-2" style="display: none;">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                       <span x-text="arquivo_nome"></span>
                     </div>
@@ -137,7 +137,7 @@
 
             {% if atividade.tipo_entrega == 'texto' %}
               <div x-show="tipo_entrega === 'texto'">
-                <label for="{{ form.texto.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Resposta / Texto</label>
+                <label for="{{ form.texto.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Resposta / Texto</label>
                 {{ form.texto }}
                 {% if form.texto.errors %}<p class="mt-1 text-sm text-red-600">{{ form.texto.errors.0 }}</p>{% endif %}
               </div>
@@ -145,15 +145,15 @@
 
             {% if atividade.tipo_entrega == 'link' %}
               <div x-show="tipo_entrega === 'link'">
-                <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">URL (Link)</label>
+                <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">URL (Link)</label>
                 {{ form.url }}
                 {% if form.url.errors %}<p class="mt-1 text-sm text-red-600">{{ form.url.errors.0 }}</p>{% endif %}
-                <p class="mt-1 text-xs text-gray-500">Cole aqui um link para o Google Drive, GitHub, Replit, etc.</p>
+                <p class="mt-1 text-xs text-zinc-500">Cole aqui um link para o Google Drive, GitHub, Replit, etc.</p>
               </div>
             {% endif %}
           </div>
 
-          <div class="pt-4 border-t border-gray-200">
+          <div class="pt-4 border-t border-zinc-700">
             <button type="submit" class="btn-primary w-full sm:w-auto">
               {% if form.instance.pk and form.instance.status != 'pendente' %}
                 Substituir Entrega

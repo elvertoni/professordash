@@ -36,7 +36,7 @@
 
       <!-- Título -->
       <div>
-        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.titulo.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.titulo.id_for_label }}">
           Título <span class="text-red-500">*</span>
         </label>
         {{ form.titulo }}
@@ -48,7 +48,7 @@
       <!-- Número e Data (grid) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.numero.id_for_label }}">
+          <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.numero.id_for_label }}">
             Número <span class="text-red-500">*</span>
           </label>
           {{ form.numero }}
@@ -57,7 +57,7 @@
           {% endif %}
         </div>
         <div>
-          <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.data.id_for_label }}">
+          <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.data.id_for_label }}">
             Data
           </label>
           {{ form.data }}
@@ -69,7 +69,7 @@
 
       <!-- Ordem -->
       <div class="max-w-xs">
-        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.ordem.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.ordem.id_for_label }}">
           Ordem de exibição
         </label>
         {{ form.ordem }}
@@ -80,7 +80,7 @@
 
       <!-- Conteúdo Markdown -->
       <div>
-        <label class="block text-sm font-medium text-zinc-300 mb-1">
+        <label class="block text-sm font-medium text-zinc-400 mb-1">
           Conteúdo (Markdown)
         </label>
         {{ form.conteudo }}

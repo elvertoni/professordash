@@ -37,7 +37,7 @@
 
       <!-- Título -->
       <div>
-        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.titulo.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.titulo.id_for_label }}">
           Título <span class="text-red-500">*</span>
         </label>
         {{ form.titulo }}
@@ -48,7 +48,7 @@
 
       <!-- Aula -->
       <div>
-        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.aula.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.aula.id_for_label }}">
           Aula Associada (opcional)
         </label>
         {{ form.aula }}
@@ -59,7 +59,7 @@
 
       <!-- Tipo (Alpine binding and visibility controller) -->
       <div>
-        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.tipo.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.tipo.id_for_label }}">
           Tipo de Material <span class="text-red-500">*</span>
         </label>
         <select name="{{ form.tipo.html_name }}"
@@ -77,7 +77,7 @@
 
       <!-- Arquivo (conditional) -->
       <div x-show="['pdf', 'zip', 'arquivo'].includes(tipo)" x-cloak>
-        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.arquivo.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.arquivo.id_for_label }}">
           Arquivo <span class="text-red-500">*</span>
         </label>
         {{ form.arquivo }}
@@ -89,7 +89,7 @@
 
       <!-- URL Externa (conditional) -->
       <div x-show="tipo === 'link'" x-cloak>
-        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.url_externa.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.url_externa.id_for_label }}">
           Link (URL) <span class="text-red-500">*</span>
         </label>
         {{ form.url_externa }}
@@ -100,7 +100,7 @@
 
       <!-- Conteúdo MD (conditional) -->
       <div x-show="tipo === 'markdown'" x-cloak>
-        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.conteudo_md.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.conteudo_md.id_for_label }}">
           Conteúdo Markdown <span class="text-red-500">*</span>
         </label>
         {{ form.conteudo_md }}
@@ -111,7 +111,7 @@
 
       <!-- Descrição (opcional) -->
       <div>
-        <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.descricao.id_for_label }}">
+        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.descricao.id_for_label }}">
           Descrição / Instruções
         </label>
         {{ form.descricao }}
@@ -123,7 +123,7 @@
       <!-- Grids para Visibilidade e Ordem -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.visibilidade.id_for_label }}">
+          <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.visibilidade.id_for_label }}">
             Visibilidade
           </label>
           <select name="{{ form.visibilidade.html_name }}"
@@ -138,7 +138,7 @@
           {% endif %}
         </div>
         <div>
-          <label class="block text-sm font-medium text-zinc-300 mb-1" for="{{ form.ordem.id_for_label }}">
+          <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.ordem.id_for_label }}">
             Ordem de exibição
           </label>
           {{ form.ordem }}

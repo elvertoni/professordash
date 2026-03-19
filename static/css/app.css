@@ -63,6 +63,15 @@ body {
   color: #ffffff;
 }
 
+/* Form labels */
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #a1a1aa;   /* zinc-400 — claramente distinto do texto dos inputs (zinc-100) */
+  margin-bottom: 0.25rem;
+}
+
 /* Form inputs — dark theme */
 .input-field {
   display: block;

@@ -27,39 +27,39 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="md:col-span-2">
-            <label for="{{ form.titulo.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Título da Atividade *</label>
+            <label for="{{ form.titulo.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Título da Atividade *</label>
             {{ form.titulo }}
             {% if form.titulo.errors %}<p class="mt-1 text-sm text-red-400">{{ form.titulo.errors.0 }}</p>{% endif %}
           </div>
 
           <div>
-            <label for="{{ form.tipo_entrega.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Tipo de Entrega *</label>
+            <label for="{{ form.tipo_entrega.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Tipo de Entrega *</label>
             {{ form.tipo_entrega }}
             {% if form.tipo_entrega.errors %}<p class="mt-1 text-sm text-red-400">{{ form.tipo_entrega.errors.0 }}</p>{% endif %}
           </div>
 
           <div>
-            <label for="{{ form.prazo.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Prazo de Entrega *</label>
+            <label for="{{ form.prazo.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Prazo de Entrega *</label>
             {{ form.prazo }}
             {% if form.prazo.errors %}<p class="mt-1 text-sm text-red-400">{{ form.prazo.errors.0 }}</p>{% endif %}
             <p class="mt-1 text-xs text-zinc-500">Data e hora limite para envio.</p>
           </div>
 
           <div>
-            <label for="{{ form.valor_pontos.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Valor em Pontos *</label>
+            <label for="{{ form.valor_pontos.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Valor em Pontos *</label>
             {{ form.valor_pontos }}
             {% if form.valor_pontos.errors %}<p class="mt-1 text-sm text-red-400">{{ form.valor_pontos.errors.0 }}</p>{% endif %}
           </div>
 
           <div>
-            <label for="{{ form.aula.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Vincular a uma Aula (Opcional)</label>
+            <label for="{{ form.aula.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Vincular a uma Aula (Opcional)</label>
             {{ form.aula }}
             {% if form.aula.errors %}<p class="mt-1 text-sm text-red-400">{{ form.aula.errors.0 }}</p>{% endif %}
           </div>
         </div>
 
         <div class="md:col-span-2">
-          <label for="{{ form.descricao.id_for_label }}" class="block text-sm font-medium text-zinc-300 mb-1">Descrição e Instruções *</label>
+          <label for="{{ form.descricao.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Descrição e Instruções *</label>
           {{ form.descricao }}
           {{ form.descricao.media }}
           {% if form.descricao.errors %}<p class="mt-1 text-sm text-red-400">{{ form.descricao.errors.0 }}</p>{% endif %}
@@ -71,14 +71,14 @@
 
           <div class="flex items-center">
             {{ form.permitir_reenvio }}
-            <label for="{{ form.permitir_reenvio.id_for_label }}" class="ml-2 block text-sm text-zinc-300">
+            <label for="{{ form.permitir_reenvio.id_for_label }}" class="ml-2 block text-sm text-zinc-400">
               Permitir reenvio de arquivos (até o limite de prazo)?
             </label>
           </div>
 
           <div class="flex items-center">
             {{ form.publicada }}
-            <label for="{{ form.publicada.id_for_label }}" class="ml-2 block text-sm text-zinc-300">
+            <label for="{{ form.publicada.id_for_label }}" class="ml-2 block text-sm text-zinc-400">
               Publicar atividade agora (ficará visível aos alunos)?
             </label>
           </div>

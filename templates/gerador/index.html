@@ -60,7 +60,7 @@
 
         <!-- PPT da Aula -->
         <div x-data="{ nome: '' }">
-          <label class="text-sm font-medium text-zinc-300 mb-1.5 block">
+          <label class="text-sm font-medium text-zinc-400 mb-1.5 block">
             PPT da aula
             <span class="text-xs text-red-400 ml-1">obrigatório</span>
           </label>
@@ -79,7 +79,7 @@
 
         <!-- Atividade -->
         <div x-data="{ nome: '' }">
-          <label class="text-sm font-medium text-zinc-300 mb-1.5 block">
+          <label class="text-sm font-medium text-zinc-400 mb-1.5 block">
             Atividade
             <span class="text-xs text-red-400 ml-1">obrigatório</span>
           </label>
@@ -98,7 +98,7 @@
 
         <!-- Prática -->
         <div x-data="{ nome: '' }">
-          <label class="text-sm font-medium text-zinc-300 mb-1.5 block">
+          <label class="text-sm font-medium text-zinc-400 mb-1.5 block">
             Prática
             <span class="text-xs text-zinc-500 ml-1">opcional</span>
           </label>
@@ -125,7 +125,7 @@
 
         <!-- Multi-file dropzone -->
         <div x-data="{ nomes: [] }">
-          <label class="text-sm font-medium text-zinc-300 mb-1.5 block">Arquivos</label>
+          <label class="text-sm font-medium text-zinc-400 mb-1.5 block">Arquivos</label>
           <label class="flex flex-col items-center justify-center w-full min-h-28 rounded-lg border-2 border-dashed cursor-pointer transition-colors"
                  :class="nomes.length ? 'border-cyan-600 bg-cyan-500/5' : 'border-zinc-700 bg-zinc-900/50 hover:border-zinc-500'">
             <div class="flex flex-col items-center gap-2 text-center px-4 py-3 w-full">
@@ -155,13 +155,13 @@
 
         <!-- URL -->
         <div>
-          <label class="text-sm font-medium text-zinc-300 mb-1.5 block">URL de referência</label>
+          <label class="text-sm font-medium text-zinc-400 mb-1.5 block">URL de referência</label>
           <input type="url" name="urls" class="input-field w-full" placeholder="https://...">
         </div>
 
         <!-- Texto livre -->
         <div>
-          <label class="text-sm font-medium text-zinc-300 mb-1.5 block">Texto colado</label>
+          <label class="text-sm font-medium text-zinc-400 mb-1.5 block">Texto colado</label>
           <textarea name="texto_livre" class="input-field w-full" rows="4"
                     placeholder="Cole texto diretamente..."></textarea>
         </div>
@@ -175,7 +175,7 @@
 
       <!-- Disciplina / Turma -->
       <div>
-        <label class="text-sm font-medium text-zinc-300 mb-1.5 block">Disciplina / Turma</label>
+        <label class="text-sm font-medium text-zinc-400 mb-1.5 block">Disciplina / Turma</label>
         <select name="turma" class="input-field w-full">
           <option value="">— Selecione —</option>
           {% for t in turmas %}
@@ -186,13 +186,13 @@
 
       <!-- Número de aulas (hidden in RCO mode) -->
       <div x-show="modo === 'livre'" x-transition>
-        <label class="text-sm font-medium text-zinc-300 mb-1.5 block">Número de aulas</label>
+        <label class="text-sm font-medium text-zinc-400 mb-1.5 block">Número de aulas</label>
         <input type="number" name="num_aulas" class="input-field w-full" value="1" min="1" max="20">
       </div>
 
       <!-- Nível -->
       <div>
-        <label class="text-sm font-medium text-zinc-300 mb-1.5 block">Nível</label>
+        <label class="text-sm font-medium text-zinc-400 mb-1.5 block">Nível</label>
         <div class="flex gap-2 flex-wrap">
 
           <label class="flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors"
@@ -218,7 +218,7 @@
 
       <!-- Provider -->
       <div>
-        <label class="text-sm font-medium text-zinc-300 mb-1.5 block">Provedor de IA</label>
+        <label class="text-sm font-medium text-zinc-400 mb-1.5 block">Provedor de IA</label>
         <div class="flex gap-2 flex-wrap">
 
           <label class="flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors"
@@ -244,7 +244,7 @@
 
       <!-- Instruções adicionais -->
       <div>
-        <label class="text-sm font-medium text-zinc-300 mb-1.5 block">Instruções adicionais</label>
+        <label class="text-sm font-medium text-zinc-400 mb-1.5 block">Instruções adicionais</label>
         <textarea name="instrucoes" class="input-field w-full" rows="3"
                   placeholder="Ex: Adicione mais exemplos de código HTML."></textarea>
       </div>
