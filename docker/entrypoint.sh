@@ -74,10 +74,13 @@ try:
         user.set_password(password)
         user.is_superuser = True
         user.is_staff = True
+        user.is_active = True
         user.save()
         print(f'Superuser {username} atualizado com sucesso.')
     else:
-        User.objects.create_superuser(username=username, email=email, password=password)
+        u = User.objects.create_superuser(username=username, email=email, password=password)
+        u.is_active = True
+        u.save()
         print(f'Superuser {username} criado.')
 except Exception as e:
     print(f'Erro ao configurar superuser: {e}')
