@@ -43,7 +43,7 @@ class AulaListView(ProfessorRequiredMixin, AulaMixin, ListView):
 class AulaDetailView(ProfessorRequiredMixin, AulaMixin, DetailView):
     """Exibe os detalhes de uma aula com conteúdo Markdown renderizado."""
 
-    template_name = "aulas/detalhe.html"
+    template_name = "aulas/aula_detalhe.html"
     context_object_name = "aula"
 
     def get_object(self):
@@ -209,7 +209,7 @@ class AulaListaPublicaView(TurmaPublicaMixin, ListView):
 class AulaDetalhePublicoView(TurmaPublicaMixin, DetailView):
     """Detalhe público de uma aula com conteúdo Markdown renderizado."""
 
-    template_name = "aulas/detalhe_publico.html"
+    template_name = "aulas/aula_detalhe.html"
     context_object_name = "aula"
 
     def get_object(self):
