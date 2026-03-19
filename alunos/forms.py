@@ -28,30 +28,30 @@ class AlunoForm(forms.ModelForm):
         widgets = {
             "nome": forms.TextInput(
                 attrs={
-                    "class": "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                    "class": "input-field",
                     "placeholder": "Ex: João da Silva",
                 }
             ),
             "email": forms.EmailInput(
                 attrs={
-                    "class": "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                    "class": "input-field",
                     "placeholder": "Ex: joao@escola.pr.gov.br",
                 }
             ),
             "matricula": forms.TextInput(
                 attrs={
-                    "class": "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                    "class": "input-field",
                     "placeholder": "CGM ou RA (opcional)",
                 }
             ),
             "avatar": forms.FileInput(
                 attrs={
-                    "class": "w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100",
+                    "class": "w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-zinc-700 file:text-zinc-200 hover:file:bg-zinc-600",
                 }
             ),
             "ativo": forms.CheckboxInput(
                 attrs={
-                    "class": "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded",
+                    "class": "h-4 w-4 rounded border-zinc-600 bg-zinc-800 text-cyan-500 focus:ring-cyan-500",
                 }
             ),
         }

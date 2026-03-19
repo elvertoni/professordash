@@ -35,11 +35,7 @@ class MaterialForm(forms.ModelForm):
             if field_name != "turma":
                 # Adiciona base styles para form controls (se não for checkbox/radio)
                 if not isinstance(field.widget, (forms.CheckboxInput, forms.RadioSelect)):
-                    field.widget.attrs.update(
-                        {
-                            "class": "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                        }
-                    )
+                    field.widget.attrs.update({"class": "input-field"})
 
     def clean_arquivo(self):
         arquivo = self.cleaned_data.get("arquivo")

@@ -28,23 +28,23 @@ class AtividadeForm(forms.ModelForm):
         ]
         widgets = {
             "prazo": forms.DateTimeInput(
-                attrs={"type": "datetime-local", "class": "form-input"}
+                attrs={"type": "datetime-local", "class": "input-field"}
             ),
-            "turma": forms.Select(attrs={"class": "form-select"}),
-            "aula": forms.Select(attrs={"class": "form-select"}),
-            "tipo_entrega": forms.Select(attrs={"class": "form-select"}),
-            "titulo": forms.TextInput(attrs={"class": "form-input"}),
+            "turma": forms.Select(attrs={"class": "input-field"}),
+            "aula": forms.Select(attrs={"class": "input-field"}),
+            "tipo_entrega": forms.Select(attrs={"class": "input-field"}),
+            "titulo": forms.TextInput(attrs={"class": "input-field"}),
             "valor_pontos": forms.NumberInput(
-                attrs={"class": "form-input", "step": "0.1"}
+                attrs={"class": "input-field", "step": "0.1"}
             ),
             "permitir_reenvio": forms.CheckboxInput(
                 attrs={
-                    "class": "rounded border-slate-300 text-brand-600 focus:ring-brand-600"
+                    "class": "h-4 w-4 rounded border-zinc-600 bg-zinc-800 text-cyan-500 focus:ring-cyan-500"
                 }
             ),
             "publicada": forms.CheckboxInput(
                 attrs={
-                    "class": "rounded border-slate-300 text-brand-600 focus:ring-brand-600"
+                    "class": "h-4 w-4 rounded border-zinc-600 bg-zinc-800 text-cyan-500 focus:ring-cyan-500"
                 }
             ),
         }
@@ -121,7 +121,7 @@ class AvaliacaoForm(forms.ModelForm):
         widgets = {
             "nota": forms.NumberInput(
                 attrs={
-                    "class": "form-input px-2 py-1 h-8 text-sm w-20",
+                    "class": "input-field px-2 py-1 h-8 text-sm w-20",
                     "step": "0.1",
                     "min": "0",
                     "max": "100",
@@ -130,7 +130,7 @@ class AvaliacaoForm(forms.ModelForm):
             ),
             "feedback": forms.Textarea(
                 attrs={
-                    "class": "form-input px-2 py-1 text-sm w-full",
+                    "class": "input-field px-2 py-1 text-sm w-full",
                     "rows": 2,
                     "placeholder": "Feedback (opcional)",
                 }
@@ -161,7 +161,7 @@ class ReabrirPrazoForm(forms.ModelForm):
         fields = ["prazo_extendido"]
         widgets = {
             "prazo_extendido": forms.DateTimeInput(
-                attrs={"type": "datetime-local", "class": "form-input"},
+                attrs={"type": "datetime-local", "class": "input-field"},
                 format="%Y-%m-%dT%H:%M",
             ),
         }
