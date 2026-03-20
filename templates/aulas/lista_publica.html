@@ -3,37 +3,86 @@
 {% block title %}Aulas — {{ turma.nome }}{% endblock %}
 
 {% block content %}
-<div class="space-y-4">
+<div class="space-y-6">
 
-  <h2 class="text-lg font-bold text-gray-900">Aulas da turma</h2>
+  <!-- Header com barra de progresso -->
+  <div>
+    <h2 class="text-lg font-bold text-gray-900">Aulas da turma</h2>
+    {% if total_aulas > 0 %}
+    <div class="mt-3">
+      <div class="flex items-center justify-between text-xs text-gray-500 mb-1.5">
+        <span>{{ aulas_realizadas }} de {{ total_aulas }} aula{{ total_aulas|pluralize }} concluida{{ total_aulas|pluralize }}</span>
+        <span class="font-medium text-gray-700">{% widthratio aulas_realizadas total_aulas 100 %}%</span>
+      </div>
+      <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div class="h-full bg-emerald-500 rounded-full transition-all duration-500"
+             style="width: {% widthratio aulas_realizadas total_aulas 100 %}%"></div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
 
   {% if aulas %}
-    <div class="space-y-2">
+    <div class="space-y-2.5">
       {% for aula in aulas %}
+        {% if aula.pk == proxima_aula_pk %}
+        <!-- Proxima aula destacada -->
         <a href="{% url 'turmas:portal_aulas_detalhe' token=turma.token_publico aula_pk=aula.pk %}"
-           class="flex items-center gap-3 bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-blue-300 hover:shadow-sm transition-all">
-          <span class="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold shrink-0
-                       {% if aula.realizada %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-400{% endif %}">
-            {{ aula.numero }}
-          </span>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-gray-900 truncate">{{ aula.titulo }}</p>
-            {% if aula.data %}
-              <p class="text-xs text-gray-400">{{ aula.data|date:"d/m/Y" }}</p>
-            {% endif %}
+           class="group flex items-stretch bg-white rounded-xl border-2 border-emerald-300 shadow-sm hover:shadow-md transition-all overflow-hidden">
+          <div class="w-1.5 bg-emerald-500 shrink-0"></div>
+          <div class="flex items-center gap-3 px-4 py-3.5 flex-1 min-w-0">
+            <span class="w-9 h-9 flex items-center justify-center rounded-lg text-xs font-bold shrink-0 bg-emerald-50 text-emerald-700 border border-emerald-200">
+              {{ aula.numero }}
+            </span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <p class="text-sm font-semibold text-gray-900 truncate">{{ aula.titulo }}</p>
+                <span class="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Proxima</span>
+              </div>
+              {% if aula.data %}
+                <p class="text-xs text-gray-400 mt-0.5">{{ aula.data|date:"d/m/Y" }}</p>
+              {% endif %}
+            </div>
+            <svg class="w-4 h-4 text-emerald-400 shrink-0 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
           </div>
-          {% if aula.realizada %}
-            <span class="text-xs text-green-600 font-medium shrink-0">Realizada</span>
-          {% endif %}
-          <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
         </a>
+        {% else %}
+        <!-- Aula normal -->
+        <a href="{% url 'turmas:portal_aulas_detalhe' token=turma.token_publico aula_pk=aula.pk %}"
+           class="group flex items-stretch bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all overflow-hidden">
+          <div class="w-1.5 shrink-0 {% if aula.realizada %}bg-emerald-500{% else %}bg-gray-200{% endif %}"></div>
+          <div class="flex items-center gap-3 px-4 py-3 flex-1 min-w-0">
+            <span class="w-9 h-9 flex items-center justify-center rounded-lg text-xs font-bold shrink-0
+                         {% if aula.realizada %}bg-emerald-50 text-emerald-700 border border-emerald-200{% else %}bg-gray-50 text-gray-400 border border-gray-200{% endif %}">
+              {{ aula.numero }}
+            </span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900 truncate">{{ aula.titulo }}</p>
+              {% if aula.data %}
+                <p class="text-xs text-gray-400 mt-0.5">{{ aula.data|date:"d/m/Y" }}</p>
+              {% endif %}
+            </div>
+            {% if aula.realizada %}
+              <span class="shrink-0 flex items-center gap-1 text-xs text-emerald-600 font-medium">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                Realizada
+              </span>
+            {% endif %}
+            <svg class="w-4 h-4 text-gray-300 shrink-0 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        {% endif %}
       {% endfor %}
     </div>
   {% else %}
     <div class="bg-white rounded-xl border border-dashed border-gray-300 p-8 text-center">
-      <p class="text-sm text-gray-400">Nenhuma aula disponível ainda.</p>
+      <p class="text-sm text-gray-400">Nenhuma aula disponivel ainda.</p>
     </div>
   {% endif %}
 

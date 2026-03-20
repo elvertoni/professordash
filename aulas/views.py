@@ -40,7 +40,35 @@ class AulaListView(ProfessorRequiredMixin, AulaMixin, ListView):
         return ctx
 
 
-class AulaDetailView(ProfessorRequiredMixin, AulaMixin, DetailView):
+class AulaNavMixin:
+    """Adiciona navegação prev/next e links de volta ao contexto."""
+
+    def get_nav_context(self, aula):
+        aulas = list(
+            Aula.objects.filter(turma=self.turma)
+            .order_by("ordem", "numero")
+            .values_list("pk", "titulo", "numero")
+        )
+        idx = next((i for i, a in enumerate(aulas) if a[0] == aula.pk), None)
+        ctx = {}
+
+        if idx is not None and idx > 0:
+            prev = aulas[idx - 1]
+            ctx["aula_anterior"] = {"titulo": prev[1], "numero": prev[2]}
+            ctx["prev_url"] = self._build_aula_url(prev[0])
+
+        if idx is not None and idx < len(aulas) - 1:
+            nxt = aulas[idx + 1]
+            ctx["aula_proxima"] = {"titulo": nxt[1], "numero": nxt[2]}
+            ctx["next_url"] = self._build_aula_url(nxt[0])
+
+        return ctx
+
+    def _build_aula_url(self, aula_pk):
+        raise NotImplementedError
+
+
+class AulaDetailView(ProfessorRequiredMixin, AulaMixin, AulaNavMixin, DetailView):
     """Exibe os detalhes de uma aula com conteúdo Markdown renderizado."""
 
     template_name = "aulas/aula_detalhe.html"
@@ -49,9 +77,17 @@ class AulaDetailView(ProfessorRequiredMixin, AulaMixin, DetailView):
     def get_object(self):
         return get_object_or_404(Aula, pk=self.kwargs["aula_pk"], turma=self.turma)
 
+    def _build_aula_url(self, aula_pk):
+        from django.urls import reverse
+
+        return reverse("turmas:aulas_detalhe", kwargs={"pk": self.turma.pk, "aula_pk": aula_pk})
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["turma"] = self.turma
+        ctx["back_url"] = reverse_lazy("turmas:aulas_lista", kwargs={"pk": self.turma.pk})
+        ctx["back_label"] = "Aulas"
+        ctx.update(self.get_nav_context(self.object))
         return ctx
 
 
@@ -203,10 +239,15 @@ class AulaListaPublicaView(TurmaPublicaMixin, ListView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["turma"] = self.turma
+        qs = self.get_queryset()
+        ctx["total_aulas"] = qs.count()
+        ctx["aulas_realizadas"] = qs.filter(realizada=True).count()
+        proxima = qs.filter(realizada=False).first()
+        ctx["proxima_aula_pk"] = proxima.pk if proxima else None
         return ctx
 
 
-class AulaDetalhePublicoView(TurmaPublicaMixin, DetailView):
+class AulaDetalhePublicoView(TurmaPublicaMixin, AulaNavMixin, DetailView):
     """Detalhe público de uma aula com conteúdo Markdown renderizado."""
 
     template_name = "aulas/aula_detalhe.html"
@@ -215,7 +256,20 @@ class AulaDetalhePublicoView(TurmaPublicaMixin, DetailView):
     def get_object(self):
         return get_object_or_404(Aula, pk=self.kwargs["aula_pk"], turma=self.turma)
 
+    def _build_aula_url(self, aula_pk):
+        from django.urls import reverse
+
+        return reverse(
+            "turmas:portal_aulas_detalhe",
+            kwargs={"token": self.turma.token_publico, "aula_pk": aula_pk},
+        )
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["turma"] = self.turma
+        ctx["back_url"] = reverse_lazy(
+            "turmas:portal_aulas_lista", kwargs={"token": self.turma.token_publico}
+        )
+        ctx["back_label"] = "Aulas"
+        ctx.update(self.get_nav_context(self.object))
         return ctx
