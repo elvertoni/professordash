@@ -184,8 +184,10 @@ class TestValidarArquivoTiposBloqueados:
             validar_arquivo(arquivo, tipos_permitidos=TIPOS_PERMITIDOS_MATERIAL)
 
         mensagem = str(exc_info.value)
-        # A mensagem menciona o tipo detectado (application/x-dosexec)
-        assert "application/x-dosexec" in mensagem
+        assert (
+            "application/x-dosexec" in mensagem
+            or "application/x-msdownload" in mensagem
+        )
 
     def test_tipo_padrao_usa_lista_material_quando_nao_especificado(self):
         """Quando tipos_permitidos não é passado, deve usar TIPOS_PERMITIDOS_MATERIAL."""
@@ -258,7 +260,7 @@ class TestAuthBootstrap:
         html = response.content.decode()
 
         assert response.status_code == 200
-        assert reverse("google_login") in html
+        assert reverse("google_oauth_start") in html
         assert "Entrar com Google" in html
 
     def test_login_page_nao_quebra_sem_google_configurado(self, client):
@@ -267,3 +269,9 @@ class TestAuthBootstrap:
 
         assert response.status_code == 200
         assert "Entrar com Google" not in html
+
+    def test_google_oauth_start_redireciona_para_login_quando_indisponivel(self, client):
+        response = client.get(reverse("google_oauth_start"))
+
+        assert response.status_code == 302
+        assert response.url == reverse("login")

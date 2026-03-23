@@ -537,9 +537,13 @@ class TestSharedTemplatePartials:
 class TestTurmaEntrarView:
     """Testes para a view de autenticação via Google OAuth."""
 
-    def test_entrar_turma_salva_token_na_sessao_e_redireciona(self, client, turma):
+    def test_entrar_turma_salva_token_na_sessao_e_redireciona(
+        self, client, turma, monkeypatch
+    ):
         """GET em /turma/<token>/entrar/ deve salvar o token na sessão e redirecionar."""
         # Arrange
+        monkeypatch.setenv("GOOGLE_CLIENT_ID", "google-client-id")
+        monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "google-client-secret")
         url = reverse("turmas:entrar", kwargs={"token": turma.token_publico})
         client.raise_request_exception = False
 
@@ -548,11 +552,36 @@ class TestTurmaEntrarView:
 
         # Assert — deve redirecionar para o OAuth (302)
         assert response.status_code == 302
-        assert response.url.startswith(reverse("google_login"))
+        assert response.url.startswith(reverse("google_oauth_start"))
         next_url = parse_qs(urlparse(response.url).query)["next"][0]
         assert next_url == reverse(
             "turmas:portal_minha_area", kwargs={"token": turma.token_publico}
         )
+
+    def test_entrar_turma_preserva_next_relativo(self, client, turma, monkeypatch):
+        monkeypatch.setenv("GOOGLE_CLIENT_ID", "google-client-id")
+        monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "google-client-secret")
+        next_url = reverse(
+            "turmas:portal_minhas_notas", kwargs={"token": turma.token_publico}
+        )
+        url = (
+            reverse("turmas:entrar", kwargs={"token": turma.token_publico})
+            + f"?next={next_url}"
+        )
+
+        response = client.get(url)
+
+        assert response.status_code == 302
+        redirected_next = parse_qs(urlparse(response.url).query)["next"][0]
+        assert redirected_next == next_url
+
+    def test_entrar_turma_sem_google_configurado_volta_ao_portal(self, client, turma):
+        url = reverse("turmas:entrar", kwargs={"token": turma.token_publico})
+
+        response = client.get(url)
+
+        assert response.status_code == 302
+        assert response.url == reverse("turmas:portal", kwargs={"token": turma.token_publico})
 
     def test_entrar_token_invalido_retorna_404(self, client):
         """GET com token inválido deve retornar 404."""
@@ -602,6 +631,9 @@ class TestMinhasNotasView:
 
         # Assert
         assert response.status_code == 302
+        assert response.url.startswith(
+            reverse("turmas:entrar", kwargs={"token": turma.token_publico})
+        )
 
     def test_minhas_notas_token_invalido_retorna_404(self, client):
         """Token inválido em minhas-notas deve retornar 404."""

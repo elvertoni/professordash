@@ -120,7 +120,11 @@ class AlunoDetailView(ProfessorRequiredMixin, AlunoMixin, DetailView):
     context_object_name = "aluno"
 
     def get_object(self):
-        return get_object_or_404(Aluno, pk=self.kwargs["aluno_pk"])
+        return get_object_or_404(
+            Aluno,
+            pk=self.kwargs["aluno_pk"],
+            matriculas__turma=self.turma,
+        )
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -141,7 +145,11 @@ class AlunoUpdateView(ProfessorRequiredMixin, AlunoMixin, UpdateView):
     context_object_name = "aluno"
 
     def get_object(self):
-        return get_object_or_404(Aluno, pk=self.kwargs["aluno_pk"])
+        return get_object_or_404(
+            Aluno,
+            pk=self.kwargs["aluno_pk"],
+            matriculas__turma=self.turma,
+        )
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -196,7 +204,10 @@ class AlunoMoverTurmaView(ProfessorRequiredMixin, AlunoMixin, View):
         nova_turma_pk = request.POST.get("nova_turma_pk")
 
         if nova_turma_pk:
-            nova_turma = get_object_or_404(Turma, pk=nova_turma_pk)
+            turmas_disponiveis = Turma.objects.filter(ativa=True).exclude(pk=self.turma.pk)
+            if hasattr(Turma, "autor"):
+                turmas_disponiveis = turmas_disponiveis.filter(autor=request.user)
+            nova_turma = get_object_or_404(turmas_disponiveis, pk=nova_turma_pk)
             # Verifica se já existe matrícula ativa na nova turma para não dar IntegrityError
             if Matricula.objects.filter(
                 aluno=matricula.aluno, turma=nova_turma

@@ -596,6 +596,9 @@ class TestAcessoEntregarAtividadeView:
 
         # Assert — deve redirecionar para login (302)
         assert response.status_code == 302
+        assert response.url.startswith(
+            reverse("turmas:entrar", kwargs={"token": turma.token_publico})
+        )
 
     def test_usuario_autenticado_sem_matricula_nao_deve_explodir(
         self, client, turma, atividade_aberta, aluno_sem_matricula
@@ -670,3 +673,19 @@ class TestAcessoEntregarAtividadeView:
         )
 
         assert form.is_valid()
+
+    def test_reabrir_prazo_exige_aluno_matriculado_na_turma(
+        self, client_professor, turma, atividade_aberta, aluno_sem_matricula
+    ):
+        url = reverse(
+            "turmas:atividades_reabrir_prazo",
+            kwargs={
+                "pk": turma.pk,
+                "atividade_pk": atividade_aberta.pk,
+                "aluno_pk": aluno_sem_matricula.pk,
+            },
+        )
+
+        response = client_professor.get(url)
+
+        assert response.status_code == 404

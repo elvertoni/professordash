@@ -189,7 +189,17 @@ class AulaImportarMdView(ProfessorRequiredMixin, AulaMixin, View):
         else:
             titulo = arquivo.name.removesuffix(".md")
 
-        aula = Aula.objects.create(turma=self.turma, titulo=titulo, conteudo=conteudo)
+        proximo_numero = (
+            self.turma.aulas.order_by("-numero").values_list("numero", flat=True).first()
+            or 0
+        ) + 1
+        aula = Aula.objects.create(
+            turma=self.turma,
+            titulo=titulo,
+            conteudo=conteudo,
+            numero=proximo_numero,
+            ordem=proximo_numero,
+        )
         logger.info(f"Aula importada de .md: '{titulo}' na turma pk={self.turma.pk}")
         messages.success(request, f'Aula "{titulo}" importada com sucesso.')
         return redirect("turmas:aulas_editar", pk=self.turma.pk, aula_pk=aula.pk)
@@ -234,7 +244,9 @@ class AulaListaPublicaView(TurmaPublicaMixin, ListView):
     context_object_name = "aulas"
 
     def get_queryset(self):
-        return Aula.objects.filter(turma=self.turma).order_by("ordem", "numero")
+        return Aula.objects.filter(turma=self.turma, realizada=True).order_by(
+            "ordem", "numero"
+        )
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -254,7 +266,12 @@ class AulaDetalhePublicoView(TurmaPublicaMixin, AulaNavMixin, DetailView):
     context_object_name = "aula"
 
     def get_object(self):
-        return get_object_or_404(Aula, pk=self.kwargs["aula_pk"], turma=self.turma)
+        return get_object_or_404(
+            Aula,
+            pk=self.kwargs["aula_pk"],
+            turma=self.turma,
+            realizada=True,
+        )
 
     def _build_aula_url(self, aula_pk):
         from django.urls import reverse

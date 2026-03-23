@@ -5,8 +5,8 @@
         file_server
     }
 
-    # Uploads: servidos diretamente pelo Caddy
-    handle /media/* {
+    # Avatares públicos podem ser servidos diretamente
+    handle /media/avatares/* {
         root * /srv/professordash
         file_server
     }

@@ -1,4 +1,4 @@
-import magic
+import mimetypes
 from django.core.exceptions import ValidationError
 
 # 50 MB
@@ -30,6 +30,24 @@ TIPOS_PERMITIDOS_ENTREGA = TIPOS_PERMITIDOS_MATERIAL + [
 ]
 
 
+def _sniff_mime_type(arquivo):
+    try:
+        import magic
+    except ImportError:
+        content_type = getattr(arquivo, "content_type", "")
+        guessed_type = mimetypes.guess_type(getattr(arquivo, "name", ""))[0]
+        fallback = (
+            content_type
+            if content_type and content_type != "application/octet-stream"
+            else guessed_type
+        )
+        return fallback or "application/octet-stream"
+
+    mime = magic.from_buffer(arquivo.read(2048), mime=True)
+    arquivo.seek(0)
+    return mime
+
+
 def validar_arquivo(arquivo, tipos_permitidos=None):
     """
     Valida o MIME type real (via python-magic) e o tamanho do arquivo.
@@ -48,8 +66,7 @@ def validar_arquivo(arquivo, tipos_permitidos=None):
             f"{MAX_UPLOAD_SIZE // (1024 * 1024)} MB."
         )
 
-    mime = magic.from_buffer(arquivo.read(2048), mime=True)
-    arquivo.seek(0)
+    mime = _sniff_mime_type(arquivo)
 
     if mime not in tipos_permitidos:
         raise ValidationError(

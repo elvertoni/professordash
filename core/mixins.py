@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 
 
 class ProfessorRequiredMixin(LoginRequiredMixin):
@@ -27,6 +28,9 @@ class TurmaPublicaMixin:
 
 class AlunoAutenticadoMixin(TurmaPublicaMixin, LoginRequiredMixin):
     """Garante que o usuário autenticado possui matrícula ativa na turma."""
+
+    def get_login_url(self):
+        return reverse("turmas:entrar", kwargs={"token": self.turma.token_publico})
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:

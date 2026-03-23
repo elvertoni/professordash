@@ -413,9 +413,15 @@ class ReabrirPrazoAlunoView(AtividadeMixin, UpdateView):
             turma=self.get_turma(),
         )
         aluno_pk = self.kwargs.get("aluno_pk")
-        from alunos.models import Aluno
+        from turmas.models import Matricula
 
-        aluno = get_object_or_404(Aluno, pk=aluno_pk)
+        matricula = get_object_or_404(
+            Matricula.objects.select_related("aluno"),
+            aluno_id=aluno_pk,
+            turma=self.get_turma(),
+            ativa=True,
+        )
+        aluno = matricula.aluno
 
         # Obtém ou cria a Entrega pendente para o aluno poder entregar depois
         entrega, _ = Entrega.objects.get_or_create(

@@ -191,3 +191,34 @@ class TestAlunoViews:
         assert response.status_code == 302
         matricula.refresh_from_db()
         assert matricula.turma == outra_turma
+
+    def test_detalhe_aluno_fora_da_turma_retorna_404(
+        self, client_professor, turma, outra_turma, aluno
+    ):
+        Matricula.objects.create(aluno=aluno, turma=outra_turma, ativa=True)
+        url = reverse(
+            "turmas:alunos_detalhe", kwargs={"pk": turma.pk, "aluno_pk": aluno.pk}
+        )
+
+        response = client_professor.get(url)
+
+        assert response.status_code == 404
+
+    def test_mover_turma_para_turma_inativa_retorna_404(
+        self, client_professor, turma, aluno, matricula, db
+    ):
+        turma_inativa = Turma.objects.create(
+            nome="Turma Inativa",
+            codigo="INATIVA2024",
+            descricao="Arquivada",
+            periodo="1",
+            ano_letivo=2024,
+            ativa=False,
+        )
+        url = reverse(
+            "turmas:alunos_mover", kwargs={"pk": turma.pk, "aluno_pk": aluno.pk}
+        )
+
+        response = client_professor.post(url, {"nova_turma_pk": turma_inativa.pk})
+
+        assert response.status_code == 404

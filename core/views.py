@@ -1,7 +1,11 @@
+from django.contrib import messages
 from django.db.models import Avg, Count, Q
+from django.shortcuts import redirect
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 
+from core.auth import is_google_oauth_configured
 from core.mixins import ProfessorRequiredMixin
 
 
@@ -71,6 +75,31 @@ class DashboardView(ProfessorRequiredMixin, TemplateView):
         )
 
         return ctx
+
+
+class GoogleOAuthStartView(View):
+    """Inicia o OAuth Google apenas quando a configuração está disponível."""
+
+    def get(self, request, *args, **kwargs):
+        if not is_google_oauth_configured():
+            messages.error(
+                request,
+                "O login com Google está indisponível no momento.",
+            )
+            return redirect("login")
+
+        next_url = request.GET.get("next")
+        if next_url and not url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure(),
+        ):
+            request.GET = request.GET.copy()
+            request.GET.pop("next", None)
+
+        from allauth.socialaccount.providers.google.views import oauth2_login
+
+        return oauth2_login(request)
 
 
 class FeedEntregasView(ProfessorRequiredMixin, TemplateView):

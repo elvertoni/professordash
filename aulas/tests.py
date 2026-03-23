@@ -15,6 +15,7 @@ def aula_base(db, turma):
         titulo="Introdução",
         numero=1,
         conteudo="Conteudo inicial",
+        realizada=True,
         ordem=1,
     )
 
@@ -65,6 +66,57 @@ class TestAulasViews:
         assert response.status_code == 200
         assert list(response.context["aulas"]) == [aula_base]
 
+    def test_lista_publica_oculta_aulas_nao_realizadas(self, client, turma):
+        Aula.objects.create(
+            turma=turma,
+            titulo="Rascunho",
+            numero=3,
+            conteudo="Ainda não liberada",
+            realizada=False,
+            ordem=3,
+        )
+        url = reverse(
+            "turmas:portal_aulas_lista", kwargs={"token": turma.token_publico}
+        )
+
+        response = client.get(url)
+
+        assert response.status_code == 200
+        assert list(response.context["aulas"]) == []
+
+    def test_detalhe_publico_bloqueia_aula_nao_realizada(self, client, turma):
+        aula = Aula.objects.create(
+            turma=turma,
+            titulo="Privada",
+            numero=4,
+            conteudo="Nao deveria aparecer",
+            realizada=False,
+            ordem=4,
+        )
+        url = reverse(
+            "turmas:portal_aulas_detalhe",
+            kwargs={"token": turma.token_publico, "aula_pk": aula.pk},
+        )
+
+        response = client.get(url)
+
+        assert response.status_code == 404
+
+    def test_importar_markdown_define_numero_sequencial(self, client_professor, turma):
+        url = reverse("turmas:aulas_importar_md", kwargs={"pk": turma.pk})
+        arquivo = b"# Aula Nova\n\nConteudo"
+
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        response = client_professor.post(
+            url,
+            {"arquivo": SimpleUploadedFile("nova.md", arquivo, content_type="text/markdown")},
+        )
+
+        assert response.status_code == 302
+        aula = Aula.objects.get(titulo="Aula Nova")
+        assert aula.numero == 1
+
     def test_reordenar_aulas_atualiza_ordem(
         self, client_professor, turma, aula_base, aula_segunda
     ):
@@ -92,4 +144,4 @@ class TestAulasViews:
 
         assert response.status_code == 200
         aula_base.refresh_from_db()
-        assert aula_base.realizada is True
+        assert aula_base.realizada is False

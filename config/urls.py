@@ -4,12 +4,16 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView
 
+from core import views as core_views
+
 urlpatterns = [
     # Django admin
     path("admin/", admin.site.urls),
 
     # Autenticação local (professor)
     path("entrar/", include("django.contrib.auth.urls")),
+    path("entrar/google/", core_views.GoogleOAuthStartView.as_view(), name="google_oauth_start"),
+    path("accounts/google/login/", core_views.GoogleOAuthStartView.as_view()),
 
     # Google OAuth (django-allauth)
     path("accounts/", include("allauth.urls")),

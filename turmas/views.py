@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.template.loader import render_to_string
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.generic import (
     CreateView,
     DetailView,
@@ -16,8 +17,8 @@ from django.views.generic import (
     UpdateView,
     View,
 )
-import weasyprint
 
+from core.auth import is_google_oauth_configured
 from core.mixins import AlunoAutenticadoMixin, ProfessorRequiredMixin, TurmaPublicaMixin
 
 from .forms import TurmaForm
@@ -144,8 +145,25 @@ class TurmaEntrarView(TurmaPublicaMixin, View):
 
     def get(self, request, token):
         request.session["turma_token"] = str(token)
-        next_url = reverse("turmas:portal_minha_area", kwargs={"token": token})
-        return redirect(f"{reverse('google_login')}?{urlencode({'next': next_url})}")
+        default_next = reverse("turmas:portal_minha_area", kwargs={"token": token})
+        next_url = request.GET.get("next", default_next)
+        if not url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure(),
+        ):
+            next_url = default_next
+
+        if not is_google_oauth_configured():
+            messages.error(
+                request,
+                "O login com Google está indisponível no momento.",
+            )
+            return redirect("turmas:portal", token=token)
+
+        return redirect(
+            f"{reverse('google_oauth_start')}?{urlencode({'next': next_url})}"
+        )
 
 
 class BoletimTurmaView(ProfessorRequiredMixin, DetailView):
@@ -312,6 +330,8 @@ class ExportarBoletimPDFView(ProfessorRequiredMixin, DetailView):
         html_string = render_to_string(
             "avaliacoes/boletim_pdf.html", context, request=request
         )
+        import weasyprint
+
         pdf_file = weasyprint.HTML(
             string=html_string, base_url=request.build_absolute_uri("/")
         ).write_pdf()

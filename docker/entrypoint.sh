@@ -62,26 +62,21 @@ python manage.py shell --settings=config.settings.production -c "
 from django.contrib.auth import get_user_model
 import os
 User = get_user_model()
-email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'elvertoni@gmail.com')
-password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'Toni1504')
-username = 'elvertoni'
+email = os.environ.get('DJANGO_SUPERUSER_EMAIL', '').strip()
+password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', '').strip()
+username = os.environ.get('DJANGO_SUPERUSER_USERNAME', '').strip()
 
 try:
-    user = User.objects.filter(email=email).first() or User.objects.filter(username=username).first()
-    if user:
-        user.username = username
-        user.email = email
-        user.set_password(password)
-        user.is_superuser = True
-        user.is_staff = True
-        user.is_active = True
-        user.save()
-        print(f'Superuser {username} atualizado com sucesso.')
+    if not email or not password:
+        print('DJANGO_SUPERUSER_EMAIL/DJANGO_SUPERUSER_PASSWORD ausentes. Superuser não será alterado.')
     else:
-        u = User.objects.create_superuser(username=username, email=email, password=password)
-        u.is_active = True
-        u.save()
-        print(f'Superuser {username} criado.')
+        username = username or email.split('@', 1)[0]
+        user = User.objects.filter(email=email).first()
+        if user:
+            print(f'Superuser {email} já existe. Mantendo credenciais atuais.')
+        else:
+            User.objects.create_superuser(username=username, email=email, password=password)
+            print(f'Superuser {email} criado.')
 except Exception as e:
     print(f'Erro ao configurar superuser: {e}')
 "
