@@ -12,15 +12,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Ativar ambiente Python
 source .venv/bin/activate
 
-# Subir banco e Redis (Django roda local)
-docker compose up -d db redis
-
-# Migrations e superuser
+# Dev usa SQLite — NÃO precisa de Docker para desenvolver
 python manage.py migrate
-python manage.py createsuperuser
-
-# Servidor de desenvolvimento
 python manage.py runserver
+
+# Subir PostgreSQL + Redis (só se quiser testar com prod settings)
+docker compose up -d db redis
 
 # Testes
 pytest
@@ -37,18 +34,22 @@ ruff check . --fix
 
 ### Stack
 
-Django 5.1 + HTMX 2.x + Alpine.js 3.x + Tailwind CSS 3.x (todos via CDN). PostgreSQL 16 + Redis 7. Deploy: Docker Compose + Caddy (HTTPS automático). Python 3.12.
+Django 5.1 + HTMX 2.x + Alpine.js 3.x + Tailwind CSS 3.x (todos via CDN). PostgreSQL 16 + Redis 7 em produção. Dev: SQLite + cache em memória. Deploy: Docker Compose + Caddy (HTTPS automático). Python 3.12.
+
+### Settings split
+
+`config/settings/` com três módulos: `base.py` (shared), `local.py` (SQLite, debug), `production.py` (PostgreSQL, Redis, HTTPS). pytest.ini aponta para `config.settings.local`. Config usa `python-decouple` para `.env`.
 
 ### Apps
 
 | App | Responsabilidade |
 |---|---|
-| `core` | `BaseModel` (timestamps), mixins de auth, validators de upload, templatetags markdown |
+| `core` | `BaseModel` (timestamps), mixins de auth, validators de upload, templatetags markdown, context processor `auth_flags` |
 | `turmas` | Turma + Matricula. Todo acesso público usa `token_publico` (UUID) |
 | `aulas` | Plano de ensino com conteúdo MarkdownxField, ordenação por drag-and-drop |
 | `materiais` | Upload (PDF/ZIP/código) + links externos + conteúdo inline Markdown |
 | `atividades` | Atividade + Entrega. Status automático: `entregue` vs `atrasada` |
-| `avaliacoes` | Nota + feedback por Entrega. Export boletim CSV (WeasyPrint para PDF) |
+| `avaliacoes` | Apenas templates (boletim, minhas_notas) — sem models/views próprias. Views estão em `turmas/views.py` |
 | `alunos` | Aluno + importação CSV. Vinculação ao `User` via Google OAuth |
 
 ### Módulos auxiliares
@@ -57,16 +58,29 @@ Django 5.1 + HTMX 2.x + Alpine.js 3.x + Tailwind CSS 3.x (todos via CDN). Postgr
 |---|---|
 | `gerador_aulas/` | Extratores de conteúdo (PDF, PPTX, DOCX, URL, RCO) + geração de aulas via IA (OpenRouter). Uso exclusivo do professor/admin. Ver `gerador_aulas/PRD-GeradorAulas-v2.md` |
 
+### URL routing centralizado
+
+Todas as URLs (admin e portal) ficam em `turmas/urls.py` com namespace único `turmas`. É incluído sem prefixo em `config/urls.py` — os prefixos `/painel/turmas/` e `/turma/<uuid:token>/` são definidos internamente. As views de outros apps (aulas, materiais, alunos, atividades) são importadas e registradas ali mesmo. Reverso: `turmas:aulas_lista`, `turmas:portal_aulas_detalhe`, etc.
+
+Dashboard do professor: `core/urls.py` (namespace `core`), acessível em `/painel/`.
+
 ### Dois níveis de interface
 
 - `/painel/*` — professor (`is_staff=True`), login próprio (email+senha)
 - `/turma/<uuid:token>/*` — aluno (Google OAuth) ou público (sem login)
 
+### Template hierarchy
+
+`templates/base.html` → três layouts derivados:
+- `base_admin.html` — painel do professor (`/painel/`)
+- `base_publico.html` — portal público da turma (sem login)
+- `base_aluno.html` — área do aluno autenticado
+
 ### Mixins principais (`core/mixins.py`)
 
 - `ProfessorRequiredMixin` — verifica `request.user.is_staff`
-- `TurmaPublicaMixin` — resolve `self.turma` pelo `token` da URL
-- `AlunoAutenticadoMixin` — herda os dois acima, verifica `Matricula` ativa
+- `TurmaPublicaMixin` — resolve `self.turma` pelo `token` da URL (via `setup()`)
+- `AlunoAutenticadoMixin` — herda `TurmaPublicaMixin` + `LoginRequiredMixin`, resolve `self.matricula`
 
 ### Fragmentos HTMX
 
@@ -77,6 +91,18 @@ if self.request.htmx:
     return render(request, 'componente/_parcial.html', context)
 return render(request, 'pagina_completa.html', context)
 ```
+
+### Third-party libs relevantes
+
+- **django-allauth** — Google OAuth para alunos
+- **markdownx** — editor/preview de Markdown nos campos de aula
+- **whitenoise** — serve static files em produção (sem Nginx)
+- **django-import-export** — import/export de dados no admin
+- **python-decouple** — `.env` config management
+
+### Test fixtures (`conftest.py`)
+
+Fixtures globais disponíveis em todos os testes: `professor` (is_staff), `aluno_user`, `aluno`, `turma`, `matricula`, `atividade_aberta`, `client_professor`, `client_aluno`, `client_aluno_sem_matricula`. Usar estas fixtures ao escrever novos testes.
 
 ## Convenções
 

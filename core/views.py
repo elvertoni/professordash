@@ -21,6 +21,7 @@ class DashboardView(ProfessorRequiredMixin, TemplateView):
 
         agora = timezone.now()
         turmas_ativas = Turma.objects.filter(ativa=True)
+        ctx["turmas_ativas"] = turmas_ativas
 
         # ── KPIs ──────────────────────────────────────────────────────────────
         ctx["kpi_turmas"] = turmas_ativas.count()
