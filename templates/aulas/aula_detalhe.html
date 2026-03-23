@@ -1,6 +1,6 @@
 {% load markdownx static %}
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,60 +8,40 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 <style>
 /* ── Reset ─────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* ── Tokens Light ──────────────────────────────────────────────── */
-:root {
-  --bg:        #F7F5F0;
-  --surface:   #FFFFFF;
-  --surface2:  #F0EDE6;
-  --border:    #E4DFD5;
-  --border2:   #CBC4B8;
-  --text:      #1A1814;
-  --text2:     #5C574F;
-  --text3:     #9A9590;
-  --accent:    #2D6A4F;
-  --accent-bg: #EBF5EF;
-  --amber:     #92400E;
-  --amber-bg:  #FEF3C7;
-  --blue:      #1E40AF;
-  --blue-bg:   #EFF6FF;
-  --violet:    #5B21B6;
-  --violet-bg: #F5F3FF;
-  --coral:     #9B2C2C;
-  --coral-bg:  #FFF5F5;
-  --shadow:    0 1px 3px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
+:root, [data-theme="dark"] {
+  --bg:        #131313;
+  --surface:   #1C1B1B;
+  --surface2:  #2A2A2A;
+  --border:    rgba(73,69,82,.25);
+  --border2:   rgba(73,69,82,.40);
+  --text:      #E5E2E1;
+  --text2:     #CAC4D4;
+  --text3:     #948E9D;
+  --accent:    #CEBDFF;
+  --accent-bg: rgba(206,189,255,.08);
+  --amber:     #FCD34D;
+  --amber-bg:  rgba(252,211,77,.06);
+  --blue:      #5DE6FF;
+  --blue-bg:   rgba(93,230,255,.06);
+  --violet:    #CEBDFF;
+  --violet-bg: rgba(206,189,255,.06);
+  --coral:     #FFB4AB;
+  --coral-bg:  rgba(255,180,171,.06);
+  --shadow:    0 1px 3px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.4);
   --radius:    10px;
   --radius-lg: 16px;
   --max-w:     780px;
   --font-body: 'Inter', system-ui, sans-serif;
+  --font-head: 'Geist', 'Inter', system-ui, sans-serif;
   --font-mono: 'DM Mono', monospace;
   --ease:      cubic-bezier(.4,0,.2,1);
-}
-
-[data-theme="dark"] {
-  --bg:        #111110;
-  --surface:   #1C1B19;
-  --surface2:  #252420;
-  --border:    #2E2D29;
-  --border2:   #3E3C37;
-  --text:      #F0EDE6;
-  --text2:     #A8A39B;
-  --text3:     #6B6660;
-  --accent:    #4ADE80;
-  --accent-bg: #052E16;
-  --amber:     #FCD34D;
-  --amber-bg:  #1C1204;
-  --blue:      #93C5FD;
-  --blue-bg:   #0C1A3A;
-  --violet:    #C4B5FD;
-  --violet-bg: #1A0B3B;
-  --coral:     #FCA5A5;
-  --coral-bg:  #2D0808;
-  --shadow:    0 1px 3px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.4);
 }
 
 html { scroll-behavior: smooth; }
@@ -314,6 +294,7 @@ body {
 
 /* ── Hero header ──────────────────────────────────────────────── */
 h1.titulo {
+  font-family: var(--font-head);
   font-size: clamp(2.2rem, 5vw, 3.5rem);
   font-weight: 800;
   line-height: 1.1;
@@ -745,7 +726,7 @@ h1.titulo {
   color: #6B6660;
   margin-bottom: 12px;
 }
-.pres-title-num { font-size: 15px; color: #4ADE80; font-weight: 500; margin-bottom: 24px; }
+.pres-title-num { font-size: 15px; color: #CEBDFF; font-weight: 500; margin-bottom: 24px; }
 .pres-title-h1 {
   font-size: clamp(2.2rem, 5vw, 3.2rem);
   font-weight: 800;
@@ -771,7 +752,7 @@ h1.titulo {
   display: inline-block;
   width: 5px;
   height: 1em;
-  background: #4ADE80;
+  background: #CEBDFF;
   border-radius: 3px;
   flex-shrink: 0;
 }
@@ -839,7 +820,7 @@ h1.titulo {
   transition: all .2s;
   border: none; padding: 0;
 }
-.pres-dot.active { background: #4ADE80; width: 24px; border-radius: 4px; }
+.pres-dot.active { background: #CEBDFF; width: 24px; border-radius: 4px; }
 .pres-dot:hover:not(.active) { background: #6B6660; }
 .pres-exit {
   position: absolute;
@@ -883,9 +864,7 @@ h1.titulo {
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         Apresentar
       </button>
-      <button class="tb-btn" id="theme-btn" title="Alternar tema" onclick="toggleTheme()">
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-      </button>
+
     </div>
   </div>
 </nav>
@@ -1012,16 +991,8 @@ window.addEventListener('scroll', function() {
   document.getElementById('progress').style.width = Math.min(pct, 100) + '%';
 });
 
-/* Theme */
-function toggleTheme() {
-  var html = document.documentElement;
-  var isDark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  localStorage.setItem('theme', isDark ? 'light' : 'dark');
-}
-var savedTheme = localStorage.getItem('theme') ||
-  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-document.documentElement.setAttribute('data-theme', savedTheme);
+/* Theme — dark only */
+document.documentElement.setAttribute('data-theme', 'dark');
 
 /* Table of Contents */
 (function buildTOC() {
