@@ -8,11 +8,11 @@
 
   <!-- Breadcrumb -->
   <nav class="flex items-center gap-2 text-sm text-zinc-500 mb-6">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-cyan-400 transition-colors">Turmas</a>
+    <a href="{% url 'turmas:lista' %}" class="hover:text-emerald-400 transition-colors">Turmas</a>
     <span>/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-cyan-400 transition-colors">{{ turma.nome }}</a>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-emerald-400 transition-colors">{{ turma.nome }}</a>
     <span>/</span>
-    <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}" class="hover:text-cyan-400 transition-colors">Aulas</a>
+    <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}" class="hover:text-emerald-400 transition-colors">Aulas</a>
     <span>/</span>
     <span class="text-zinc-100 font-medium">Aula {{ aula.numero }}</span>
   </nav>
@@ -64,7 +64,7 @@
     <div class="bg-zinc-900 rounded-xl border border-dashed border-zinc-700 p-10 text-center">
       <p class="text-zinc-400 text-sm">Nenhum conteúdo cadastrado para esta aula.</p>
       <a href="{% url 'turmas:aulas_editar' pk=turma.pk aula_pk=aula.pk %}"
-         class="mt-2 inline-block text-cyan-400 hover:underline text-sm">Adicionar conteúdo</a>
+         class="mt-2 inline-block text-emerald-400 hover:underline text-sm">Adicionar conteúdo</a>
     </div>
   {% endif %}
 
@@ -73,7 +73,7 @@
     <div class="flex items-center justify-between mb-3">
       <h2 class="text-base font-semibold text-zinc-100">Materiais</h2>
       <a href="{% url 'turmas:materiais_novo' pk=turma.pk %}?aula={{ aula.pk }}"
-         class="text-xs text-cyan-400 hover:text-cyan-300 border border-zinc-700 px-3 py-1.5 rounded-lg hover:bg-zinc-800 transition-colors">
+         class="text-xs text-emerald-400 hover:text-emerald-300 border border-zinc-700 px-3 py-1.5 rounded-lg hover:bg-zinc-800 transition-colors">
         + Adicionar material
       </a>
     </div>

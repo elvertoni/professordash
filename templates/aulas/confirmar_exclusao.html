@@ -7,11 +7,11 @@
 
   <!-- Breadcrumb -->
   <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-cyan-400">Turmas</a>
+    <a href="{% url 'turmas:lista' %}" class="hover:text-emerald-400">Turmas</a>
     <span>/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-cyan-400">{{ turma.nome }}</a>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-emerald-400">{{ turma.nome }}</a>
     <span>/</span>
-    <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}" class="hover:text-cyan-400">Aulas</a>
+    <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}" class="hover:text-emerald-400">Aulas</a>
     <span>/</span>
     <span class="text-zinc-100 font-medium">Excluir</span>
   </nav>

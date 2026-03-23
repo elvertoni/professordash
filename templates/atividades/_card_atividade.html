@@ -1,6 +1,6 @@
-<div class="bg-zinc-900 rounded-lg border border-zinc-700 p-4 hover:border-cyan-600 transition-colors flex items-start gap-4">
+<div class="bg-zinc-900 rounded-lg border border-zinc-700 p-4 hover:border-emerald-600 transition-colors flex items-start gap-4">
   <div class="shrink-0 pt-1">
-    <div class="bg-cyan-950 text-cyan-400 p-2 rounded-lg">
+    <div class="bg-emerald-950 text-emerald-400 p-2 rounded-lg">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
       </svg>
@@ -9,7 +9,7 @@
 
   <div class="flex-1 min-w-0">
     <h3 class="text-base font-semibold text-zinc-100">
-      <a href="{% url 'turmas:atividade_detalhe' pk=turma.pk atividade_pk=atividade.pk %}" class="hover:text-cyan-400">
+      <a href="{% url 'turmas:atividade_detalhe' pk=turma.pk atividade_pk=atividade.pk %}" class="hover:text-emerald-400">
         {{ atividade.titulo }}
       </a>
       {% if not atividade.publicada %}
@@ -33,7 +33,7 @@
       
       {% if atividade.aula %}
         <span class="text-zinc-600">&bull;</span>
-        <span class="text-cyan-400 bg-cyan-950 px-2 py-0.5 rounded-full">Aula {{ atividade.aula.numero }}</span>
+        <span class="text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded-full">Aula {{ atividade.aula.numero }}</span>
       {% endif %}
     </div>
 
@@ -46,7 +46,7 @@
       </div>
       <div class="w-full bg-zinc-800 rounded-full h-1.5">
         {% widthratio atividade.entregas_avaliadas atividade.total_entregas|default:"1" 100 as progresso %}
-        <div class="bg-cyan-500 h-1.5 rounded-full" style="width: {% if atividade.total_entregas == 0 %}0{% else %}{{ progresso }}{% endif %}%"></div>
+        <div class="bg-emerald-500 h-1.5 rounded-full" style="width: {% if atividade.total_entregas == 0 %}0{% else %}{{ progresso }}{% endif %}%"></div>
       </div>
     </div>
     {% endif %}
@@ -54,7 +54,7 @@
 
   <div class="flex items-center gap-1 shrink-0 ml-4">
     <a href="{% url 'turmas:atividades_editar' pk=turma.pk atividade_pk=atividade.pk %}"
-       class="p-2 text-zinc-500 hover:text-cyan-400 hover:bg-cyan-950 rounded-lg transition-colors" title="Editar">
+       class="p-2 text-zinc-500 hover:text-emerald-400 hover:bg-emerald-950 rounded-lg transition-colors" title="Editar">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
       </svg>

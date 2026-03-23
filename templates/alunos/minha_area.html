@@ -33,7 +33,7 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         Ver Minhas Notas e Aproveitamento
       </a>
-      <a href="{% url 'turmas:portal' token=turma.token_publico %}" class="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1">
+      <a href="{% url 'turmas:portal' token=turma.token_publico %}" class="text-sm font-medium text-violet-600 hover:text-violet-700 hover:underline flex items-center gap-1">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         Voltar para o Portal da Turma
       </a>
@@ -55,7 +55,7 @@
                     {% if item.entrega.status == 'pendente' %}
                       <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">Rascunho</span>
                     {% elif item.entrega.status == 'entregue' %}
-                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">Entregue</span>
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-violet-100 text-violet-800">Entregue</span>
                     {% elif item.entrega.status == 'avaliada' %}
                       <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Avaliado</span>
                     {% elif item.entrega.status == 'atrasada' %}

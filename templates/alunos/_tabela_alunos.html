@@ -21,12 +21,12 @@
                     <img src="{{ matricula.aluno.avatar.url }}" alt="{{ matricula.aluno.nome }}"
                          class="w-9 h-9 rounded-full object-cover ring-1 ring-zinc-700">
                   {% else %}
-                    <div class="w-9 h-9 rounded-full bg-cyan-950 border border-cyan-900/80 flex items-center justify-center text-cyan-300 font-bold text-xs uppercase">
+                    <div class="w-9 h-9 rounded-full bg-emerald-950 border border-emerald-900/80 flex items-center justify-center text-emerald-300 font-bold text-xs uppercase">
                       {{ matricula.aluno.nome|slice:":2" }}
                     </div>
                   {% endif %}
                   <a href="{% url 'turmas:alunos_detalhe' pk=turma.pk aluno_pk=matricula.aluno.pk %}"
-                     class="font-medium text-zinc-100 hover:text-cyan-400 transition-colors">
+                     class="font-medium text-zinc-100 hover:text-emerald-400 transition-colors">
                     {{ matricula.aluno.nome }}
                   </a>
                 </div>
@@ -43,7 +43,7 @@
               <td class="px-6 py-4 text-right">
                 <div class="flex items-center justify-end gap-2">
                   <a href="{% url 'turmas:alunos_editar' pk=turma.pk aluno_pk=matricula.aluno.pk %}"
-                     class="inline-flex items-center justify-center p-2 text-zinc-400 hover:text-cyan-300 hover:bg-cyan-500/10 rounded-lg border border-transparent hover:border-cyan-500/20 transition-colors"
+                     class="inline-flex items-center justify-center p-2 text-zinc-400 hover:text-emerald-300 hover:bg-emerald-500/10 rounded-lg border border-transparent hover:border-emerald-500/20 transition-colors"
                      title="Editar aluno">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

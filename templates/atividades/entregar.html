@@ -11,7 +11,7 @@
 
   <!-- Breadcrumb -->
   <nav class="flex items-center gap-2 text-sm text-gray-500">
-    <a href="{% url 'turmas:portal_minha_area' token=turma.token_publico %}" class="hover:text-cyan-400">Minha Área</a>
+    <a href="{% url 'turmas:portal_minha_area' token=turma.token_publico %}" class="hover:text-emerald-400">Minha Área</a>
     <span>/</span>
     <span class="text-gray-900 font-medium text-ellipsis overflow-hidden whitespace-nowrap">{{ atividade.titulo }}</span>
   </nav>
@@ -63,15 +63,15 @@
       {% endif %}
 
       {% if form.instance.pk and form.instance.status == 'entregue' or form.instance.pk and form.instance.status == 'atrasada' %}
-        <div class="rounded-lg bg-blue-50 p-4 border border-blue-200 mb-6 flex justify-between items-center">
+        <div class="rounded-lg bg-violet-50 p-4 border border-violet-200 mb-6 flex justify-between items-center">
           <div class="flex">
             <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+              <svg class="h-5 w-5 text-violet-400" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
               </svg>
             </div>
             <div class="ml-3">
-              <h3 class="text-sm font-medium text-blue-800">
+              <h3 class="text-sm font-medium text-violet-800">
                 Entrega registrada em {{ form.instance.data_envio|date:"d/m/Y às H:i" }}
               </h3>
               {% if form.instance.status == 'atrasada' %}
@@ -80,7 +80,7 @@
             </div>
           </div>
           {% if form.instance.arquivo %}
-            <a href="{% url 'turmas:portal_entrega_arquivo' token=turma.token_publico entrega_pk=form.instance.pk %}" target="_blank" rel="noopener noreferrer" class="text-cyan-700 hover:text-cyan-800 text-sm font-medium flex items-center gap-1">
+            <a href="{% url 'turmas:portal_entrega_arquivo' token=turma.token_publico entrega_pk=form.instance.pk %}" target="_blank" rel="noopener noreferrer" class="text-emerald-700 hover:text-emerald-800 text-sm font-medium flex items-center gap-1">
               Ver Arquivo Enviado
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </a>
@@ -104,18 +104,18 @@
             {% if atividade.tipo_entrega == 'arquivo' %}
               <div x-show="tipo_entrega === 'arquivo'">
                 <label class="block text-sm font-medium text-zinc-400 mb-2">Selecione o arquivo para envio</label>
-                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-zinc-600 border-dashed rounded-lg hover:border-cyan-500 hover:bg-cyan-900/10 transition-colors relative"
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-zinc-600 border-dashed rounded-lg hover:border-emerald-500 hover:bg-emerald-900/10 transition-colors relative"
                      x-data="{ dragging: false }"
                      @dragover.prevent="dragging = true"
                      @dragleave.prevent="dragging = false"
                      @drop.prevent="dragging = false; const files = $event.dataTransfer.files; if(files.length > 0) { $refs.fileInput.files = files; arquivo_nome = files[0].name }"
-                     :class="{'border-cyan-500 bg-cyan-50 ring-2 ring-cyan-100': dragging}">
+                     :class="{'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-100': dragging}">
                   <div class="space-y-1 text-center">
                     <svg class="mx-auto h-12 w-12 text-zinc-500" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                       <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     <div class="flex text-sm text-zinc-400 justify-center">
-                      <label for="{{ form.arquivo.id_for_label }}" class="relative cursor-pointer rounded-md font-medium text-cyan-700 hover:text-cyan-800 focus-within:outline-none z-10">
+                      <label for="{{ form.arquivo.id_for_label }}" class="relative cursor-pointer rounded-md font-medium text-emerald-700 hover:text-emerald-800 focus-within:outline-none z-10">
                         <span>Fazer upload de arquivo</span>
                         <input id="{{ form.arquivo.id_for_label }}" name="{{ form.arquivo.html_name }}" type="file" class="sr-only" x-ref="fileInput" @change="arquivo_nome = $event.target.files[0].name" {% if form.arquivo.field.required %}required{% endif %}>
                       </label>
@@ -123,7 +123,7 @@
                     </div>
                     <p class="text-xs text-zinc-500">PDF, DOCX, ZIP, JPG, PNG até 10MB</p>
                     
-                    <div x-show="arquivo_nome" class="mt-4 p-2 bg-cyan-900/20 text-cyan-300 border border-cyan-700/40 rounded text-sm font-medium flex items-center justify-center gap-2" style="display: none;">
+                    <div x-show="arquivo_nome" class="mt-4 p-2 bg-emerald-900/20 text-emerald-300 border border-emerald-700/40 rounded text-sm font-medium flex items-center justify-center gap-2" style="display: none;">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                       <span x-text="arquivo_nome"></span>
                     </div>

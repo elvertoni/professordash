@@ -15,11 +15,11 @@
   </div>
 
   <!-- CTA de login -->
-  <div class="bg-blue-600 rounded-xl p-6 text-white text-center">
+  <div class="bg-violet-600 rounded-xl p-6 text-white text-center">
     <h2 class="font-semibold text-lg mb-2">Acesse o portal completo</h2>
-    <p class="text-blue-100 text-sm mb-4">Entre com sua conta Google para ver materiais, atividades e seu desempenho.</p>
+    <p class="text-violet-100 text-sm mb-4">Entre com sua conta Google para ver materiais, atividades e seu desempenho.</p>
     <a href="{% url 'turmas:entrar' token=turma.token_publico %}"
-       class="inline-block bg-white text-blue-700 font-medium text-sm px-5 py-2.5 rounded-lg hover:bg-blue-50 transition-colors">
+       class="inline-block bg-white text-violet-700 font-medium text-sm px-5 py-2.5 rounded-lg hover:bg-violet-50 transition-colors">
       Entrar com Google
     </a>
   </div>
@@ -27,7 +27,7 @@
   <!-- Navegação Pública Rápida -->
   <div class="flex gap-3 border-b border-gray-200">
     <a href="{% url 'turmas:portal' token=turma.token_publico %}"
-       class="text-sm font-medium py-3 border-b-2 border-blue-600 text-blue-600">
+       class="text-sm font-medium py-3 border-b-2 border-violet-600 text-violet-600">
       Aulas
     </a>
     <a href="{% url 'turmas:portal_materiais_lista' token=turma.token_publico %}"
@@ -47,7 +47,7 @@
       <div class="space-y-2">
         {% for aula in aulas %}
           <a href="{% url 'turmas:portal_aulas_detalhe' token=turma.token_publico aula_pk=aula.pk %}"
-             class="flex items-center gap-3 bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-blue-300 hover:shadow-sm transition-all">
+             class="flex items-center gap-3 bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-violet-300 hover:shadow-sm transition-all">
             <span class="w-8 h-8 flex items-center justify-center rounded-full bg-green-100 text-green-700 text-xs font-bold shrink-0">
               {{ aula.numero }}
             </span>
