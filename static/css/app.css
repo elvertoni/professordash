@@ -15,7 +15,7 @@ body {
   display: block;
   font-size: 0.8125rem;   /* 13px */
   font-weight: 500;
-  color: #CAC4D4; /* on-surface-variant */
+  color: #a1a1aa; /* on-surface-variant */
   opacity: 0.6;
   margin-bottom: 0.375rem;
   letter-spacing: 0.01em;
@@ -26,8 +26,8 @@ body {
 .input-field {
   display: block;
   width: 100%;
-  background-color: #1C1B1B; /* surface-container-low */
-  border: 1px solid rgba(73, 69, 82, 0.15); /* outline-variant at 15% */
+  background-color: #0d0d0d; /* surface-container-low */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* outline-variant */
   color: #E5E2E1; /* on-background */
   border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
@@ -38,20 +38,20 @@ body {
   outline: none;
 }
 .input-field::placeholder {
-  color: rgba(202, 196, 212, 0.3); /* on-surface-variant at 30% */
+  color: rgba(161, 161, 170, 0.3); /* on-surface-variant at 30% */
 }
 .input-field:focus {
   border-color: transparent;
-  border-bottom-color: #5DE6FF; /* secondary */
-  background-color: #201F1F; /* surface-container */
-  box-shadow: none;
+  border-bottom-color: #10B981; /* primary emerald */
+  background-color: #111111; /* surface-container */
+  box-shadow: 0 1px 0 0 #10B981;
 }
 select.input-field {
   cursor: pointer;
   appearance: auto;
 }
 select.input-field option {
-  background-color: #131313;
+  background-color: #000000;
   color: #E5E2E1;
 }
 textarea.input-field {
@@ -68,43 +68,47 @@ textarea.input-field {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 0.375rem; /* radius-md per design system */
+  border-radius: 0.5rem;
   border-width: 0;
   padding: 0.5rem 1rem;
   font-size: 0.8125rem;
-  font-weight: 500;
-  transition: all 0.15s;
+  font-weight: 600;
+  transition: all 0.2s;
   outline: none;
+  cursor: pointer;
 }
 
 .btn {
-  border: 1px solid rgba(73, 69, 82, 0.2); /* outline-variant at 20% */
+  border: 1px solid rgba(255, 255, 255, 0.1);
   background-color: transparent;
-  color: #CAC4D4; /* on-surface-variant */
+  color: #a1a1aa; /* on-surface-variant */
 }
 .btn:hover {
-  background-color: #2A2A2A; /* surface-container-high */
+  background-color: #1a1a1a; /* surface-container-high */
   color: #E5E2E1;
-  border-color: rgba(73, 69, 82, 0.3);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .btn-primary {
   border: none;
-  background: linear-gradient(45deg, #CEBDFF, #A78BFA); /* primary → primary-container */
-  color: #381385; /* on-primary */
+  background: #10B981; /* emerald solid */
+  color: #000000; /* on-primary */
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.25); /* glow */
 }
 .btn-primary:hover {
-  opacity: 0.9;
+  background: #059669;
+  box-shadow: 0 0 28px rgba(16, 185, 129, 0.35);
 }
 
 .btn-secondary {
-  border: 1px solid rgba(73, 69, 82, 0.2); /* outline at 20% */
-  background-color: transparent;
-  color: #5DE6FF; /* secondary */
+  border: 1px solid rgba(139, 92, 246, 0.3); /* violet border */
+  background: rgba(139, 92, 246, 0.08);
+  color: #8B5CF6; /* secondary */
 }
 .btn-secondary:hover {
-  background-color: rgba(93, 230, 255, 0.08);
-  color: #5DE6FF;
+  background: rgba(139, 92, 246, 0.15);
+  border-color: rgba(139, 92, 246, 0.45);
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.15);
 }
 
 /* ── Markdown rendered content ──────────────────────────────────────── */
@@ -116,22 +120,22 @@ textarea.input-field {
 .prose h3,
 .prose-content h3 { font-size: 1.125rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: rgba(229, 226, 225, 0.85); }
 .prose p,
-.prose-content p { margin-bottom: 0.75rem; line-height: 1.7; color: #CAC4D4; }
+.prose-content p { margin-bottom: 0.75rem; line-height: 1.7; color: #a1a1aa; }
 .prose ul,
 .prose-content ul { list-style-type: disc; margin-left: 1.25rem; margin-bottom: 0.75rem; }
 .prose ol,
 .prose-content ol { list-style-type: decimal; margin-left: 1.25rem; margin-bottom: 0.75rem; }
 .prose li,
-.prose-content li { color: #CAC4D4; margin-bottom: 0.25rem; }
+.prose-content li { color: #a1a1aa; margin-bottom: 0.25rem; }
 .prose pre,
-.prose-content pre { background-color: #0E0E0E; border: 1px solid rgba(73, 69, 82, 0.15); color: #E5E2E1; border-radius: 0.5rem; padding: 1rem; overflow-x: auto; margin-bottom: 1rem; font-size: 0.875rem; }
+.prose-content pre { background-color: #050505; border: 1px solid rgba(255, 255, 255, 0.08); color: #E5E2E1; border-radius: 0.5rem; padding: 1rem; overflow-x: auto; margin-bottom: 1rem; font-size: 0.875rem; }
 .prose code,
-.prose-content code { background-color: rgba(73, 69, 82, 0.15); border: 1px solid rgba(73, 69, 82, 0.2); color: #5DE6FF; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-size: 0.875rem; font-family: 'Geist Mono', monospace; }
+.prose-content code { background-color: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.15); color: #10B981; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-size: 0.875rem; font-family: 'Geist Mono', monospace; }
 .prose pre code,
 .prose-content pre code { background: transparent; border: none; color: inherit; padding: 0; }
 .prose a,
-.prose-content a { color: #5DE6FF; text-decoration: underline; }
+.prose-content a { color: #10B981; text-decoration: underline; }
 .prose a:hover,
-.prose-content a:hover { color: #CEBDFF; }
+.prose-content a:hover { color: #8B5CF6; }
 .prose blockquote,
-.prose-content blockquote { border-left: 3px solid rgba(93, 230, 255, 0.3); padding-left: 1rem; font-style: italic; margin: 0.75rem 0; color: rgba(202, 196, 212, 0.7); }
+.prose-content blockquote { border-left: 3px solid rgba(16, 185, 129, 0.3); padding-left: 1rem; font-style: italic; margin: 0.75rem 0; color: rgba(161, 161, 170, 0.7); }
