@@ -5,7 +5,7 @@ import re
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, View
 
 from core.mixins import ProfessorRequiredMixin, TurmaPublicaMixin
@@ -43,11 +43,12 @@ class AulaListView(ProfessorRequiredMixin, AulaMixin, ListView):
 class AulaNavMixin:
     """Adiciona navegação prev/next e links de volta ao contexto."""
 
+    def get_nav_queryset(self):
+        return Aula.objects.filter(turma=self.turma).order_by("ordem", "numero")
+
     def get_nav_context(self, aula):
         aulas = list(
-            Aula.objects.filter(turma=self.turma)
-            .order_by("ordem", "numero")
-            .values_list("pk", "titulo", "numero")
+            self.get_nav_queryset().values_list("pk", "titulo", "numero")
         )
         idx = next((i for i, a in enumerate(aulas) if a[0] == aula.pk), None)
         ctx = {}
@@ -78,8 +79,6 @@ class AulaDetailView(ProfessorRequiredMixin, AulaMixin, AulaNavMixin, DetailView
         return get_object_or_404(Aula, pk=self.kwargs["aula_pk"], turma=self.turma)
 
     def _build_aula_url(self, aula_pk):
-        from django.urls import reverse
-
         return reverse("turmas:aulas_detalhe", kwargs={"pk": self.turma.pk, "aula_pk": aula_pk})
 
     def get_context_data(self, **kwargs):
@@ -87,6 +86,19 @@ class AulaDetailView(ProfessorRequiredMixin, AulaMixin, AulaNavMixin, DetailView
         ctx["turma"] = self.turma
         ctx["back_url"] = reverse_lazy("turmas:aulas_lista", kwargs={"pk": self.turma.pk})
         ctx["back_label"] = "Aulas"
+        ctx["atividades_url"] = f"{reverse('turmas:detalhe', kwargs={'pk': self.turma.pk})}?tab=atividades"
+        ctx["sidebar_aulas"] = [
+            {
+                "pk": aula.pk,
+                "numero": aula.numero,
+                "titulo": aula.titulo,
+                "href": reverse(
+                    "turmas:aulas_detalhe",
+                    kwargs={"pk": self.turma.pk, "aula_pk": aula.pk},
+                ),
+            }
+            for aula in Aula.objects.filter(turma=self.turma).order_by("ordem", "numero")
+        ]
         ctx.update(self.get_nav_context(self.object))
         return ctx
 
@@ -244,9 +256,7 @@ class AulaListaPublicaView(TurmaPublicaMixin, ListView):
     context_object_name = "aulas"
 
     def get_queryset(self):
-        return Aula.objects.filter(turma=self.turma, realizada=True).order_by(
-            "ordem", "numero"
-        )
+        return Aula.objects.filter(turma=self.turma).order_by("ordem", "numero")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -274,12 +284,13 @@ class AulaDetalhePublicoView(TurmaPublicaMixin, AulaNavMixin, DetailView):
         )
 
     def _build_aula_url(self, aula_pk):
-        from django.urls import reverse
-
         return reverse(
             "turmas:portal_aulas_detalhe",
             kwargs={"token": self.turma.token_publico, "aula_pk": aula_pk},
         )
+
+    def get_nav_queryset(self):
+        return Aula.objects.filter(turma=self.turma, realizada=True).order_by("ordem", "numero")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -288,5 +299,23 @@ class AulaDetalhePublicoView(TurmaPublicaMixin, AulaNavMixin, DetailView):
             "turmas:portal_aulas_lista", kwargs={"token": self.turma.token_publico}
         )
         ctx["back_label"] = "Aulas"
+        ctx["atividades_url"] = reverse(
+            "turmas:portal_atividades_lista",
+            kwargs={"token": self.turma.token_publico},
+        )
+        ctx["sidebar_aulas"] = [
+            {
+                "pk": aula.pk,
+                "numero": aula.numero,
+                "titulo": aula.titulo,
+                "href": reverse(
+                    "turmas:portal_aulas_detalhe",
+                    kwargs={"token": self.turma.token_publico, "aula_pk": aula.pk},
+                ),
+            }
+            for aula in Aula.objects.filter(turma=self.turma, realizada=True).order_by(
+                "ordem", "numero"
+            )
+        ]
         ctx.update(self.get_nav_context(self.object))
         return ctx

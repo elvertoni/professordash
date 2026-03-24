@@ -66,8 +66,8 @@ class TestAulasViews:
         assert response.status_code == 200
         assert list(response.context["aulas"]) == [aula_base]
 
-    def test_lista_publica_oculta_aulas_nao_realizadas(self, client, turma):
-        Aula.objects.create(
+    def test_lista_publica_exibe_aulas_futuras_como_em_breve(self, client, turma):
+        rascunho = Aula.objects.create(
             turma=turma,
             titulo="Rascunho",
             numero=3,
@@ -80,9 +80,40 @@ class TestAulasViews:
         )
 
         response = client.get(url)
+        content = response.content.decode()
 
         assert response.status_code == 200
-        assert list(response.context["aulas"]) == []
+        assert list(response.context["aulas"]) == [rascunho]
+        assert response.context["total_aulas"] == 1
+        assert response.context["aulas_realizadas"] == 0
+        assert response.context["proxima_aula_pk"] == rascunho.pk
+        assert "Em breve" in content
+
+    def test_lista_publica_calcula_progresso_com_aulas_liberadas_e_futuras(
+        self, client, turma, aula_base
+    ):
+        proxima = Aula.objects.create(
+            turma=turma,
+            titulo="Próxima Aula",
+            numero=2,
+            conteudo="Conteúdo futuro",
+            realizada=False,
+            ordem=2,
+        )
+        url = reverse(
+            "turmas:portal_aulas_lista", kwargs={"token": turma.token_publico}
+        )
+
+        response = client.get(url)
+        content = response.content.decode()
+
+        assert response.status_code == 200
+        assert list(response.context["aulas"]) == [aula_base, proxima]
+        assert response.context["total_aulas"] == 2
+        assert response.context["aulas_realizadas"] == 1
+        assert response.context["proxima_aula_pk"] == proxima.pk
+        assert "1 de 2 aula" in content
+        assert "Em breve" in content
 
     def test_detalhe_publico_bloqueia_aula_nao_realizada(self, client, turma):
         aula = Aula.objects.create(
@@ -101,6 +132,40 @@ class TestAulasViews:
         response = client.get(url)
 
         assert response.status_code == 404
+
+    def test_detalhe_publico_usa_links_publicos_e_nao_vaza_rascunhos(
+        self, client, turma, aula_base
+    ):
+        Aula.objects.create(
+            turma=turma,
+            titulo="Rascunho Interno",
+            numero=2,
+            conteudo="Nao deveria aparecer para alunos",
+            realizada=False,
+            ordem=2,
+        )
+        url = reverse(
+            "turmas:portal_aulas_detalhe",
+            kwargs={"token": turma.token_publico, "aula_pk": aula_base.pk},
+        )
+
+        response = client.get(url)
+        content = response.content.decode()
+
+        assert response.status_code == 200
+        assert "Rascunho Interno" not in content
+        assert reverse(
+            "turmas:portal_aulas_detalhe",
+            kwargs={"token": turma.token_publico, "aula_pk": aula_base.pk},
+        ) in content
+        assert response.context["atividades_url"] == reverse(
+            "turmas:portal_atividades_lista",
+            kwargs={"token": turma.token_publico},
+        )
+        assert reverse(
+            "turmas:aulas_detalhe",
+            kwargs={"pk": turma.pk, "aula_pk": aula_base.pk},
+        ) not in content
 
     def test_importar_markdown_define_numero_sequencial(self, client_professor, turma):
         url = reverse("turmas:aulas_importar_md", kwargs={"pk": turma.pk})

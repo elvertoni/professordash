@@ -27,8 +27,8 @@
       {% for aula in aulas %}
         {% if aula.pk == proxima_aula_pk %}
         <!-- Proxima aula destacada -->
-        <a href="{% url 'turmas:portal_aulas_detalhe' token=turma.token_publico aula_pk=aula.pk %}"
-           class="group flex items-stretch bg-white rounded-xl border-2 border-emerald-300 shadow-sm hover:shadow-md transition-all overflow-hidden">
+        <div
+           class="group flex items-stretch bg-white rounded-xl border-2 border-emerald-300 shadow-sm transition-all overflow-hidden">
           <div class="w-1.5 bg-emerald-500 shrink-0"></div>
           <div class="flex items-center gap-3 px-4 py-3.5 flex-1 min-w-0">
             <span class="w-9 h-9 flex items-center justify-center rounded-lg text-xs font-bold shrink-0 bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -43,13 +43,12 @@
                 <p class="text-xs text-gray-400 mt-0.5">{{ aula.data|date:"d/m/Y" }}</p>
               {% endif %}
             </div>
-            <svg class="w-4 h-4 text-emerald-400 shrink-0 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
+            <span class="shrink-0 text-xs font-medium text-emerald-700">Em breve</span>
           </div>
-        </a>
+        </div>
         {% else %}
         <!-- Aula normal -->
+        {% if aula.realizada %}
         <a href="{% url 'turmas:portal_aulas_detalhe' token=turma.token_publico aula_pk=aula.pk %}"
            class="group flex items-stretch bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all overflow-hidden">
           <div class="w-1.5 shrink-0 {% if aula.realizada %}bg-emerald-500{% else %}bg-gray-200{% endif %}"></div>
@@ -77,6 +76,26 @@
             </svg>
           </div>
         </a>
+        {% else %}
+        <div
+          class="flex items-stretch bg-white/80 rounded-xl border border-dashed border-gray-300 overflow-hidden opacity-80">
+          <div class="w-1.5 shrink-0 bg-gray-200"></div>
+          <div class="flex items-center gap-3 px-4 py-3 flex-1 min-w-0">
+            <span class="w-9 h-9 flex items-center justify-center rounded-lg text-xs font-bold shrink-0 bg-gray-50 text-gray-400 border border-gray-200">
+              {{ aula.numero }}
+            </span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-700 truncate">{{ aula.titulo }}</p>
+              {% if aula.data %}
+                <p class="text-xs text-gray-400 mt-0.5">{{ aula.data|date:"d/m/Y" }}</p>
+              {% endif %}
+            </div>
+            <span class="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-gray-500 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full">
+              Bloqueada
+            </span>
+          </div>
+        </div>
+        {% endif %}
         {% endif %}
       {% endfor %}
     </div>
