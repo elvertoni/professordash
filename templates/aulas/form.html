@@ -5,6 +5,93 @@
 
 {% block extra_head %}
   {{ form.media }}
+  <style>
+    /* ── Textarea markdown legível ────────────────────────────── */
+    .CodeMirror, .CodeMirror-scroll,
+    textarea[name="conteudo"],
+    .markdownx textarea,
+    #id_conteudo {
+      background: #111827 !important;
+      color: #E5E2E1 !important;
+      border: 1px solid rgba(255,255,255,.12) !important;
+      border-radius: 8px !important;
+      font-family: 'DM Mono', 'Consolas', monospace !important;
+      font-size: 13.5px !important;
+      line-height: 1.7 !important;
+      min-height: 340px !important;
+      caret-color: #10B981 !important;
+    }
+    .CodeMirror-cursor { border-left-color: #10B981 !important; }
+    .markdownx-preview {
+      background: #0D0D0D !important;
+      border: 1px solid rgba(255,255,255,.08) !important;
+      border-radius: 8px !important;
+      color: #A1A1AA !important;
+      padding: 1rem !important;
+      min-height: 100px !important;
+      font-size: 14px !important;
+      line-height: 1.75 !important;
+    }
+
+    /* ── Abas de ingestão ─────────────────────────────────────── */
+    .ingestion-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      margin-bottom: 1.25rem;
+    }
+    .ingestion-tab {
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #71717A;
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color .2s, border-color .2s;
+      font-family: inherit;
+    }
+    .ingestion-tab:hover { color: #A1A1AA; }
+    .ingestion-tab.active {
+      color: #10B981;
+      border-bottom-color: #10B981;
+    }
+    .ingestion-panel { display: none; }
+    .ingestion-panel.active { display: block; }
+
+    /* ── Drop zone para upload ──────────────────────────────── */
+    .drop-zone {
+      border: 2px dashed rgba(16,185,129,.25);
+      border-radius: 12px;
+      padding: 2.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .25s;
+      background: rgba(16,185,129,.03);
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: rgba(16,185,129,.6);
+      background: rgba(16,185,129,.06);
+    }
+    .drop-zone-icon { font-size: 2rem; margin-bottom: .5rem; }
+    .drop-zone-text { font-size: 14px; color: #71717A; }
+    .drop-zone-text span { color: #10B981; font-weight: 500; }
+    .upload-preview {
+      margin-top: 1rem;
+      padding: .75rem 1rem;
+      background: rgba(16,185,129,.08);
+      border: 1px solid rgba(16,185,129,.2);
+      border-radius: 8px;
+      font-size: 13px;
+      color: #10B981;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .upload-preview.show { display: flex; }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -31,7 +118,7 @@
       <p class="text-sm text-zinc-400 mt-0.5">{{ turma.nome }}</p>
     </div>
 
-    <form method="post" class="p-6 space-y-5">
+    <form method="post" enctype="multipart/form-data" class="p-6 space-y-5" id="aula-form">
       {% csrf_token %}
 
       <!-- Título -->
@@ -78,15 +165,60 @@
         {% endif %}
       </div>
 
-      <!-- Conteúdo Markdown -->
+      <!-- ── Conteúdo Markdown: Abas ───────────────────────── -->
       <div>
-        <label class="block text-sm font-medium text-zinc-400 mb-1">
+        <label class="block text-sm font-medium text-zinc-400 mb-2">
           Conteúdo (Markdown)
         </label>
-        {{ form.conteudo }}
-        {% if form.conteudo.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ form.conteudo.errors|join:", " }}</p>
-        {% endif %}
+
+        <!-- Abas -->
+        <div class="ingestion-tabs" role="tablist">
+          <button type="button" class="ingestion-tab active" id="tab-digitar"
+                  role="tab" aria-controls="panel-digitar" aria-selected="true"
+                  onclick="switchTab('digitar')">
+            ✏️ &nbsp;Digitar / Colar
+          </button>
+          <button type="button" class="ingestion-tab" id="tab-upload"
+                  role="tab" aria-controls="panel-upload" aria-selected="false"
+                  onclick="switchTab('upload')">
+            📄 &nbsp;Upload .md
+          </button>
+        </div>
+
+        <!-- Painel: digitar/colar -->
+        <div class="ingestion-panel active" id="panel-digitar" role="tabpanel">
+          {{ form.conteudo }}
+          {% if form.conteudo.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ form.conteudo.errors|join:", " }}</p>
+          {% endif %}
+          <p class="text-xs text-zinc-500 mt-2">Suporta Markdown completo — cabeçalhos, listas, código, tabelas.</p>
+        </div>
+
+        <!-- Painel: upload -->
+        <div class="ingestion-panel" id="panel-upload" role="tabpanel">
+          <div class="drop-zone" id="drop-zone" onclick="document.getElementById('md-file-input').click()">
+            <div class="drop-zone-icon">📂</div>
+            <div class="drop-zone-text">
+              <span>Clique para selecionar</span> ou arraste um arquivo .md aqui
+            </div>
+          </div>
+          <input type="file" id="md-file-input" accept=".md,.markdown" class="hidden" aria-label="Arquivo Markdown">
+
+          <div class="upload-preview" id="upload-preview">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span id="upload-filename">arquivo.md</span>
+            <button type="button" onclick="clearUpload()"
+                    class="ml-auto text-zinc-400 hover:text-red-400 transition-colors text-xs">✕ Remover</button>
+          </div>
+
+          <p class="text-xs text-zinc-500 mt-3">
+            O título da aula será extraído do primeiro <code class="bg-zinc-700 px-1 rounded text-zinc-300"># H1</code>,
+            ou você pode definir acima. O conteúdo do arquivo substituirá qualquer texto já digitado.
+          </p>
+        </div>
       </div>
 
       <!-- Erros gerais -->
@@ -98,7 +230,7 @@
 
       <!-- Ações -->
       <div class="flex items-center gap-3 pt-2">
-        <button type="submit"
+        <button type="submit" id="submit-btn"
                 class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors">
           {% if object.pk %}Salvar alterações{% else %}Criar aula{% endif %}
         </button>
@@ -111,4 +243,84 @@
   </div>
 
 </div>
+
+<script>
+/* ── Abas de ingestão ──────────────────────────────────────────── */
+var activeTab = 'digitar';
+var uploadedContent = null;
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.ingestion-tab').forEach(function(btn) {
+    btn.classList.toggle('active', btn.id === 'tab-' + tab);
+    btn.setAttribute('aria-selected', btn.id === 'tab-' + tab ? 'true' : 'false');
+  });
+  document.querySelectorAll('.ingestion-panel').forEach(function(panel) {
+    panel.classList.toggle('active', panel.id === 'panel-' + tab);
+  });
+}
+
+/* ── Leitura de arquivo .md ────────────────────────────────────── */
+var fileInput = document.getElementById('md-file-input');
+var dropZone  = document.getElementById('drop-zone');
+var preview   = document.getElementById('upload-preview');
+var filenameEl = document.getElementById('upload-filename');
+
+function handleFile(file) {
+  if (!file || !/\.(md|markdown)$/i.test(file.name)) {
+    alert('Por favor selecione um arquivo .md ou .markdown');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    uploadedContent = e.target.result;
+    filenameEl.textContent = file.name;
+    preview.classList.add('show');
+    dropZone.style.borderColor = 'rgba(16,185,129,.6)';
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+fileInput.addEventListener('change', function() {
+  if (this.files[0]) handleFile(this.files[0]);
+});
+
+/* Drag & drop */
+dropZone.addEventListener('dragover', function(e) {
+  e.preventDefault();
+  this.classList.add('drag-over');
+});
+dropZone.addEventListener('dragleave', function() {
+  this.classList.remove('drag-over');
+});
+dropZone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  this.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+
+function clearUpload() {
+  uploadedContent = null;
+  fileInput.value = '';
+  preview.classList.remove('show');
+  dropZone.style.borderColor = '';
+}
+
+/* ── Submit: injeta conteúdo do upload no campo markdown ──────── */
+document.getElementById('aula-form').addEventListener('submit', function() {
+  if (activeTab === 'upload' && uploadedContent !== null) {
+    var conteudoField = document.getElementById('id_conteudo');
+    if (conteudoField) {
+      conteudoField.value = uploadedContent;
+    }
+    /* Se MarkdownX usa CodeMirror, tenta atualizar via CM API */
+    if (window.CodeMirror && conteudoField && conteudoField.nextSibling) {
+      try {
+        var cm = conteudoField.nextSibling.CodeMirror;
+        if (cm) cm.setValue(uploadedContent);
+      } catch(e) {}
+    }
+  }
+});
+</script>
 {% endblock %}

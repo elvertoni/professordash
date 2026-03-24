@@ -723,18 +723,38 @@ h1.titulo {
 /* ── Individual slide ─────────────────────────────────────────── */
 .pres-slide {
   width: 100%;
-  max-width: 900px;
-  max-height: calc(100vh - 80px);
+  max-width: 860px;
+  max-height: calc(100vh - 100px);
   overflow-y: auto;
-  padding: 3rem 4.5rem;
+  padding: 2.25rem 3.5rem;
   opacity: 0;
   transform: scale(.97) translateY(8px);
   transition: opacity .45s cubic-bezier(.4,0,.2,1), transform .45s cubic-bezier(.4,0,.2,1);
   scrollbar-width: thin;
   scrollbar-color: rgba(16,185,129,.15) transparent;
 }
+@media (max-width: 768px) {
+  .pres-slide { padding: 1.5rem 1.25rem; }
+}
 .pres-slide.visible { opacity: 1; transform: scale(1) translateY(0); }
 .pres-slide.exit-left { opacity: 0; transform: scale(.97) translateY(-8px); }
+
+/* ── Sub-slide label ─────────────────────────────────────────── */
+.pres-subslide-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: #71717A;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 99px;
+  padding: 3px 10px;
+  margin-bottom: 1rem;
+}
 
 /* ── Title slide (first slide) ────────────────────────────────── */
 .pres-title-slide {
@@ -813,20 +833,20 @@ h1.titulo {
   letter-spacing: -.01em;
 }
 .pres-slide p {
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   line-height: 1.75;
   color: #A1A1AA;
-  margin-bottom: 1.1rem;
+  margin-bottom: .9rem;
 }
 .pres-slide strong { color: #E5E2E1; font-weight: 600; }
 .pres-slide ul, .pres-slide ol {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   line-height: 1.75;
   color: #A1A1AA;
   padding-left: 1.5rem;
-  margin: .75rem 0;
+  margin: .5rem 0;
 }
-.pres-slide li { margin-bottom: 10px; }
+.pres-slide li { margin-bottom: 7px; }
 .pres-slide li::marker { color: #10B981; }
 
 /* ── Code blocks in slides ────────────────────────────────────── */
@@ -940,17 +960,24 @@ h1.titulo {
 
 /* ── Bottom control bar ───────────────────────────────────────── */
 .pres-bottom {
-  height: 56px;
+  height: 60px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 16px;
   padding: 0 28px;
   background: rgba(0,0,0,.7);
   backdrop-filter: blur(16px);
   border-top: 1px solid rgba(255,255,255,.08);
   flex-shrink: 0;
   z-index: 2;
+}
+.pres-bottom-center {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  justify-content: center;
 }
 .pres-counter {
   font-family: var(--font-mono);
@@ -960,6 +987,17 @@ h1.titulo {
   min-width: 55px;
   text-align: center;
   letter-spacing: .05em;
+}
+.pres-section-label {
+  font-size: 11px;
+  color: #52525B;
+  font-weight: 500;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+  letter-spacing: .02em;
 }
 .pres-dots { display: flex; gap: 5px; align-items: center; }
 .pres-dot {
@@ -1139,8 +1177,11 @@ h1.titulo {
     </button>
   </div>
   <div class="pres-bottom">
-    <span class="pres-counter" id="pres-counter"></span>
-    <div class="pres-dots" id="pres-dots"></div>
+    <div class="pres-bottom-center">
+      <span class="pres-counter" id="pres-counter"></span>
+      <div class="pres-dots" id="pres-dots"></div>
+    </div>
+    <span class="pres-section-label" id="pres-section-label"></span>
   </div>
 </div>
 
@@ -1226,10 +1267,19 @@ function toggleRefs(btn) {
 var presSlides = [];
 var presIndex = 0;
 
+/* ── Mapa de seções: índice do slide → nome da seção ──────────── */
+var presSectionMap = [];
+
+/* Limite de elementos por sub-slide (evita slides gigantes) */
+var SLIDE_MAX_ELEMENTS = 5;
+
 function buildSlides() {
   var content = document.getElementById('md-content');
   if (!content) return [];
   var slides = [];
+  presSectionMap = [];
+
+  /* Slide 0: capa da aula */
   slides.push(
     '<div class="pres-title-slide">' +
       '<div class="pres-title-turma">{{ aula.turma.nome|escapejs }}</div>' +
@@ -1238,25 +1288,74 @@ function buildSlides() {
       '{% if aula.data %}<div class="pres-title-date">{{ aula.data|date:"d/m/Y" }}</div>{% endif %}' +
     '</div>'
   );
+  presSectionMap.push('');
+
   var children = Array.from(content.children);
   var hasH2 = children.some(function(el) { return el.tagName === 'H2'; });
-  var hasHR = children.some(function(el) { return el.tagName === 'HR'; });
+  var hasHR = !hasH2 && children.some(function(el) { return el.tagName === 'HR'; });
   var splitTag = hasH2 ? 'H2' : (hasHR ? 'HR' : null);
+
+  /* Sem separadores: divide em blocos de SLIDE_MAX_ELEMENTS */
   if (!splitTag) {
-    slides.push(content.innerHTML);
+    pushChunked(children, '', slides);
     return slides;
   }
-  var current = '';
+
+  /* Com separadores H2 / HR */
+  var sectionTitle = '';
+  var sectionEls = [];
+
   children.forEach(function(el) {
     if (el.tagName === splitTag) {
-      if (current.trim()) slides.push(current);
-      current = (splitTag === 'HR') ? '' : el.outerHTML;
+      if (sectionEls.length) pushChunked(sectionEls, sectionTitle, slides);
+      sectionTitle = (splitTag === 'H2') ? el.textContent.trim() : '';
+      sectionEls = (splitTag === 'HR') ? [] : [el];
     } else {
-      current += el.outerHTML;
+      sectionEls.push(el);
     }
   });
-  if (current.trim()) slides.push(current);
+  if (sectionEls.length) pushChunked(sectionEls, sectionTitle, slides);
   return slides;
+}
+
+/**
+ * Adiciona elements como 1+ slides. Se count > SLIDE_MAX_ELEMENTS divide
+ * em sub-slides marcados com "cont.".
+ */
+function pushChunked(elements, sectionTitle, slides) {
+  /* Isola o H2 líder se existir */
+  var leaderHTML = '';
+  var bodyEls = elements;
+  if (elements.length && elements[0].tagName === 'H2') {
+    leaderHTML = elements[0].outerHTML;
+    bodyEls = elements.slice(1);
+  }
+
+  /* Sem body? Slide só com o H2 */
+  if (!bodyEls.length) {
+    if (leaderHTML) { slides.push(leaderHTML); presSectionMap.push(sectionTitle); }
+    return;
+  }
+
+  var chunks = [];
+  for (var i = 0; i < bodyEls.length; i += SLIDE_MAX_ELEMENTS) {
+    chunks.push(bodyEls.slice(i, i + SLIDE_MAX_ELEMENTS));
+  }
+
+  chunks.forEach(function(chunk, ci) {
+    var html = '';
+    /* Primeiro chunk do H2: inclui o líder */
+    if (ci === 0 && leaderHTML) html += leaderHTML;
+    /* Chunks subsequentes: aviso de continuação */
+    if (ci > 0 && sectionTitle) {
+      html += '<div class="pres-subslide-label">' +
+                sectionTitle + ' &mdash; cont.' +
+              '</div>';
+    }
+    chunk.forEach(function(el) { html += el.outerHTML; });
+    slides.push(html);
+    presSectionMap.push(sectionTitle);
+  });
 }
 
 function renderSlide() {
@@ -1276,6 +1375,9 @@ function renderSlide() {
   dots.forEach(function(d, i) { d.classList.toggle('active', i === presIndex); });
   var progressBar = document.getElementById('pres-progress');
   if (progressBar) progressBar.style.width = ((presIndex + 1) / presSlides.length * 100) + '%';
+  /* Indicador de seção */
+  var sectionLbl = document.getElementById('pres-section-label');
+  if (sectionLbl) sectionLbl.textContent = (presSectionMap[presIndex] || '');
 }
 
 function buildDots() {
