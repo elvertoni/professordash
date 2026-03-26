@@ -1,35 +1,36 @@
 {% extends "base_admin.html" %}
 
-{% block title %}Materiais — {{ turma.nome }} — Prof Toni Coimbra{% endblock %}
+{% block title %}Materiais â€” {{ turma.nome }} â€” Prof Toni Coimbra{% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto" x-data>
-
-  <!-- Breadcrumb -->
-  <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6 overflow-x-auto whitespace-nowrap">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-emerald-400 shrink-0">Turmas</a>
-    <span>/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-emerald-400 shrink-0">{{ turma.nome }}</a>
-    <span>/</span>
-    <span class="text-zinc-100 font-medium">Materiais</span>
+  <nav class="flex items-center gap-2 text-sm text-white/35 mb-6 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="shrink-0 transition-colors hover:text-white/70">Turmas</a>
+    <span class="text-white/15">/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="shrink-0 transition-colors hover:text-white/70">{{ turma.nome }}</a>
+    <span class="text-white/15">/</span>
+    <span class="font-medium text-white/72">Materiais</span>
   </nav>
 
-  <!-- Cabeçalho -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-    <div>
-      <h1 class="text-xl sm:text-2xl font-bold text-zinc-100">Materiais</h1>
-      <p class="text-sm text-zinc-400 mt-1">{{ turma.nome }}</p>
+  <section class="mb-6 rounded-3xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div class="max-w-2xl">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-300/80">Biblioteca da turma</p>
+        <h1 class="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-white/90">Materiais de {{ turma.nome }}</h1>
+        <p class="mt-2 text-sm leading-6 text-white/50">
+          Organize arquivos, links e conteúdos Markdown em uma lista mais limpa e fácil de escanear.
+        </p>
+      </div>
+      <a href="{% url 'turmas:materiais_novo' pk=turma.pk %}"
+         class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-3.5 py-2 text-[13px] font-semibold text-black transition-colors hover:bg-emerald-400">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Novo material
+      </a>
     </div>
-    <a href="{% url 'turmas:materiais_novo' pk=turma.pk %}"
-       class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shrink-0">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-      </svg>
-      Novo material
-    </a>
-  </div>
+  </section>
 
-  <!-- Lista de materiais -->
   {% if materiais %}
     <div class="space-y-3">
       {% for material in materiais %}
@@ -40,9 +41,7 @@
     {% url 'turmas:materiais_novo' pk=turma.pk as url_novo_material %}
     {% include "components/_empty_state.html" with icon_path="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" title="Nenhum material cadastrado" subtitle="Adicione arquivos, links ou conteúdo Markdown para esta turma." action_url=url_novo_material action_label="Novo material" %}
   {% endif %}
-
 </div>
 
-{# Modal de confirmação global #}
 {% include "components/_modal_confirm.html" %}
 {% endblock %}

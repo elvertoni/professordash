@@ -1,45 +1,47 @@
 {% extends "base.html" %}
 
 {% block body %}
-<div class="min-h-screen flex flex-col">
+<div class="min-h-screen flex flex-col shell-grid">
 
-  <!-- Navbar pública -->
-  <nav class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+  <nav class="panel-soft mx-4 mt-4 px-4 sm:px-5 py-3.5 flex items-center justify-between gap-4 sticky top-4 z-20">
     <a href="{% url 'turmas:portal' token=turma.token_publico %}"
-       class="font-semibold text-gray-800 text-lg truncate">
-      {{ turma.nome }}
+       class="min-w-0 flex items-center gap-3 text-on-surface hover:text-white transition-colors">
+      <span class="w-9 h-9 shrink-0">
+        {% include "components/_logo.html" with size="w-9 h-9" %}
+      </span>
+      <span class="font-semibold text-[15px] sm:text-base truncate">
+        {{ turma.nome }}
+      </span>
     </a>
+
     <div class="flex items-center gap-3">
       {% if request.user.is_authenticated %}
-        <span class="hidden sm:block text-sm text-gray-600">
+        <span class="hidden sm:block text-sm text-on-surface-variant/70">
           {{ request.user.get_full_name|default:request.user.email }}
         </span>
         <form method="post" action="{% url 'logout' %}">
           {% csrf_token %}
-          <button type="submit"
-                  class="text-sm text-gray-500 hover:text-red-600">
+          <button type="submit" class="btn btn-ghost px-3 py-2 text-[12px]">
             Sair
           </button>
         </form>
       {% else %}
         <a href="{% url 'turmas:entrar' token=turma.token_publico %}"
-           class="text-sm bg-violet-600 text-white px-3 py-1.5 rounded hover:bg-violet-700">
+           class="btn btn-primary px-4 py-2.5 text-[13px]">
           Entrar com Google
         </a>
       {% endif %}
     </div>
   </nav>
 
-  <!-- Mensagens -->
   {% include "components/_messages.html" %}
 
-  <!-- Conteúdo -->
-  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-6">
+  <main class="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="text-center text-xs text-gray-400 py-4">
-    Prof Toni Coimbra · {{ turma.nome }}
+  <footer class="px-4 sm:px-6 pb-5 text-center text-xs text-on-surface-variant/45">
+    Prof Toni Coimbra - {{ turma.nome }}
   </footer>
 </div>
 {% endblock %}

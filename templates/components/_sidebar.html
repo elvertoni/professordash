@@ -1,27 +1,28 @@
 {% load static %}
-<aside class="fixed top-0 left-0 h-full bg-surface-container-low border-r border-outline-variant/15 z-30 flex flex-col"
+<aside class="fixed top-0 left-0 h-full z-30 flex flex-col panel-strong overflow-hidden"
        :class="$store.sidebar.collapsed ? 'w-14' : 'w-64'"
        style="transition: width 0.2s ease">
 
-  <!-- Logo -->
-  <div class="flex items-center gap-3 px-4 h-14 border-b border-outline-variant/15 shrink-0">
+  <div class="flex items-center gap-3 px-4 h-16 border-b border-white/[0.08] shrink-0">
     {% include "components/_logo.html" with size="w-8 h-8 shrink-0" %}
-    <span class="font-semibold text-on-surface text-sm tracking-tight truncate"
-          x-show="!$store.sidebar.collapsed" x-cloak>Prof Toni Coimbra</span>
+    <div x-show="!$store.sidebar.collapsed" x-cloak class="min-w-0">
+      <span class="block font-semibold text-sm text-on-surface truncate">Prof Toni Coimbra</span>
+      <span class="block text-[11px] uppercase tracking-[0.16em] text-on-surface-variant/55 truncate">Painel do professor</span>
+    </div>
   </div>
 
-  <!-- Navegação -->
-  <nav class="flex-1 px-2 py-3 overflow-y-auto space-y-0.5">
-
-    <div class="px-3 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-on-surface-variant/40"
-         x-show="!$store.sidebar.collapsed" x-cloak>Navegação</div>
+  <nav class="flex-1 px-2 py-3 overflow-y-auto space-y-2">
+    <div class="px-3 pb-1 pt-1 text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant/45"
+         x-show="!$store.sidebar.collapsed" x-cloak>
+      Navegacao
+    </div>
 
     <a href="{% url 'core:dashboard' %}"
-       class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
-              {% if request.resolver_match.namespace == 'core' %}bg-surface-container-high text-on-surface{% else %}text-on-surface-variant/50 hover:bg-surface-container-high/50 hover:text-on-surface{% endif %}">
-      <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 transition-colors
-                   {% if request.resolver_match.namespace == 'core' %}bg-primary/15 text-primary{% else %}bg-surface-container-high/50 text-on-surface-variant/40 group-hover:text-on-surface-variant/60{% endif %}">
-        <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+       class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
+              {% if request.resolver_match.namespace == 'core' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0
+                   {% if request.resolver_match.namespace == 'core' %}bg-primary/15 text-primary border border-primary/15{% else %}bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface{% endif %}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
         </svg>
@@ -30,11 +31,11 @@
     </a>
 
     <a href="{% url 'turmas:lista' %}"
-       class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
-              {% if request.resolver_match.namespace == 'turmas' and not turma %}bg-surface-container-high text-on-surface{% else %}text-on-surface-variant/50 hover:bg-surface-container-high/50 hover:text-on-surface{% endif %}">
-      <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 transition-colors
-                   {% if request.resolver_match.namespace == 'turmas' and not turma %}bg-primary/15 text-primary{% else %}bg-surface-container-high/50 text-on-surface-variant/40 group-hover:text-on-surface-variant/60{% endif %}">
-        <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+       class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
+              {% if request.resolver_match.namespace == 'turmas' and not turma %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0
+                   {% if request.resolver_match.namespace == 'turmas' and not turma %}bg-primary/15 text-primary border border-primary/15{% else %}bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface{% endif %}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
         </svg>
@@ -42,18 +43,17 @@
       <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">Turmas</span>
     </a>
 
-    <!-- Sub-menu contextual: só aparece quando há uma turma no contexto -->
     {% if turma %}
       <div x-show="!$store.sidebar.collapsed" x-cloak class="pt-2 pb-1">
-        <div class="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-on-surface-variant/40 truncate">
+        <div class="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant/45 truncate">
           {{ turma.nome|truncatechars:20 }}
         </div>
 
         <a href="{% url 'turmas:alunos_lista' pk=turma.pk %}"
-           class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
-                  {% if request.resolver_match.url_name == 'alunos_lista' or request.resolver_match.url_name == 'alunos_detalhe' %}bg-surface-container-high text-on-surface{% else %}text-on-surface-variant/50 hover:bg-surface-container-high/50 hover:text-on-surface{% endif %}">
-          <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 bg-surface-container-high/50 text-on-surface-variant/40 group-hover:text-on-surface-variant/60 transition-colors">
-            <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
+                  {% if request.resolver_match.url_name == 'alunos_lista' or request.resolver_match.url_name == 'alunos_detalhe' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0 bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
@@ -62,10 +62,10 @@
         </a>
 
         <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}"
-           class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
-                  {% if request.resolver_match.url_name == 'aulas_lista' or request.resolver_match.url_name == 'aulas_detalhe' %}bg-surface-container-high text-on-surface{% else %}text-on-surface-variant/50 hover:bg-surface-container-high/50 hover:text-on-surface{% endif %}">
-          <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 bg-surface-container-high/50 text-on-surface-variant/40 group-hover:text-on-surface-variant/60 transition-colors">
-            <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
+                  {% if request.resolver_match.url_name == 'aulas_lista' or request.resolver_match.url_name == 'aulas_detalhe' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0 bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
             </svg>
@@ -74,10 +74,10 @@
         </a>
 
         <a href="{% url 'turmas:materiais_lista' pk=turma.pk %}"
-           class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
-                  {% if request.resolver_match.url_name == 'materiais_lista' %}bg-surface-container-high text-on-surface{% else %}text-on-surface-variant/50 hover:bg-surface-container-high/50 hover:text-on-surface{% endif %}">
-          <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 bg-surface-container-high/50 text-on-surface-variant/40 group-hover:text-on-surface-variant/60 transition-colors">
-            <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
+                  {% if request.resolver_match.url_name == 'materiais_lista' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0 bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
@@ -86,10 +86,10 @@
         </a>
 
         <a href="{% url 'turmas:atividades_lista' pk=turma.pk %}"
-           class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium transition-all duration-150
-                  {% if request.resolver_match.url_name == 'atividades_lista' or request.resolver_match.url_name == 'atividade_detalhe' %}bg-surface-container-high text-on-surface{% else %}text-on-surface-variant/50 hover:bg-surface-container-high/50 hover:text-on-surface{% endif %}">
-          <span class="flex h-8 w-8 items-center justify-center rounded-lg shrink-0 bg-surface-container-high/50 text-on-surface-variant/40 group-hover:text-on-surface-variant/60 transition-colors">
-            <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
+                  {% if request.resolver_match.url_name == 'atividades_lista' or request.resolver_match.url_name == 'atividade_detalhe' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0 bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
             </svg>
@@ -98,34 +98,34 @@
         </a>
       </div>
     {% endif %}
-
   </nav>
 
-  <!-- Footer -->
-  <div class="px-2 py-3 border-t border-outline-variant/15 space-y-0.5">
-    <div class="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-on-surface-variant/40"
-         x-show="!$store.sidebar.collapsed" x-cloak>Sistema</div>
+  <div class="px-2 py-3 border-t border-white/[0.08] space-y-0.5">
+    <div class="px-3 pb-1 text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant/45"
+         x-show="!$store.sidebar.collapsed" x-cloak>
+      Sistema
+    </div>
 
     <a href="{% url 'admin:index' %}"
-       class="group flex items-center gap-3 px-2 py-1.5 rounded-xl text-[13px] font-medium text-on-surface-variant/40 hover:bg-surface-container-high/50 hover:text-on-surface-variant/70 transition-all duration-150"
-       title="Administração Django">
-      <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-container-high/50 text-on-surface-variant/30 group-hover:text-on-surface-variant/50 shrink-0 transition-colors">
-        <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+       class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface"
+       title="Administracao Django">
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.04] text-on-surface-variant/55 group-hover:text-on-surface shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
         </svg>
       </span>
-      <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">Configurações</span>
+      <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">Configuracoes</span>
     </a>
 
-    <div class="flex items-center gap-3 px-2 py-1.5" x-show="!$store.sidebar.collapsed" x-cloak>
+    <div class="flex items-center gap-3 px-2.5 py-2" x-show="!$store.sidebar.collapsed" x-cloak>
       <div class="shrink-0">
         {% include "components/_logo.html" with size="w-7 h-7" %}
       </div>
       <div class="min-w-0">
         <p class="text-xs font-semibold text-on-surface truncate">Prof. Toni Coimbra</p>
-        <p class="text-[10px] text-on-surface-variant/50 truncate">SEED-PR</p>
+        <p class="text-[10px] tracking-[0.16em] uppercase text-on-surface-variant/50 truncate">SEED-PR</p>
       </div>
     </div>
   </div>

@@ -1,9 +1,9 @@
-{# Componente de estado vazio reutilizável. #}
-{# Parâmetros esperados: icon_path, title, subtitle, action_url, action_label. #}
+{# Componente de estado vazio reutilizavel. #}
+{# Parametros esperados: icon_path, title, subtitle, action_url, action_label. #}
 
-<div class="bg-[#111] rounded-xl border border-dashed border-white/[0.08] p-10 sm:p-14 text-center">
-  <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-white/[0.04] border border-white/[0.07] flex items-center justify-center">
-    <svg class="w-6 h-6 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="panel panel-soft p-8 sm:p-12 text-center">
+  <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
+    <svg class="w-7 h-7 text-on-surface-variant/55" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       {% if icon_path %}
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ icon_path }}"/>
       {% else %}
@@ -13,18 +13,19 @@
     </svg>
   </div>
 
-  <h3 class="text-[13px] font-semibold text-white/70">
+  <h3 class="text-base sm:text-lg font-semibold text-on-surface">
     {{ title|default:"Nenhum item encontrado" }}
   </h3>
 
   {% if subtitle %}
-    <p class="mt-1 text-[13px] text-white/35">{{ subtitle }}</p>
+    <p class="mt-2 text-sm sm:text-[15px] text-on-surface-variant/62 max-w-xl mx-auto">
+      {{ subtitle }}
+    </p>
   {% endif %}
 
   {% if action_url %}
-    <div class="mt-5">
-      <a href="{{ action_url }}"
-         class="inline-flex items-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.1] hover:border-white/[0.18] text-white/80 hover:text-white text-[13px] font-medium px-4 py-2 rounded-lg transition-all">
+    <div class="mt-6">
+      <a href="{{ action_url }}" class="btn btn-primary px-4 py-2.5 text-sm">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>

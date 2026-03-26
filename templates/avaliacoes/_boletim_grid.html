@@ -1,68 +1,68 @@
 <div class="overflow-x-auto">
-  <table class="min-w-full divide-y divide-gray-200">
-    <thead class="bg-gray-50">
+  <table class="min-w-full divide-y divide-outline-variant/10">
+    <thead class="bg-white/[0.025]">
       <tr>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 bg-gray-50 z-10 border-r border-gray-200">
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-on-surface-variant/55 uppercase tracking-wider sticky left-0 bg-white/[0.025] z-10 border-r border-outline-variant/10">
           Aluno
         </th>
         {% for ativ in atividades %}
-          <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">
+          <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-on-surface-variant/55 uppercase tracking-wider min-w-[120px]">
             <span class="block truncate" title="{{ ativ.titulo }}">{{ ativ.titulo|truncatechars:15 }}</span>
-            <span class="block text-gray-400 font-normal">Máx: {{ ativ.valor_pontos|floatformat:1 }}</span>
+            <span class="block text-on-surface-variant/40 font-normal">Max: {{ ativ.valor_pontos|floatformat:1 }}</span>
           </th>
         {% endfor %}
-        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-emerald-300 uppercase tracking-wider bg-emerald-950 min-w-[100px]">
+        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-emerald-300 uppercase tracking-wider bg-emerald-500/10 border-l border-emerald-500/15 min-w-[100px]">
           Total
         </th>
-        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-emerald-300 uppercase tracking-wider bg-emerald-950 min-w-[100px]">
-          Média
+        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-emerald-300 uppercase tracking-wider bg-emerald-500/10 min-w-[100px]">
+          Media
         </th>
       </tr>
     </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
+    <tbody class="divide-y divide-outline-variant/10">
       {% for linha in grid %}
-        <tr class="hover:bg-gray-50 transition-colors">
-          <td class="px-6 py-4 whitespace-nowrap sticky left-0 bg-white border-r border-gray-200 group-hover:bg-gray-50">
+        <tr class="hover:bg-white/[0.03] transition-colors">
+          <td class="px-6 py-4 whitespace-nowrap sticky left-0 bg-surface-container-low border-r border-outline-variant/10 group-hover:bg-white/[0.03]">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-8 w-8">
-                <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-emerald-900">
+                <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                   <span class="font-medium text-emerald-300 leading-none text-xs">
                     {{ linha.aluno.nome|make_list|first|upper }}
                   </span>
                 </span>
               </div>
               <div class="ml-3">
-                <div class="text-sm font-medium text-gray-900">
-                  <a href="{% url 'turmas:alunos_detalhe' pk=turma.pk aluno_pk=linha.aluno.pk %}" class="hover:text-emerald-400 hover:underline">
+                <div class="text-sm font-medium text-on-surface">
+                  <a href="{% url 'turmas:alunos_detalhe' pk=turma.pk aluno_pk=linha.aluno.pk %}" class="hover:text-emerald-300 hover:underline">
                     {{ linha.aluno.nome }}
                   </a>
                 </div>
               </div>
             </div>
           </td>
-          
+
           {% for item in linha.notas %}
             <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
               {% if item.nota is not None %}
-                <span class="font-medium {% if item.nota >= item.atividade.valor_pontos|add:"-0.01"|floatformat:2|add:"/2" %}text-green-600{% else %}text-emerald-400{% endif %}">
+                <span class="font-medium {% if item.nota >= item.atividade.valor_pontos|add:"-0.01"|floatformat:2|add:"/2" %}text-emerald-200{% else %}text-emerald-300{% endif %}">
                   {{ item.nota|floatformat:1 }}
                 </span>
               {% else %}
-                <span class="text-gray-400">-</span>
+                <span class="text-on-surface-variant/40">-</span>
               {% endif %}
             </td>
           {% endfor %}
-          
-          <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold bg-gray-50 border-l border-gray-200 text-gray-900">
+
+          <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold bg-white/[0.025] border-l border-outline-variant/10 text-on-surface">
             {{ linha.total|floatformat:1 }}
           </td>
-          <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold bg-emerald-950 text-emerald-300">
+          <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold bg-emerald-500/10 text-emerald-300">
             {{ linha.media|floatformat:1 }}%
           </td>
         </tr>
       {% empty %}
         <tr>
-          <td colspan="{{ atividades|length|add:3 }}" class="px-6 py-10 text-center text-gray-500">
+          <td colspan="{{ atividades|length|add:3 }}" class="px-6 py-10 text-center text-on-surface-variant/55">
             Nenhum aluno cadastrado nesta turma.
           </td>
         </tr>

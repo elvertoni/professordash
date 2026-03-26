@@ -1,20 +1,20 @@
-﻿{% load markdownx static %}
+{% load markdownx static %}
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ aula.titulo }} â€” {{ aula.turma.nome }}</title>
+<title>{{ aula.titulo }} — {{ aula.turma.nome }}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 <style>
-/* â”€â”€ Reset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Reset ─────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* â”€â”€ Tokens Light â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Tokens Light ──────────────────────────────────────────────── */
 :root, [data-theme="dark"] {
   --bg:        #000000;
   --surface:   #0D0D0D;
@@ -56,7 +56,7 @@ body {
   transition: background .3s var(--ease), color .3s var(--ease);
 }
 
-/* â”€â”€ Progress bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Progress bar ─────────────────────────────────────────────── */
 #progress {
   position: fixed;
   top: 0; left: 0;
@@ -68,7 +68,7 @@ body {
   border-radius: 0 2px 2px 0;
 }
 
-/* â”€â”€ Top navigation bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Top navigation bar ───────────────────────────────────────── */
 .top-nav {
   position: sticky;
   top: 0;
@@ -137,7 +137,7 @@ body {
   font-family: var(--font-body);
 }
 
-/* â”€â”€ Main layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Main layout ──────────────────────────────────────────────── */
 .layout-wrapper {
   display: flex;
   max-width: 1100px;
@@ -146,7 +146,7 @@ body {
   gap: 2rem;
 }
 
-/* â”€â”€ Left sidebar (mÃ³dulos) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Left sidebar (módulos) ───────────────────────────────────── */
 .modules-sidebar {
   display: none;
 }
@@ -201,14 +201,14 @@ body {
   }
 }
 
-/* â”€â”€ Main content area â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Main content area ────────────────────────────────────────── */
 .page {
   flex: 1;
   min-width: 0;
   padding: 2.5rem 0 6rem;
 }
 
-/* â”€â”€ Right TOC sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Right TOC sidebar ────────────────────────────────────────── */
 .toc-sidebar { display: none; }
 @media (min-width: 1200px) {
   .toc-sidebar {
@@ -253,7 +253,7 @@ body {
   .toc-list .toc-h3 { padding-left: 22px; font-size: 11.5px; }
 }
 
-/* â”€â”€ Metadata badges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Metadata badges ──────────────────────────────────────────── */
 .aula-meta {
   display: flex;
   align-items: center;
@@ -292,7 +292,7 @@ body {
   text-transform: uppercase;
 }
 
-/* â”€â”€ Hero header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Hero header ──────────────────────────────────────────────── */
 h1.titulo {
   font-family: var(--font-head);
   font-size: clamp(2.2rem, 5vw, 3.5rem);
@@ -313,7 +313,7 @@ h1.titulo {
   border-bottom: 1px solid var(--border);
 }
 
-/* â”€â”€ Cover image â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Cover image ──────────────────────────────────────────────── */
 .cover-image {
   width: 100%;
   aspect-ratio: 16/9;
@@ -340,7 +340,7 @@ h1.titulo {
   font-size: 13px;
 }
 
-/* â”€â”€ Markdown rendering â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Markdown rendering ───────────────────────────────────────── */
 .md-content h1 {
   font-size: clamp(1.8rem, 3.5vw, 2.4rem);
   font-weight: 700;
@@ -462,7 +462,7 @@ h1.titulo {
   margin: 1rem 0;
 }
 
-/* â”€â”€ Callouts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Callouts ─────────────────────────────────────────────────── */
 .callout {
   display: flex;
   gap: 14px;
@@ -486,7 +486,7 @@ h1.titulo {
 .c-coral  { background: var(--coral-bg);  border-color: var(--coral);  border-left: 3px solid var(--coral); }
 .c-coral  .callout-title { color: var(--coral); }
 
-/* â”€â”€ Roteiro de fala â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Roteiro de fala ──────────────────────────────────────────── */
 .roteiro {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -522,7 +522,7 @@ h1.titulo {
   color: var(--text2);
 }
 
-/* â”€â”€ Questao interativa â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Questao interativa ───────────────────────────────────────── */
 .questao {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -589,7 +589,7 @@ h1.titulo {
 }
 .gabarito.show { display: block; }
 
-/* â”€â”€ Resumo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Resumo ───────────────────────────────────────────────────── */
 .resumo-list { list-style: none; margin: .5rem 0; }
 .resumo-list li {
   display: flex; align-items: flex-start; gap: 10px;
@@ -599,7 +599,7 @@ h1.titulo {
 .resumo-list li:last-child { border-bottom: none; }
 .resumo-check { color: var(--accent); flex-shrink: 0; }
 
-/* â”€â”€ Referencias â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Referencias ──────────────────────────────────────────────── */
 .refs-toggle {
   display: flex; align-items: center; gap: 8px;
   background: none; border: 1px solid var(--border);
@@ -616,7 +616,7 @@ h1.titulo {
 }
 .refs-content.open { display: block; }
 
-/* â”€â”€ Prev/Next footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Prev/Next footer ─────────────────────────────────────────── */
 .nav-footer {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -785,7 +785,7 @@ h1.titulo {
   }
 }
 
-/* â”€â”€ Animations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Animations ───────────────────────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -796,9 +796,9 @@ h1.titulo {
 .page > *:nth-child(3) { animation-delay: .15s; }
 .page > *:nth-child(4) { animation-delay: .20s; }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   PRESENTATION MODE â€” EDITORIAL INTELLIGENCE
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ═══════════════════════════════════════════════════════════════
+   PRESENTATION MODE — EDITORIAL INTELLIGENCE
+   ═══════════════════════════════════════════════════════════════ */
 .pres-overlay {
   position: fixed;
   inset: 0;
@@ -898,7 +898,7 @@ h1.titulo {
   border-color: rgba(16,185,129,.25);
 }
 
-/* â”€â”€ Slide progress bar (top) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Slide progress bar (top) ─────────────────────────────────── */
 .pres-progress {
   position: absolute;
   top: 0; left: 0;
@@ -909,7 +909,7 @@ h1.titulo {
   border-radius: 0 1px 1px 0;
 }
 
-/* â”€â”€ Slide container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Slide container ──────────────────────────────────────────── */
 .pres-slide-container {
   flex: 1;
   display: flex;
@@ -920,7 +920,7 @@ h1.titulo {
   z-index: 1;
 }
 
-/* â”€â”€ Individual slide â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Individual slide ─────────────────────────────────────────── */
 .pres-slide {
   width: 100%;
   max-width: 860px;
@@ -943,7 +943,7 @@ h1.titulo {
 .pres-slide.visible { opacity: 1; transform: scale(1) translateY(0); }
 .pres-slide.exit-left { opacity: 0; transform: scale(.97) translateY(-8px); }
 
-/* â”€â”€ Sub-slide label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Sub-slide label ─────────────────────────────────────────── */
 .pres-subslide-label {
   display: inline-flex;
   align-items: center;
@@ -960,7 +960,7 @@ h1.titulo {
   margin-bottom: 1rem;
 }
 
-/* â”€â”€ Title slide (first slide) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Title slide (first slide) ────────────────────────────────── */
 .pres-title-slide {
   display: flex;
   flex-direction: column;
@@ -1006,7 +1006,7 @@ h1.titulo {
   letter-spacing: .03em;
 }
 
-/* â”€â”€ Slide typography â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Slide typography ─────────────────────────────────────────── */
 .pres-slide h2 {
   font-family: var(--font-head);
   font-size: 2.4rem;
@@ -1053,7 +1053,7 @@ h1.titulo {
 .pres-slide li { margin-bottom: 7px; }
 .pres-slide li::marker { color: #10B981; }
 
-/* â”€â”€ Code blocks in slides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Code blocks in slides ────────────────────────────────────── */
 .pres-slide code {
   font-family: var(--font-mono);
   font-size: 1.15rem;
@@ -1081,7 +1081,7 @@ h1.titulo {
   color: #E5E2E1;
 }
 
-/* â”€â”€ Other elements in slides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Other elements in slides ─────────────────────────────────── */
 .pres-slide blockquote {
   border-left: 3px solid rgba(16,185,129,.3);
   padding: .75rem 0 .75rem 1.5rem;
@@ -1116,7 +1116,7 @@ h1.titulo {
   box-shadow: 0 8px 32px rgba(0,0,0,.5);
 }
 
-/* â”€â”€ Callouts in slides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Callouts in slides ───────────────────────────────────────── */
 .pres-slide .callout { border-radius: 12px; padding: 1.1rem 1.4rem; font-size: 1.15rem; }
 .pres-slide .callout-text { font-size: 1.15rem; }
 .pres-slide .c-blue   { background: rgba(6,182,212,.06); border-color: rgba(6,182,212,.25); }
@@ -1130,13 +1130,13 @@ h1.titulo {
 .pres-slide .c-coral  { background: rgba(248,113,113,.06); border-color: rgba(248,113,113,.25); }
 .pres-slide .c-coral  .callout-title { color: #F87171; }
 
-/* â”€â”€ Questions in slides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Questions in slides ──────────────────────────────────────── */
 .pres-slide .questao { background: rgba(139,92,246,.04); border-color: rgba(255,255,255,.1); border-radius: 12px; font-size: 1.15rem; }
 .pres-slide .questao-enunciado { font-size: 1.25rem; color: #E5E2E1; }
 .pres-slide .alt { font-size: 1.15rem; color: #A1A1AA; }
 .pres-slide .alt-badge { background: rgba(139,92,246,.08); border-color: rgba(255,255,255,.15); color: #A1A1AA; }
 
-/* â”€â”€ Navigation arrows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Navigation arrows ────────────────────────────────────────── */
 .pres-arrow {
   position: absolute;
   top: 50%;
@@ -1182,7 +1182,7 @@ h1.titulo {
 .pres-arrow.left { left: 24px; }
 .pres-arrow.right { right: 24px; }
 
-/* â”€â”€ Bottom control bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Bottom control bar ───────────────────────────────────────── */
 .pres-bottom {
   min-height: 72px;
   display: flex;
@@ -1273,7 +1273,7 @@ h1.titulo {
   background: rgba(16,185,129,.10);
 }
 
-/* â”€â”€ Exit button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Exit button ──────────────────────────────────────────────── */
 .pres-exit {
   background: rgba(255,255,255,.03);
   border: 1px solid rgba(255,255,255,.08);
@@ -1342,12 +1342,1193 @@ h1.titulo {
   }
 }
 </style>
+<style>
+:root,
+[data-theme="dark"] {
+  --bg: #131313;
+  --bg-alt: #181716;
+  --surface: rgba(24, 23, 22, 0.86);
+  --surface-soft: rgba(30, 29, 29, 0.94);
+  --surface-strong: rgba(43, 42, 44, 0.96);
+  --text: #e5e2e1;
+  --muted: #cac4d4;
+  --muted-soft: #918a98;
+  --ghost: rgba(202, 196, 212, 0.12);
+  --ghost-strong: rgba(202, 196, 212, 0.22);
+  --primary: #cebdff;
+  --primary-strong: #a78bfa;
+  --primary-bg: rgba(206, 189, 255, 0.12);
+  --secondary: #5de6ff;
+  --secondary-bg: rgba(93, 230, 255, 0.12);
+  --success: #34d399;
+  --success-bg: rgba(52, 211, 153, 0.12);
+  --warning: #f9c56d;
+  --warning-bg: rgba(249, 197, 109, 0.12);
+  --danger: #fb7185;
+  --danger-bg: rgba(251, 113, 133, 0.12);
+  --shadow-soft: 0 28px 90px rgba(0, 0, 0, 0.34);
+  --shadow-card: 0 24px 60px rgba(0, 0, 0, 0.28);
+  --radius: 18px;
+  --radius-lg: 28px;
+}
+
+html,
+body {
+  background: var(--bg);
+}
+
+body {
+  min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.75;
+  background:
+    radial-gradient(circle at top left, rgba(206, 189, 255, 0.12), transparent 28%),
+    radial-gradient(circle at top right, rgba(93, 230, 255, 0.10), transparent 24%),
+    linear-gradient(180deg, #111111 0%, #131313 22%, #161515 100%);
+  color: var(--text);
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto auto 0 0;
+  width: 34vw;
+  height: 34vw;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(48px);
+  opacity: 0.28;
+}
+
+body::before {
+  left: -12vw;
+  bottom: 8vh;
+  background: rgba(167, 139, 250, 0.18);
+}
+
+body::after {
+  inset: 6vh -10vw auto auto;
+  background: rgba(93, 230, 255, 0.12);
+}
+
+#progress {
+  height: 2px;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  box-shadow: 0 0 18px rgba(93, 230, 255, 0.45);
+}
+
+.top-nav {
+  padding: 14px 24px;
+  border-bottom: 1px solid rgba(202, 196, 212, 0.08);
+  background: rgba(13, 13, 14, 0.62);
+  backdrop-filter: blur(24px);
+}
+
+.top-nav-inner {
+  max-width: 1480px;
+  min-height: 58px;
+  margin: 0 auto;
+  gap: 18px;
+}
+
+.breadcrumb {
+  gap: 10px;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-soft);
+}
+
+.breadcrumb a,
+.breadcrumb .current {
+  color: inherit;
+}
+
+.breadcrumb a:hover {
+  color: var(--secondary);
+}
+
+.breadcrumb .sep {
+  color: rgba(202, 196, 212, 0.28);
+}
+
+.breadcrumb .current {
+  max-width: min(50vw, 560px);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.nav-actions {
+  gap: 10px;
+}
+
+.tb-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--ghost);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+  color: var(--muted);
+}
+
+.tb-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(93, 230, 255, 0.22);
+  color: var(--text);
+}
+
+.tb-btn-label {
+  width: auto;
+  padding: 0 16px;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(93, 230, 255, 0.12), rgba(206, 189, 255, 0.12));
+}
+
+.layout-wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1480px;
+  padding: 28px 24px 72px;
+  gap: 28px;
+  align-items: flex-start;
+}
+
+@media (min-width: 1024px) {
+  .modules-sidebar {
+    width: 240px;
+    padding-top: 8px;
+  }
+}
+
+.modules-shell,
+.toc-shell {
+  background: rgba(24, 23, 22, 0.72);
+  border: 1px solid rgba(202, 196, 212, 0.08);
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(24px);
+}
+
+.modules-label,
+.toc-title {
+  margin-bottom: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-soft);
+}
+
+.modules-list li,
+.toc-list li {
+  margin-bottom: 8px;
+}
+
+.modules-list a {
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  color: var(--muted);
+  background: transparent;
+}
+
+.modules-list a:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.modules-list a.active {
+  color: var(--text);
+  background:
+    linear-gradient(135deg, rgba(206, 189, 255, 0.16), rgba(93, 230, 255, 0.08)),
+    rgba(255, 255, 255, 0.03);
+}
+
+.modules-list .module-num {
+  min-width: 24px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--secondary);
+  opacity: 1;
+}
+
+.page {
+  padding: 0;
+}
+
+.lesson-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.92fr);
+  gap: 28px;
+  align-items: stretch;
+  margin-bottom: 32px;
+}
+
+.lesson-hero-copy {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(28px, 4vw, 48px);
+  border-radius: 34px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
+    rgba(24, 23, 22, 0.82);
+  box-shadow: var(--shadow-soft);
+}
+
+.lesson-hero-copy::before,
+.lesson-stage::before,
+.lesson-article-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 180px;
+  height: 180px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(206, 189, 255, 0.18), transparent 68%);
+  pointer-events: none;
+}
+
+.lesson-hero-copy::after {
+  content: "";
+  position: absolute;
+  inset: auto 36px 28px auto;
+  width: 160px;
+  height: 160px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(93, 230, 255, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+.lesson-kicker {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--secondary);
+}
+
+.lesson-kicker::before {
+  content: "";
+  width: 42px;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--secondary), transparent);
+}
+
+.aula-meta {
+  position: relative;
+  z-index: 1;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.tag {
+  padding: 7px 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.tag-primary {
+  color: var(--primary);
+  background: var(--primary-bg);
+  border-color: rgba(206, 189, 255, 0.18);
+  opacity: 1;
+}
+
+.tag-neutral {
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(202, 196, 212, 0.08);
+}
+
+.tag-success {
+  color: var(--success);
+  background: var(--success-bg);
+  border-color: rgba(52, 211, 153, 0.18);
+}
+
+.tag-draft {
+  color: var(--warning);
+  background: var(--warning-bg);
+  border-color: rgba(249, 197, 109, 0.18);
+}
+
+.tag-date {
+  margin-left: 0;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(202, 196, 212, 0.08);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--muted-soft);
+}
+
+h1.titulo {
+  position: relative;
+  z-index: 1;
+  max-width: 11ch;
+  margin-bottom: 18px;
+  font-size: clamp(2.9rem, 7vw, 5.8rem);
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+}
+
+.intro-text {
+  display: none;
+  position: relative;
+  z-index: 1;
+  max-width: 58ch;
+  margin: 0;
+  padding: 0;
+  border: none;
+  color: var(--muted);
+  font-size: 1.06rem;
+  line-height: 1.9;
+}
+
+.intro-text.is-ready {
+  display: block;
+}
+
+.lesson-stage {
+  position: relative;
+  overflow: hidden;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin: 0;
+  padding: 28px;
+  border: none;
+  border-radius: 32px;
+  background:
+    linear-gradient(160deg, rgba(206, 189, 255, 0.10), transparent 56%),
+    linear-gradient(200deg, rgba(93, 230, 255, 0.10), transparent 52%),
+    rgba(24, 23, 22, 0.88);
+  box-shadow: var(--shadow-card);
+  align-content: start;
+}
+
+.lesson-stage-copy,
+.lesson-stage-metrics,
+.lesson-stage-actions {
+  position: relative;
+  z-index: 1;
+}
+
+.lesson-stage-kicker {
+  color: var(--primary);
+}
+
+.lesson-stage-kicker::before {
+  background: linear-gradient(90deg, var(--primary), transparent);
+}
+
+.lesson-stage-copy h2 {
+  margin: 0 0 0.8rem;
+  font-size: clamp(1.45rem, 2vw, 1.9rem);
+  line-height: 1.05;
+}
+
+.lesson-stage-copy p {
+  font-size: 0.98rem;
+  color: var(--muted);
+}
+
+.lesson-stage-metric {
+  padding: 16px 14px;
+  border: 1px solid rgba(202, 196, 212, 0.06);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lesson-stage-metric strong {
+  font-size: 1.55rem;
+}
+
+.lesson-stage-metric span {
+  margin-top: 4px;
+  color: var(--muted-soft);
+}
+
+.lesson-stage-primary,
+.lesson-stage-secondary {
+  min-height: 48px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lesson-stage-primary {
+  border: none;
+  background: linear-gradient(135deg, var(--secondary), var(--primary-strong));
+  color: #111111;
+}
+
+.lesson-stage-secondary {
+  border: 1px solid rgba(202, 196, 212, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.cover-image {
+  margin-bottom: 32px;
+  border-radius: 30px;
+  background: rgba(24, 23, 22, 0.92);
+  box-shadow: var(--shadow-card);
+}
+
+.cover-image img {
+  filter: saturate(0.96) contrast(1.04);
+}
+
+.lesson-article-shell {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 32px;
+  padding: clamp(24px, 4vw, 42px);
+  border-radius: 34px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
+    rgba(24, 23, 22, 0.86);
+  box-shadow: var(--shadow-soft);
+}
+
+.md-content {
+  position: relative;
+  z-index: 1;
+  max-width: 820px;
+}
+
+.md-content > h1:first-child {
+  display: none;
+}
+
+.md-content h1 {
+  margin: 3rem 0 1rem;
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
+}
+
+.md-content h2 {
+  gap: 16px;
+  margin: 4rem 0 1.35rem;
+  font-size: clamp(1.55rem, 2.4vw, 2.05rem);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.md-content h2::before {
+  width: 46px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+.md-content h3 {
+  margin: 2.15rem 0 0.85rem;
+  font-size: 1.14rem;
+  color: var(--text);
+}
+
+.md-content p,
+.md-content li {
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.9;
+}
+
+.md-content strong {
+  color: var(--text);
+}
+
+.md-content a {
+  color: var(--secondary);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(93, 230, 255, 0.24);
+}
+
+.md-content a:hover {
+  border-bottom-color: rgba(93, 230, 255, 0.72);
+}
+
+.md-content ul,
+.md-content ol {
+  margin: 0.8rem 0 1.35rem;
+  padding-left: 1.5rem;
+}
+
+.md-content li {
+  margin-bottom: 0.55rem;
+}
+
+.md-content li::marker {
+  color: var(--secondary);
+}
+
+.md-content blockquote {
+  margin: 2rem 0;
+  padding: 1.3rem 1.5rem;
+  border: none;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(206, 189, 255, 0.12), rgba(93, 230, 255, 0.06));
+  color: var(--text);
+  font-size: 1.06rem;
+  box-shadow: var(--shadow-card);
+}
+
+.md-content code {
+  padding: 2px 8px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(93, 230, 255, 0.10);
+  color: var(--secondary);
+}
+
+.md-content pre {
+  position: relative;
+  margin: 1.5rem 0;
+  padding: 1.45rem 1.6rem;
+  border: none;
+  border-radius: 28px;
+  background: #0f1012;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.34);
+}
+
+.md-content pre::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: 18px;
+  width: 44px;
+  height: 10px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(251, 113, 133, 0.8) 0 4px, transparent 5px),
+    radial-gradient(circle, rgba(249, 197, 109, 0.8) 0 4px, transparent 5px),
+    radial-gradient(circle, rgba(52, 211, 153, 0.8) 0 4px, transparent 5px);
+  background-size: 14px 10px;
+  background-repeat: no-repeat;
+  background-position: 0 0, 15px 0, 30px 0;
+}
+
+.md-content pre code {
+  display: block;
+  padding: 1.1rem 0 0;
+  background: transparent;
+  color: #e7e4ec;
+  font-size: 13.5px;
+}
+
+.md-content hr {
+  margin: 2.75rem 0;
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(202, 196, 212, 0.28), transparent);
+}
+
+.md-content table {
+  display: block;
+  overflow-x: auto;
+  margin: 1.6rem 0;
+  border-spacing: 0;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.md-content th,
+.md-content td {
+  padding: 12px 16px;
+}
+
+.md-content th {
+  color: var(--muted-soft);
+  border-bottom: 1px solid rgba(202, 196, 212, 0.12);
+}
+
+.md-content td {
+  border-bottom: 1px solid rgba(202, 196, 212, 0.06);
+}
+
+.md-content tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.md-content img {
+  margin: 1.3rem 0;
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.callout {
+  gap: 16px;
+  align-items: flex-start;
+  margin: 1.5rem 0;
+  padding: 18px 20px;
+  border: none;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: var(--shadow-card);
+}
+
+.callout-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  line-height: 1;
+}
+
+.callout-title {
+  margin-bottom: 0.3rem;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.callout-text {
+  font-size: 0.98rem;
+  color: var(--muted);
+}
+
+.c-blue {
+  background: linear-gradient(135deg, rgba(93, 230, 255, 0.12), rgba(93, 230, 255, 0.04));
+}
+
+.c-blue .callout-title,
+.c-blue .callout-icon {
+  color: var(--secondary);
+}
+
+.c-green {
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.12), rgba(52, 211, 153, 0.04));
+}
+
+.c-green .callout-title,
+.c-green .callout-icon {
+  color: var(--success);
+}
+
+.c-amber {
+  background: linear-gradient(135deg, rgba(249, 197, 109, 0.12), rgba(249, 197, 109, 0.04));
+}
+
+.c-amber .callout-title,
+.c-amber .callout-icon {
+  color: var(--warning);
+}
+
+.c-violet {
+  background: linear-gradient(135deg, rgba(206, 189, 255, 0.14), rgba(167, 139, 250, 0.08));
+}
+
+.c-violet .callout-title,
+.c-violet .callout-icon {
+  color: var(--primary);
+}
+
+.c-coral {
+  background: linear-gradient(135deg, rgba(251, 113, 133, 0.12), rgba(251, 113, 133, 0.04));
+}
+
+.c-coral .callout-title,
+.c-coral .callout-icon {
+  color: var(--danger);
+}
+
+.roteiro {
+  padding: 24px 24px 24px 28px;
+  border: none;
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(206, 189, 255, 0.10), rgba(255, 255, 255, 0.03));
+  box-shadow: var(--shadow-card);
+}
+
+.roteiro::before {
+  width: 3px;
+  background: linear-gradient(180deg, var(--primary), var(--secondary));
+}
+
+.roteiro-header {
+  color: var(--muted-soft);
+}
+
+.roteiro-texto {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.questao {
+  padding: 22px 22px 18px;
+  border: none;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.045);
+  box-shadow: var(--shadow-card);
+}
+
+.questao-num {
+  color: var(--muted-soft);
+}
+
+.questao-enunciado {
+  font-size: 1.02rem;
+  color: var(--text);
+}
+
+.alt {
+  margin: 8px 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  font-size: 0.96rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+}
+
+.alt:hover:not(.selected):not(.wrong) {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(202, 196, 212, 0.10);
+}
+
+.alt.selected {
+  background: rgba(52, 211, 153, 0.10);
+  border-color: rgba(52, 211, 153, 0.24);
+}
+
+.alt.wrong {
+  background: rgba(251, 113, 133, 0.10);
+  border-color: rgba(251, 113, 133, 0.24);
+  opacity: 1;
+}
+
+.alt-badge {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(202, 196, 212, 0.12);
+}
+
+.gabarito {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 18px;
+  background: rgba(52, 211, 153, 0.10);
+  color: #93f0c8;
+}
+
+.nav-footer {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  gap: 16px;
+}
+
+.nav-card {
+  padding: 20px 22px;
+  border: none;
+  border-radius: 24px;
+  background: rgba(24, 23, 22, 0.84);
+  box-shadow: var(--shadow-card);
+}
+
+.nav-card:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, rgba(206, 189, 255, 0.10), rgba(93, 230, 255, 0.06));
+}
+
+.nav-card-label {
+  color: var(--muted-soft);
+}
+
+.nav-card-title {
+  color: var(--text);
+}
+
+.toc-list a {
+  padding: 8px 10px;
+  border: none;
+  border-radius: 14px;
+  color: var(--muted);
+}
+
+.toc-list a:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.toc-list a.active {
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(93, 230, 255, 0.12), rgba(206, 189, 255, 0.08));
+}
+
+.pres-overlay {
+  background:
+    radial-gradient(circle at top left, rgba(206, 189, 255, 0.12), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(93, 230, 255, 0.10), transparent 26%),
+    linear-gradient(180deg, #090909 0%, #0d0d0f 100%);
+}
+
+.pres-topbar {
+  padding: calc(18px + env(safe-area-inset-top)) 28px 16px;
+  border-bottom: 1px solid rgba(202, 196, 212, 0.10);
+  background: rgba(10, 10, 11, 0.62);
+  backdrop-filter: blur(28px);
+}
+
+.pres-topbar-kicker {
+  color: var(--secondary);
+}
+
+.pres-topbar-kicker::before {
+  background: linear-gradient(90deg, var(--secondary), transparent);
+}
+
+.pres-current-title {
+  font-family: var(--font-head);
+  font-size: 1.08rem;
+}
+
+.pres-current-section,
+.pres-shortcuts {
+  color: var(--muted-soft);
+}
+
+.pres-secondary-btn,
+.pres-exit {
+  border: 1px solid rgba(202, 196, 212, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.pres-secondary-btn:hover,
+.pres-exit:hover {
+  color: var(--text);
+  border-color: rgba(93, 230, 255, 0.22);
+}
+
+.pres-progress {
+  height: 3px;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+}
+
+.pres-slide-container {
+  padding: 26px 94px 18px;
+}
+
+.pres-slide {
+  width: min(1180px, 100%);
+  max-width: 1180px;
+  max-height: calc(100vh - 228px);
+  padding: clamp(28px, 4vw, 54px);
+  border-radius: 34px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
+    rgba(17, 17, 19, 0.92);
+  border: 1px solid rgba(202, 196, 212, 0.10);
+  box-shadow: 0 42px 120px rgba(0, 0, 0, 0.42);
+}
+
+.pres-title-slide {
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 62vh;
+  padding: 0;
+  text-align: left;
+}
+
+.pres-title-turma {
+  border-color: rgba(206, 189, 255, 0.16);
+  background: rgba(206, 189, 255, 0.08);
+  color: var(--primary);
+}
+
+.pres-title-num {
+  color: var(--secondary);
+}
+
+.pres-title-h1 {
+  max-width: 10ch;
+  margin-bottom: 18px;
+  font-size: clamp(3rem, 6.4vw, 5.5rem);
+  line-height: 0.96;
+}
+
+.pres-title-date {
+  color: var(--muted);
+}
+
+.pres-title-summary {
+  max-width: 760px;
+  margin: 0 0 4px;
+  color: #d9d4de;
+  font-size: 1.18rem;
+  line-height: 1.72;
+}
+
+.pres-title-agenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 760px;
+  margin-top: 26px;
+}
+
+.pres-title-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(202, 196, 212, 0.12);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.pres-slide h2 {
+  gap: 18px;
+  margin-bottom: 1.5rem;
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.pres-slide h2::before {
+  width: 52px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+}
+
+.pres-slide h3 {
+  margin: 1.8rem 0 0.8rem;
+  font-size: 1.45rem;
+}
+
+.pres-slide p,
+.pres-slide ul,
+.pres-slide ol {
+  font-size: 1.24rem;
+  line-height: 1.72;
+  color: #d9d4de;
+}
+
+.pres-slide li::marker {
+  color: var(--secondary);
+}
+
+.pres-slide code {
+  border: none;
+  background: rgba(93, 230, 255, 0.12);
+  color: var(--secondary);
+  font-size: 1rem;
+}
+
+.pres-slide pre {
+  padding: 1.45rem 1.55rem;
+  border: none;
+  border-radius: 26px;
+  background: rgba(10, 11, 14, 0.92);
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.34);
+}
+
+.pres-slide pre code {
+  padding: 0;
+  font-size: 0.98rem;
+}
+
+.pres-slide blockquote {
+  padding: 1.3rem 1.5rem;
+  border: none;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(206, 189, 255, 0.14), rgba(93, 230, 255, 0.06));
+  color: #f2eef7;
+  font-size: 1.18rem;
+}
+
+.pres-slide table {
+  display: block;
+  overflow-x: auto;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.pres-slide img {
+  max-height: 48vh;
+  border-radius: 24px;
+}
+
+.pres-slide .callout,
+.pres-slide .questao {
+  border: none;
+  border-radius: 24px;
+  box-shadow: none;
+}
+
+.pres-slide .callout {
+  padding: 20px 22px;
+}
+
+.pres-slide .callout-title {
+  font-size: 0.92rem;
+}
+
+.pres-slide .callout-text,
+.pres-slide .questao-enunciado {
+  font-size: 1.08rem;
+}
+
+.pres-slide .questao {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.pres-slide .alt {
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 1.02rem;
+}
+
+.pres-slide .roteiro,
+.pres-slide .refs-toggle,
+.pres-slide .refs-content {
+  display: none;
+}
+
+.pres-arrow {
+  width: 62px;
+  height: 62px;
+  border: 1px solid rgba(202, 196, 212, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.pres-arrow:hover {
+  color: var(--text);
+  border-color: rgba(93, 230, 255, 0.22);
+}
+
+.pres-bottom {
+  min-height: 84px;
+  padding: 16px 28px calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(202, 196, 212, 0.10);
+  background: rgba(10, 10, 11, 0.62);
+  backdrop-filter: blur(28px);
+}
+
+.pres-counter {
+  min-width: 68px;
+  color: var(--text);
+}
+
+.pres-section-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.pres-dot {
+  background: rgba(202, 196, 212, 0.22);
+}
+
+.pres-dot.active {
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+}
+
+.pres-agenda-btn {
+  border: 1px solid rgba(202, 196, 212, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+}
+
+.pres-agenda-btn.active {
+  color: var(--text);
+  border-color: rgba(93, 230, 255, 0.22);
+  background: linear-gradient(135deg, rgba(93, 230, 255, 0.12), rgba(206, 189, 255, 0.10));
+}
+
+@media (max-width: 1199px) {
+  .toc-sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .lesson-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .top-nav {
+    padding-inline: 16px;
+  }
+
+  .layout-wrapper {
+    padding: 20px 16px 56px;
+  }
+
+  .lesson-hero-copy,
+  .lesson-stage,
+  .lesson-article-shell {
+    border-radius: 28px;
+  }
+
+  .pres-slide-container {
+    padding: 20px 18px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  h1.titulo {
+    max-width: none;
+  }
+
+  .tag-date {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pres-topbar {
+    padding-inline: 16px;
+  }
+
+  .pres-bottom {
+    padding-inline: 16px;
+  }
+
+  .pres-slide {
+    max-height: calc(100vh - 244px);
+    border-radius: 26px;
+  }
+}
+</style>
 </head>
 
 <body>
 <div id="progress"></div>
 
-<!-- â”€â”€ Top Navigation Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+<!-- ── Top Navigation Bar ──────────────────────────────────────── -->
 <nav class="top-nav">
   <div class="top-nav-inner">
     <div class="breadcrumb">
@@ -1355,7 +2536,7 @@ h1.titulo {
         <a href="{{ back_url }}">{{ back_label }}</a>
         <span class="sep">/</span>
       {% endif %}
-      <span class="current">Aula {{ aula.numero }} â€” {{ aula.titulo }}</span>
+      <span class="current">Aula {{ aula.numero }} — {{ aula.titulo }}</span>
     </div>
     <div class="nav-actions">
       {% if user.is_staff %}
@@ -1367,7 +2548,7 @@ h1.titulo {
         class="tb-btn tb-btn-label"
         id="presentation-trigger"
         type="button"
-        title="Modo apresentaÃ§Ã£o"
+        title="Modo apresentação"
         aria-haspopup="dialog"
         aria-controls="pres-overlay"
         onclick="startPresentation()">
@@ -1379,12 +2560,12 @@ h1.titulo {
   </div>
 </nav>
 
-<!-- â”€â”€ Page Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+<!-- ── Page Layout ─────────────────────────────────────────────── -->
 <div class="layout-wrapper">
 
   <!-- Sidebar esquerda: lista de aulas da turma -->
   <aside class="modules-sidebar">
-    <div class="modules-sticky">
+    <div class="modules-sticky modules-shell">
       <div class="modules-label">{{ aula.turma.nome }}</div>
       <ul class="modules-list">
         {% for item in sidebar_aulas %}
@@ -1400,54 +2581,64 @@ h1.titulo {
     </div>
   </aside>
 
-  <!-- ConteÃºdo principal -->
+  <!-- Conteúdo principal -->
   <main class="page">
 
-    <!-- Metadata row -->
-    <div class="aula-meta">
-      <span class="tag tag-primary">{{ aula.turma.nome }}</span>
-      <span class="tag tag-neutral">Aula {{ aula.numero }}</span>
-      {% if aula.data %}
-      <span class="tag-date">
-        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-        {{ aula.data|date:"d/m/Y" }}
-      </span>
-      {% endif %}
-    </div>
+    <header class="lesson-hero">
+      <div class="lesson-hero-copy">
+        <div class="aula-meta">
+          <span class="tag tag-primary">{{ aula.turma.nome }}</span>
+          <span class="tag tag-neutral">Aula {{ aula.numero }}</span>
+          {% if user.is_staff %}
+            {% if aula.realizada %}
+            <span class="tag tag-success">Publicada</span>
+            {% else %}
+            <span class="tag tag-draft">Rascunho</span>
+            {% endif %}
+          {% endif %}
+          {% if aula.data %}
+          <span class="tag-date">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            {{ aula.data|date:"d/m/Y" }}
+          </span>
+          {% endif %}
+        </div>
+        <span class="lesson-kicker">Leitura guiada e projeção</span>
+        <h1 class="titulo">{{ aula.titulo }}</h1>
+        <p class="intro-text" id="lesson-intro"></p>
+      </div>
 
-    <!-- Hero title -->
-    <h1 class="titulo">{{ aula.titulo }}</h1>
-
-    <section class="lesson-stage" aria-labelledby="lesson-stage-title">
-      <div class="lesson-stage-copy">
-        <span class="lesson-stage-kicker">Modo aula</span>
-        <h2 id="lesson-stage-title">Apresente esta aula com ritmo de sala, nÃ£o como um scroll infinito.</h2>
-        <p>
-          O modo apresentaÃ§Ã£o organiza o conteÃºdo em blocos, destaca a seÃ§Ã£o atual
-          e mantÃ©m atalhos de navegaÃ§Ã£o prontos para projeÃ§Ã£o.
-        </p>
-      </div>
-      <div class="lesson-stage-metrics" aria-label="Resumo da apresentaÃ§Ã£o">
-        <div class="lesson-stage-metric">
-          <strong id="lesson-stage-sections">-</strong>
-          <span>SeÃ§Ãµes</span>
+      <section class="lesson-stage" aria-labelledby="lesson-stage-title">
+        <div class="lesson-stage-copy">
+          <span class="lesson-stage-kicker">Modo apresentação</span>
+          <h2 id="lesson-stage-title">A mesma aula, com estrutura melhor para leitura individual e para TV.</h2>
+          <p>
+            O conteúdo vira uma sequência de blocos mais claros, com ritmo editorial no modo normal
+            e navegação mais firme quando a aula precisa ser projetada.
+          </p>
         </div>
-        <div class="lesson-stage-metric">
-          <strong id="lesson-stage-slides">-</strong>
-          <span>Slides</span>
+        <div class="lesson-stage-metrics" aria-label="Resumo da apresentação">
+          <div class="lesson-stage-metric">
+            <strong id="lesson-stage-sections">-</strong>
+            <span>Seções</span>
+          </div>
+          <div class="lesson-stage-metric">
+            <strong id="lesson-stage-slides">-</strong>
+            <span>Slides</span>
+          </div>
+          <div class="lesson-stage-metric">
+            <strong id="lesson-stage-reading">-</strong>
+            <span>Min. leitura</span>
+          </div>
         </div>
-        <div class="lesson-stage-metric">
-          <strong id="lesson-stage-reading">-</strong>
-          <span>Min. leitura</span>
+        <div class="lesson-stage-actions">
+          <button type="button" class="lesson-stage-primary" onclick="startPresentation()">
+            Iniciar apresentação
+          </button>
+          <a href="#md-content" class="lesson-stage-secondary">Ler conteúdo</a>
         </div>
-      </div>
-      <div class="lesson-stage-actions">
-        <button type="button" class="lesson-stage-primary" onclick="startPresentation()">
-          Iniciar apresentaÃ§Ã£o
-        </button>
-        <a href="#md-content" class="lesson-stage-secondary">Ler conteÃºdo</a>
-      </div>
-    </section>
+      </section>
+    </header>
 
     <!-- Cover image (se existir campo de imagem) -->
     {% if aula.imagem_capa %}
@@ -1456,16 +2647,18 @@ h1.titulo {
     </div>
     {% endif %}
 
-    <!-- ConteÃºdo Markdown -->
-    <div class="md-content" id="md-content">
-      {{ aula.conteudo|markdownify }}
-    </div>
+    <!-- Conteúdo Markdown -->
+    <section class="lesson-article-shell">
+      <div class="md-content" id="md-content">
+        {{ aula.conteudo|markdownify }}
+      </div>
+    </section>
 
     {% if aula.atividades.exists %}
-    <hr style="border:none;border-top:1px solid var(--border);margin:2.5rem 0;">
-    <p style="font-size:13px;color:var(--text3);text-align:center;">
+    <hr style="border:none;height:1px;background:linear-gradient(90deg,transparent,rgba(202,196,212,.28),transparent);margin:2.5rem 0;">
+    <p style="font-size:13px;color:var(--muted-soft);text-align:center;">
       Esta aula tem
-      <a href="{{ atividades_url }}" style="color:var(--accent);">
+      <a href="{{ atividades_url }}" style="color:var(--secondary);">
         {{ aula.atividades.count }} atividade{{ aula.atividades.count|pluralize }}
       </a>
       associada{{ aula.atividades.count|pluralize }}.
@@ -1477,14 +2670,14 @@ h1.titulo {
     <div class="nav-footer">
       {% if prev_url %}
       <a href="{{ prev_url }}" class="nav-card prev">
-        <span class="nav-card-label">â† Anterior</span>
-        <span class="nav-card-title">Aula {{ aula_anterior.numero }} â€” {{ aula_anterior.titulo }}</span>
+        <span class="nav-card-label">← Anterior</span>
+        <span class="nav-card-title">Aula {{ aula_anterior.numero }} — {{ aula_anterior.titulo }}</span>
       </a>
       {% endif %}
       {% if next_url %}
       <a href="{{ next_url }}" class="nav-card next">
-        <span class="nav-card-label">PrÃ³xima â†’</span>
-        <span class="nav-card-title">Aula {{ aula_proxima.numero }} â€” {{ aula_proxima.titulo }}</span>
+        <span class="nav-card-label">Próxima →</span>
+        <span class="nav-card-title">Aula {{ aula_proxima.numero }} — {{ aula_proxima.titulo }}</span>
       </a>
       {% endif %}
     </div>
@@ -1494,7 +2687,7 @@ h1.titulo {
 
   <!-- TOC sidebar direita -->
   <aside class="toc-sidebar">
-    <div class="toc-sticky">
+    <div class="toc-sticky toc-shell">
       <div class="toc-title">Nesta aula</div>
       <ul class="toc-list" id="toc-list"></ul>
     </div>
@@ -1502,7 +2695,7 @@ h1.titulo {
 
 </div>
 
-<!-- â”€â”€ Presentation Overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+<!-- ── Presentation Overlay ────────────────────────────────────── -->
 <div
   class="pres-overlay"
   id="pres-overlay"
@@ -1513,24 +2706,24 @@ h1.titulo {
   <div class="pres-progress" id="pres-progress"></div>
   <div class="pres-topbar">
     <div class="pres-topbar-copy">
-      <span class="pres-topbar-kicker">Modo apresentaÃ§Ã£o</span>
+      <span class="pres-topbar-kicker">Modo apresentação</span>
       <div class="pres-topbar-meta">
         <strong class="pres-current-title" id="pres-current-title">{{ aula.titulo }}</strong>
         <span class="pres-current-section" id="pres-current-section">Capa</span>
       </div>
     </div>
-    <div class="pres-shortcuts" aria-hidden="true">â† â†’ navegar Â· espaÃ§o avanÃ§ar Â· home/end</div>
+    <div class="pres-shortcuts" aria-hidden="true">← → navegar · espaço avançar · home/end</div>
     <button class="pres-secondary-btn" id="pres-fullscreen-btn" type="button" onclick="togglePresentationFullscreen()">
       Tela cheia
     </button>
-    <button class="pres-exit" type="button" aria-label="Sair do modo apresentaÃ§Ã£o" onclick="exitPresentation()">ESC Sair</button>
+    <button class="pres-exit" type="button" aria-label="Sair do modo apresentação" onclick="exitPresentation()">ESC Sair</button>
   </div>
   <div class="pres-slide-container">
     <button class="pres-arrow left" type="button" aria-label="Slide anterior" onclick="presNav(-1)">
       <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
     </button>
     <div class="pres-slide" id="pres-slide" tabindex="0"></div>
-    <button class="pres-arrow right" type="button" aria-label="PrÃ³ximo slide" onclick="presNav(1)">
+    <button class="pres-arrow right" type="button" aria-label="Próximo slide" onclick="presNav(1)">
       <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
     </button>
   </div>
@@ -1542,7 +2735,7 @@ h1.titulo {
     <div class="pres-bottom-center">
       <div class="pres-dots" id="pres-dots"></div>
     </div>
-    <div class="pres-agenda" id="pres-agenda" aria-label="Agenda da apresentaÃ§Ã£o"></div>
+    <div class="pres-agenda" id="pres-agenda" aria-label="Agenda da apresentação"></div>
   </div>
 </div>
 
@@ -1553,7 +2746,7 @@ var answered = {};
 var presSlides = [];
 var presIndex = 0;
 var presLastFocus = null;
-var SLIDE_MAX_ELEMENTS = 5;
+var SLIDE_MAX_ELEMENTS = 4;
 
 function cleanText(value) {
   return (value || '').replace(/\s+/g, ' ').trim();
@@ -1579,6 +2772,60 @@ function setReadingProgress() {
   var maxScroll = el.scrollHeight - el.clientHeight;
   var pct = maxScroll > 0 ? (el.scrollTop / maxScroll) * 100 : 0;
   progress.style.width = Math.min(Math.max(pct, 0), 100) + '%';
+}
+
+function normalizeLessonContent() {
+  var content = document.getElementById('md-content');
+  var intro = document.getElementById('lesson-intro');
+  if (!content) return;
+
+  var first = content.firstElementChild;
+  if (first && first.tagName === 'H1') {
+    first.remove();
+  }
+
+  var firstParagraph = content.querySelector(':scope > p');
+  if (firstParagraph && intro) {
+    intro.innerHTML = firstParagraph.innerHTML;
+    intro.classList.add('is-ready');
+    firstParagraph.remove();
+  }
+
+  while (content.firstElementChild && content.firstElementChild.tagName === 'HR') {
+    content.firstElementChild.remove();
+  }
+
+  content.querySelectorAll('.questao').forEach(function(question, index) {
+    if (!question.dataset.idx) {
+      question.dataset.idx = 'q-' + (index + 1);
+    }
+  });
+}
+
+function collectSectionTitles() {
+  var content = document.getElementById('md-content');
+  if (!content) return [];
+
+  return Array.from(content.querySelectorAll(':scope > h2'))
+    .map(function(heading) { return cleanText(heading.textContent); })
+    .filter(Boolean);
+}
+
+function buildTitleAgendaMarkup() {
+  var sections = collectSectionTitles().slice(0, 6);
+  if (!sections.length) return '';
+
+  return '<div class="pres-title-agenda">' +
+    sections.map(function(section) {
+      return '<span class="pres-title-pill">' + escapeHTML(section) + '</span>';
+    }).join('') +
+  '</div>';
+}
+
+function buildTitleSummaryMarkup() {
+  var intro = document.getElementById('lesson-intro');
+  if (!intro || !cleanText(intro.textContent)) return '';
+  return '<p class="pres-title-summary">' + intro.innerHTML + '</p>';
 }
 
 function buildTOC() {
@@ -1627,9 +2874,20 @@ function handleQuestionClick(event) {
   var idx = question.dataset.idx;
   if (answered[idx] && answered[idx].locked) return;
 
-  var correct = list.dataset.correct;
-  var gabarito = list.dataset.gabarito;
-  var selected = option.querySelector('.alt-badge').textContent.trim();
+  var correctOption = list.querySelector('.alt[data-correta="true"]');
+  var correctBadge = correctOption ? correctOption.querySelector('.alt-badge') : null;
+  var correct = correctOption
+    ? (correctOption.dataset.letra || (correctBadge ? correctBadge.textContent.trim() : ''))
+    : (list.dataset.correct || '');
+  var selectedBadge = option.querySelector('.alt-badge');
+  var selected = option.dataset.letra || (selectedBadge ? selectedBadge.textContent.trim() : '');
+  var gab = question.querySelector('.gabarito');
+  var gabarito = '';
+
+  if (gab) {
+    var rawText = gab.dataset.explicacao || gab.textContent || '';
+    gabarito = cleanText(rawText);
+  }
 
   list.querySelectorAll('.alt').forEach(function(item) {
     var badge = item.querySelector('.alt-badge');
@@ -1639,7 +2897,6 @@ function handleQuestionClick(event) {
     else if (letter === selected && letter !== correct) item.classList.add('wrong');
   });
 
-  var gab = question.querySelector('.gabarito');
   if (gab) {
     var text = gab.querySelector('.gab-texto');
     if (text) text.textContent = gabarito;
@@ -1699,13 +2956,17 @@ function extractChunkTitle(chunk, fallback) {
 
 function pushChunkedSlides(elements, sectionTitle, slides) {
   var leaderHTML = '';
-  var bodyElements = elements;
-  var normalizedSection = sectionTitle || 'Conteudo';
+  var bodyElements = elements.filter(function(element) {
+    return !element.classList.contains('roteiro') &&
+      !element.classList.contains('refs-toggle') &&
+      !element.classList.contains('refs-content');
+  });
+  var normalizedSection = sectionTitle || 'Visao geral';
 
-  if (elements.length && elements[0].tagName === 'H2') {
-    normalizedSection = cleanText(elements[0].textContent) || normalizedSection;
-    leaderHTML = serializeForPresentation(elements[0]);
-    bodyElements = elements.slice(1);
+  if (bodyElements.length && bodyElements[0].tagName === 'H2') {
+    normalizedSection = cleanText(bodyElements[0].textContent) || normalizedSection;
+    leaderHTML = serializeForPresentation(bodyElements[0]);
+    bodyElements = bodyElements.slice(1);
   }
 
   if (!bodyElements.length) {
@@ -1751,6 +3012,8 @@ function buildSlides() {
       '<div class="pres-title-num">Aula {{ aula.numero }}</div>' +
       '<div class="pres-title-h1">{{ aula.titulo|escapejs }}</div>' +
       '{% if aula.data %}<div class="pres-title-date">{{ aula.data|date:"d/m/Y" }}</div>{% endif %}' +
+      buildTitleSummaryMarkup() +
+      buildTitleAgendaMarkup() +
     '</div>',
     { section: 'Abertura', title: '{{ aula.titulo|escapejs }}' }
   ));
@@ -1761,7 +3024,7 @@ function buildSlides() {
   var splitTag = hasH2 ? 'H2' : (hasHR ? 'HR' : null);
 
   if (!splitTag) {
-    pushChunkedSlides(children, 'Conteudo', slides);
+    pushChunkedSlides(children, 'Visao geral', slides);
     return slides;
   }
 
@@ -1771,7 +3034,7 @@ function buildSlides() {
   children.forEach(function(element) {
     if (element.tagName === splitTag) {
       if (sectionElements.length) {
-        pushChunkedSlides(sectionElements, sectionTitle || 'Conteudo', slides);
+        pushChunkedSlides(sectionElements, sectionTitle || 'Visao geral', slides);
       }
       sectionTitle = splitTag === 'H2' ? cleanText(element.textContent) : '';
       sectionElements = splitTag === 'HR' ? [] : [element];
@@ -1781,7 +3044,7 @@ function buildSlides() {
   });
 
   if (sectionElements.length) {
-    pushChunkedSlides(sectionElements, sectionTitle || 'Conteudo', slides);
+    pushChunkedSlides(sectionElements, sectionTitle || 'Visao geral', slides);
   }
 
   return slides;
@@ -2055,6 +3318,7 @@ document.addEventListener('keydown', function(event) {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
+  normalizeLessonContent();
   buildTOC();
   updatePresentationSummary();
   bindPresentationSwipe();

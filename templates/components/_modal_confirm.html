@@ -41,12 +41,12 @@
      class="fixed inset-0 z-50 flex items-center justify-center p-4">
 
   {# Overlay #}
-  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+  <div class="absolute inset-0 bg-black/65 backdrop-blur-md"
        @click="show = false">
   </div>
 
   {# Card #}
-  <div class="relative bg-zinc-900 border border-zinc-700 rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4"
+  <div class="panel-strong relative w-full max-w-md rounded-[1.6rem] p-6 sm:p-7 space-y-5"
        x-transition:enter="transition ease-out duration-200"
        x-transition:enter-start="opacity-0 scale-95"
        x-transition:enter-end="opacity-100 scale-100"
@@ -54,28 +54,29 @@
        x-transition:leave-start="opacity-100 scale-100"
        x-transition:leave-end="opacity-0 scale-95">
 
-    <div class="flex items-start gap-3">
-      <div class="w-10 h-10 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
-        <svg class="w-5 h-5 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="flex items-start gap-4">
+      <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/12">
+        <svg class="w-5 h-5 text-rose-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
         </svg>
       </div>
-      <div>
-        <h3 class="text-base font-semibold text-zinc-100" x-text="title"></h3>
-        <p class="text-sm text-zinc-400 mt-1" x-text="message"></p>
+      <div class="min-w-0">
+        <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-rose-200/75">Confirmação</p>
+        <h3 class="text-lg font-semibold tracking-tight text-white" x-text="title"></h3>
+        <p class="mt-2 text-sm leading-6 text-white/65" x-text="message"></p>
       </div>
     </div>
 
     <div class="flex justify-end gap-3 pt-2">
       <button type="button"
               @click="show = false"
-              class="px-4 py-2 text-sm font-medium text-zinc-300 bg-zinc-950 border border-zinc-700 rounded-lg hover:bg-zinc-800 transition-colors">
+              class="btn btn-secondary px-4 py-2 text-sm">
         Cancelar
       </button>
       <button type="button"
               @click="confirm()"
-              class="px-4 py-2 text-sm font-medium text-white bg-rose-600 rounded-lg hover:bg-rose-700 transition-colors">
+              class="btn btn-danger px-4 py-2 text-sm">
         <span x-text="confirmLabel"></span>
       </button>
     </div>
