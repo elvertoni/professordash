@@ -8,11 +8,11 @@
   <!-- Breadcrumb -->
   <nav class="flex items-center gap-2 text-sm text-on-surface-variant/50 mb-6 overflow-x-auto whitespace-nowrap">
     <a href="{% url 'turmas:lista' %}" class="hover:text-primary shrink-0">Turmas</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-primary shrink-0">{{ turma.nome }}</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}" class="hover:text-primary shrink-0">Aulas</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <span class="text-on-surface font-medium">Importar .md</span>
   </nav>
 

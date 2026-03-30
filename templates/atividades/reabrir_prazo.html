@@ -7,11 +7,11 @@
 
   <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6">
     <a href="{% url 'turmas:lista' %}" class="hover:text-zinc-200">Turmas</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-zinc-200">{{ turma.nome }}</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <a href="{% url 'turmas:atividade_detalhe' pk=turma.pk atividade_pk=atividade.pk %}" class="hover:text-zinc-200">{{ atividade.titulo }}</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <span class="text-zinc-200">Reabrir prazo</span>
   </nav>
 

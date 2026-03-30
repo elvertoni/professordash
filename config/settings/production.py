@@ -11,9 +11,7 @@ ALLOWED_HOSTS = config(
     cast=lambda v: [h.strip() for h in v.split(",")],
 )
 
-CSRF_TRUSTED_ORIGINS = [
-    f"https://{host}" for host in ALLOWED_HOSTS
-] + ["http://localhost:8000"]
+CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True

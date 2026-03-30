@@ -29,11 +29,11 @@
 <div class="space-y-6">
   <nav class="flex items-center gap-2 text-sm text-white/35 overflow-x-auto whitespace-nowrap">
     <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-white/70">Turmas</a>
-    <span class="text-white/15">/</span>
+    <span class="" aria-hidden="true">/</span>
     <a href="{% url 'turmas:detalhe' pk=turma.pk %}?tab=atividades" class="transition-colors hover:text-white/70">{{ turma.nome }}</a>
-    <span class="text-white/15">/</span>
+    <span class="" aria-hidden="true">/</span>
     <a href="{% url 'turmas:atividades_lista' pk=turma.pk %}" class="transition-colors hover:text-white/70">Atividades</a>
-    <span class="text-white/15">/</span>
+    <span class="" aria-hidden="true">/</span>
     <span class="min-w-0 truncate font-medium text-white/72">{{ atividade.titulo }}</span>
   </nav>
 

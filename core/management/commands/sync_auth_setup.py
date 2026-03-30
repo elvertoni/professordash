@@ -4,13 +4,18 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand
 
+from core.auth import has_valid_google_oauth_env
+
 
 class Command(BaseCommand):
-    help = "Sincroniza Site e valida a configuração do Google OAuth."
+    help = "Sincroniza Site e valida a configuracao do Google OAuth."
 
     def handle(self, *args, **options):
         domain = self._get_site_domain()
-        site_name = os.environ.get("APP_SITE_NAME", "ProfessorDash").strip() or "ProfessorDash"
+        site_name = (
+            os.environ.get("APP_SITE_NAME", "ProfessorDash").strip()
+            or "ProfessorDash"
+        )
 
         site, _ = Site.objects.update_or_create(
             id=1,
@@ -25,14 +30,21 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.WARNING(
                     "Google OAuth incompleto: defina GOOGLE_CLIENT_ID e "
-                    "GOOGLE_CLIENT_SECRET juntos. Configuração atual mantida."
+                    "GOOGLE_CLIENT_SECRET juntos. Configuracao atual mantida."
                 )
             )
             return
 
         if not client_id:
+            self.stdout.write("Google OAuth nao configurado via .env.")
+            return
+
+        if not has_valid_google_oauth_env():
             self.stdout.write(
-                "Google OAuth não configurado via .env."
+                self.style.WARNING(
+                    "Google OAuth com valores placeholder no .env. "
+                    "Configuracao ignorada ate definir credenciais reais."
+                )
             )
             return
 

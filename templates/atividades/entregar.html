@@ -10,7 +10,7 @@
 <div class="max-w-4xl mx-auto space-y-6">
   <nav class="flex items-center gap-2 text-sm text-on-surface-variant/55">
     <a href="{% url 'turmas:portal_minha_area' token=turma.token_publico %}" class="hover:text-emerald-300">Minha area</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <span class="text-on-surface font-medium text-ellipsis overflow-hidden whitespace-nowrap">{{ atividade.titulo }}</span>
   </nav>
 

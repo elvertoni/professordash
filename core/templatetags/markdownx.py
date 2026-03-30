@@ -2,25 +2,19 @@
 Templatetag library 'markdownx' — compatível com {% load markdownx %}.
 
 Fornece o filtro |markdownify para renderizar Markdown como HTML seguro.
-Usa o pacote 'markdown' (já instalado como dependência do django-markdownx).
+Delega para markdownx.utils.markdownify() que respeita MARKDOWNX_MARKDOWN_EXTENSIONS
+do settings — incluindo md_in_html e extra necessários para HTML inline no Markdown.
 """
-import markdown as md
 from django import template
 from django.utils.safestring import mark_safe
+from markdownx.utils import markdownify as _markdownx_markdownify
 
 register = template.Library()
 
 
 @register.filter(name="markdownify", is_safe=True)
 def markdownify(value):
-    """Converte texto Markdown em HTML seguro."""
+    """Converte texto Markdown em HTML, respeitando MARKDOWNX_MARKDOWN_EXTENSIONS."""
     if not value:
         return ""
-    extensions = [
-        "markdown.extensions.fenced_code",
-        "markdown.extensions.tables",
-        "markdown.extensions.nl2br",
-        "markdown.extensions.toc",
-    ]
-    html = md.markdown(str(value), extensions=extensions)
-    return mark_safe(html)
+    return mark_safe(_markdownx_markdownify(str(value)))

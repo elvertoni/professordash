@@ -7,7 +7,7 @@
 
   <nav class="flex items-center gap-2 overflow-x-auto whitespace-nowrap text-sm text-on-surface-variant/55">
     <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-on-surface">Turmas</a>
-    <span class="text-on-surface-variant/25">/</span>
+    <span class="" aria-hidden="true">/</span>
     <span class="font-medium text-on-surface">{{ turma.nome }}</span>
   </nav>
 
@@ -32,12 +32,17 @@
         <a href="{% url 'turmas:editar' pk=turma.pk %}" class="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container-high px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
           Editar
         </a>
-        <form method="post" action="{% url 'turmas:arquivar' pk=turma.pk %}" class="inline">
-          {% csrf_token %}
-          <button type="submit" class="inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold transition-colors {% if turma.ativa %}border-amber-500/20 bg-amber-500/10 text-amber-200 hover:bg-amber-500/15{% else %}border-primary/20 bg-primary/10 text-primary hover:bg-primary/15{% endif %}" onclick="return confirm('{% if turma.ativa %}Arquivar{% else %}Reativar{% endif %} esta turma?')">
-            {{ turma.ativa|yesno:"Arquivar,Reativar" }}
-          </button>
-        </form>
+        <form id="form-arquivar-turma" method="post" action="{% url 'turmas:arquivar' pk=turma.pk %}" class="hidden">{% csrf_token %}</form>
+        <button type="button"
+                @click="$dispatch('modal-confirm', {
+                  title: '{% if turma.ativa %}Arquivar{% else %}Reativar{% endif %} turma',
+                  message: '{% if turma.ativa %}Deseja arquivar esta turma? Ela ficará disponível na seção de arquivadas.{% else %}Deseja reativar esta turma? Ela voltará para a lista de turmas ativas.{% endif %}',
+                  confirmLabel: '{{ turma.ativa|yesno:"Arquivar,Reativar" }}',
+                  formId: 'form-arquivar-turma'
+                })"
+                class="inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold transition-colors {% if turma.ativa %}border-amber-500/20 bg-amber-500/10 text-amber-200 hover:bg-amber-500/15{% else %}border-primary/20 bg-primary/10 text-primary hover:bg-primary/15{% endif %}">
+          {{ turma.ativa|yesno:"Arquivar,Reativar" }}
+        </button>
       </div>
     </div>
   </section>
@@ -240,4 +245,5 @@
   </section>
 
 </div>
+{% include "components/_modal_confirm.html" %}
 {% endblock %}

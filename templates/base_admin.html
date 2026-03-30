@@ -10,7 +10,9 @@
        style="transition: margin-left 0.2s ease">
 
     <header class="panel-soft h-16 mx-4 mt-4 px-4 sm:px-5 flex items-center justify-between shrink-0 sticky top-4 z-20">
-      <button @click="$store.sidebar.toggle()"
+      <button type="button"
+              @click="$store.sidebar.toggle()"
+              aria-label="Alternar menu lateral"
               class="icon-action w-9 h-9 flex items-center justify-center border border-transparent bg-white/[0.03] text-on-surface-variant/60 hover:bg-white/[0.06] hover:text-on-surface">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>

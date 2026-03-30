@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.template.loader import render_to_string
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.text import slugify
 from django.views.generic import (
     CreateView,
     DetailView,
@@ -230,8 +231,9 @@ class ExportarBoletimCSVView(ProfessorRequiredMixin, View):
         turma = get_object_or_404(Turma, pk=pk)
 
         response = HttpResponse(content_type="text/csv")
+        safe_codigo = slugify(turma.codigo)
         response["Content-Disposition"] = (
-            f'attachment; filename="boletim_{turma.codigo}.csv"'
+            f'attachment; filename="boletim_{safe_codigo}.csv"'
         )
 
         writer = csv.writer(response)

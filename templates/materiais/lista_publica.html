@@ -1,12 +1,12 @@
 {% extends "base_publico.html" %}
 
-{% block title %}Materiais â€” {{ turma.nome }} â€” Portal{% endblock %}
+{% block title %}Materiais - {{ turma.nome }} - Portal{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
   <nav class="flex items-center gap-2 text-sm text-white/35 overflow-x-auto whitespace-nowrap">
     <a href="{% url 'turmas:portal' token=turma.token_publico %}" class="transition-colors hover:text-white/70">{{ turma.nome }}</a>
-    <span class="text-white/15">/</span>
+    <span class="" aria-hidden="true">/</span>
     <span class="font-medium text-white/72">Materiais</span>
   </nav>
 

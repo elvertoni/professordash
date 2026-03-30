@@ -13,6 +13,7 @@ import io
 
 import pytest
 from allauth.socialaccount.models import SocialApp
+from django.core import mail
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -25,6 +26,7 @@ from core.validators import (
     TIPOS_PERMITIDOS_MATERIAL,
     validar_arquivo,
 )
+from core.auth import has_valid_google_oauth_env, is_google_oauth_configured
 
 
 # ---------------------------------------------------------------------------
@@ -219,6 +221,15 @@ class TestValidarArquivoTiposBloqueados:
 
 @pytest.mark.django_db
 class TestAuthBootstrap:
+    def test_google_oauth_env_placeholder_nao_e_considerado_configurado(
+        self, monkeypatch
+    ):
+        monkeypatch.setenv("GOOGLE_CLIENT_ID", "COLOQUE_SEU_GOOGLE_CLIENT_ID")
+        monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "COLOQUE_SEU_GOOGLE_CLIENT_SECRET")
+
+        assert has_valid_google_oauth_env() is False
+        assert is_google_oauth_configured() is False
+
     def test_sync_auth_setup_sincroniza_site_e_remove_socialapp_google_duplicado(
         self, monkeypatch
     ):
@@ -251,7 +262,17 @@ class TestAuthBootstrap:
 
         assert not SocialApp.objects.filter(provider="google").exists()
 
-    def test_login_page_expoe_link_de_google(self, client, monkeypatch):
+    def test_sync_auth_setup_ignora_google_placeholder(self, monkeypatch):
+        monkeypatch.setenv("GOOGLE_CLIENT_ID", "COLOQUE_SEU_GOOGLE_CLIENT_ID")
+        monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "COLOQUE_SEU_GOOGLE_CLIENT_SECRET")
+
+        call_command("sync_auth_setup")
+
+        assert not SocialApp.objects.filter(provider="google").exists()
+
+    def test_login_page_prioriza_login_do_professor_mesmo_com_google_configurado(
+        self, client, monkeypatch
+    ):
         monkeypatch.setenv("GOOGLE_CLIENT_ID", "google-client-id")
         monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "google-client-secret")
         call_command("sync_auth_setup")
@@ -260,15 +281,49 @@ class TestAuthBootstrap:
         html = response.content.decode()
 
         assert response.status_code == 200
-        assert reverse("google_oauth_start") in html
-        assert "Entrar com Google" in html
+        assert "Entrar no painel" in html
+        assert "Esqueci minha senha" in html
+        assert reverse("google_oauth_start") not in html
 
     def test_login_page_nao_quebra_sem_google_configurado(self, client):
         response = client.get(reverse("login"))
         html = response.content.decode()
 
         assert response.status_code == 200
-        assert "Entrar com Google" not in html
+        assert reverse("google_oauth_start") not in html
+
+    def test_password_reset_page_renderiza(self, client):
+        response = client.get(reverse("password_reset"))
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "Solicitar novo acesso" in html
+
+    def test_password_reset_envia_email_para_professor(
+        self, client, professor, settings
+    ):
+        settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+
+        response = client.post(
+            reverse("password_reset"),
+            {"email": professor.email},
+        )
+
+        assert response.status_code == 302
+        assert response.url == reverse("password_reset_done")
+        assert len(mail.outbox) == 1
+        assert professor.email in mail.outbox[0].to
+        assert "Recuperacao de senha do painel" in mail.outbox[0].subject
+
+    def test_login_page_nao_expoe_google_com_placeholder(self, client, monkeypatch):
+        monkeypatch.setenv("GOOGLE_CLIENT_ID", "COLOQUE_SEU_GOOGLE_CLIENT_ID")
+        monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "COLOQUE_SEU_GOOGLE_CLIENT_SECRET")
+
+        response = client.get(reverse("login"))
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert reverse("google_oauth_start") not in html
 
     def test_google_oauth_start_redireciona_para_login_quando_indisponivel(self, client):
         response = client.get(reverse("google_oauth_start"))

@@ -172,12 +172,21 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
 # --- Markdownx ---
 
 MARKDOWNX_MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra',
+    'markdown.extensions.md_in_html',
     'markdown.extensions.tables',
     'markdown.extensions.fenced_code',
     'markdown.extensions.codehilite',
     'markdown.extensions.toc',
     'markdown.extensions.nl2br',
 ]
+
+# --- Segurança ---
+
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
 
 # --- Misc ---
 

@@ -8,11 +8,11 @@
   <!-- Breadcrumb -->
   <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6 overflow-x-auto whitespace-nowrap">
     <a href="{% url 'turmas:lista' %}" class="hover:text-emerald-400 shrink-0">Turmas</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-emerald-400 shrink-0">{{ turma.nome }}</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <a href="{% url 'turmas:materiais_lista' pk=turma.pk %}" class="hover:text-emerald-400 shrink-0">Materiais</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <span class="text-zinc-100 font-medium">Excluir</span>
   </nav>
 

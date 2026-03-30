@@ -1,14 +1,14 @@
 {% extends "base_admin.html" %}
 
-{% block title %}Materiais â€” {{ turma.nome }} â€” Prof Toni Coimbra{% endblock %}
+{% block title %}Materiais - {{ turma.nome }} - Prof Toni Coimbra{% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto" x-data>
   <nav class="flex items-center gap-2 text-sm text-white/35 mb-6 overflow-x-auto whitespace-nowrap">
     <a href="{% url 'turmas:lista' %}" class="shrink-0 transition-colors hover:text-white/70">Turmas</a>
-    <span class="text-white/15">/</span>
+    <span class="" aria-hidden="true">/</span>
     <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="shrink-0 transition-colors hover:text-white/70">{{ turma.nome }}</a>
-    <span class="text-white/15">/</span>
+    <span class="" aria-hidden="true">/</span>
     <span class="font-medium text-white/72">Materiais</span>
   </nav>
 

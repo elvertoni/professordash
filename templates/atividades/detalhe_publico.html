@@ -10,9 +10,9 @@
 <div class="max-w-4xl mx-auto space-y-6">
   <nav class="flex items-center gap-2 text-sm text-on-surface-variant/55">
     <a href="{% url 'turmas:portal' token=turma.token_publico %}" class="hover:text-emerald-300 truncate max-w-[200px] sm:max-w-none">{{ turma.nome }}</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <a href="{% url 'turmas:portal_atividades_lista' token=turma.token_publico %}" class="hover:text-emerald-300">Atividades</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <span class="text-on-surface font-medium truncate max-w-[200px]">{{ atividade.titulo }}</span>
   </nav>
 

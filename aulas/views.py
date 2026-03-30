@@ -192,6 +192,11 @@ class AulaImportarMdView(ProfessorRequiredMixin, AulaMixin, View):
             messages.error(request, "Apenas arquivos .md são aceitos.")
             return render(request, "aulas/importar_md.html", {"turma": self.turma})
 
+        _max_md = 5 * 1024 * 1024  # 5 MB
+        if arquivo.size > _max_md:
+            messages.error(request, "Arquivo muito grande. Máximo permitido: 5 MB.")
+            return render(request, "aulas/importar_md.html", {"turma": self.turma})
+
         conteudo = arquivo.read().decode("utf-8", errors="replace")
 
         # Extrair título do primeiro H1

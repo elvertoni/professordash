@@ -1,4 +1,5 @@
 import io
+import logging
 import os
 import zipfile
 
@@ -235,21 +236,21 @@ class DownloadEntregasZipView(AtividadeMixin, View):
         # Buffer em memória
         zip_buffer = io.BytesIO()
 
+        logger = logging.getLogger(__name__)
+
         with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
             for entrega in entregas_com_arquivo:
                 if entrega.arquivo and hasattr(entrega.arquivo, "path"):
                     nome_aluno = slugify(entrega.aluno.nome)
+                    # Sanitiza nome para prevenir path traversal dentro do ZIP
                     nome_original = os.path.basename(entrega.arquivo.name)
-                    nome_no_zip = f"{nome_aluno}-{nome_original}"
+                    nome_original = nome_original.replace("..", "").lstrip("/\\")
+                    nome_no_zip = f"{nome_aluno}-{nome_original}"[:200]
 
                     try:
                         zip_file.write(entrega.arquivo.path, arcname=nome_no_zip)
-                    except Exception as e:
-                        import logging as _logging
-
-                        _logging.getLogger(__name__).warning(
-                            "Erro ao zipar %s: %s", entrega.arquivo.path, e
-                        )
+                    except (OSError, FileNotFoundError) as e:
+                        logger.warning("Erro ao zipar %s: %s", entrega.arquivo.path, e)
 
         # Configura as respostas HTTP
         zip_buffer.seek(0)
@@ -272,6 +273,8 @@ class DownloadEntregaArquivoProfessorView(AtividadeMixin, View):
         )
         if not entrega.arquivo:
             raise Http404("Entrega sem arquivo anexo.")
+        if not entrega.arquivo.storage.exists(entrega.arquivo.name):
+            raise Http404("Arquivo não encontrado no servidor.")
 
         return FileResponse(
             entrega.arquivo.open("rb"),
@@ -292,6 +295,8 @@ class DownloadMinhaEntregaArquivoView(AlunoAutenticadoMixin, View):
         )
         if not entrega.arquivo:
             raise Http404("Entrega sem arquivo anexo.")
+        if not entrega.arquivo.storage.exists(entrega.arquivo.name):
+            raise Http404("Arquivo não encontrado no servidor.")
 
         return FileResponse(
             entrega.arquivo.open("rb"),

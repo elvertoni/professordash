@@ -6,9 +6,9 @@
 <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
   <nav class="flex items-center gap-2 text-sm text-on-surface-variant/55 mb-6">
     <a href="{% url 'turmas:portal' token=turma.token_publico %}" class="hover:text-emerald-300">{{ turma.nome }}</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <a href="{% url 'turmas:portal_minha_area' token=turma.token_publico %}" class="hover:text-emerald-300">Minha area</a>
-    <span>/</span>
+    <span aria-hidden="true">/</span>
     <span class="text-on-surface font-medium">Minhas notas</span>
   </nav>
 

@@ -1,14 +1,14 @@
 {% extends "base_admin.html" %}
 
-{% block title %}Aulas â€” {{ turma.nome }} â€” Prof Toni Coimbra{% endblock %}
+{% block title %}Aulas - {{ turma.nome }} - Prof Toni Coimbra{% endblock %}
 
 {% block content %}
 <div class="max-w-5xl mx-auto" x-data>
   <nav class="flex items-center gap-2 text-[12px] text-white/35 mb-6 overflow-x-auto whitespace-nowrap">
     <a href="{% url 'turmas:lista' %}" class="shrink-0 transition-colors hover:text-white/70">Turmas</a>
-    <span class="text-white/15">/</span>
+    <span class="text-white/15" aria-hidden="true">/</span>
     <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="shrink-0 transition-colors hover:text-white/70">{{ turma.nome }}</a>
-    <span class="text-white/15">/</span>
+    <span class="text-white/15" aria-hidden="true">/</span>
     <span class="font-medium text-white/70">Aulas</span>
   </nav>
 
@@ -46,11 +46,7 @@
     </div>
 
     <div id="aulas-sortable"
-         class="space-y-3"
-         hx-post="{% url 'turmas:aulas_reordenar' pk=turma.pk %}"
-         hx-trigger="end"
-         hx-swap="none"
-         hx-include="[name='ids[]']">
+         class="space-y-3">
       {% for aula in aulas %}
         <article class="aula-item group flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/[0.045] p-4 transition-all duration-200 hover:border-white/18 hover:bg-white/[0.065] lg:flex-row lg:items-center"
                  data-id="{{ aula.pk }}">
@@ -99,6 +95,7 @@
             </button>
             <a href="{% url 'turmas:aulas_detalhe' pk=turma.pk aula_pk=aula.pk %}"
                target="_blank"
+               rel="noopener noreferrer"
                class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-[12px] font-medium text-white/70 transition-colors hover:border-emerald-500/25 hover:bg-emerald-500/10 hover:text-emerald-300"
                title="Apresentar aula">
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
