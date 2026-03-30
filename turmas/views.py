@@ -135,7 +135,7 @@ class TurmaPortalPublicoView(TurmaPublicaMixin, TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["turma"] = self.turma
-        ctx["aulas"] = self.turma.aulas.filter(realizada=True).order_by(
+        ctx["aulas"] = self.turma.aulas.all().order_by(
             "ordem", "numero"
         )
         return ctx

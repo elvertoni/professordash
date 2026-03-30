@@ -285,7 +285,6 @@ class AulaDetalhePublicoView(TurmaPublicaMixin, AulaNavMixin, DetailView):
             Aula,
             pk=self.kwargs["aula_pk"],
             turma=self.turma,
-            realizada=True,
         )
 
     def _build_aula_url(self, aula_pk):
@@ -295,7 +294,7 @@ class AulaDetalhePublicoView(TurmaPublicaMixin, AulaNavMixin, DetailView):
         )
 
     def get_nav_queryset(self):
-        return Aula.objects.filter(turma=self.turma, realizada=True).order_by("ordem", "numero")
+        return Aula.objects.filter(turma=self.turma).order_by("ordem", "numero")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -318,7 +317,7 @@ class AulaDetalhePublicoView(TurmaPublicaMixin, AulaNavMixin, DetailView):
                     kwargs={"token": self.turma.token_publico, "aula_pk": aula.pk},
                 ),
             }
-            for aula in Aula.objects.filter(turma=self.turma, realizada=True).order_by(
+            for aula in Aula.objects.filter(turma=self.turma).order_by(
                 "ordem", "numero"
             )
         ]

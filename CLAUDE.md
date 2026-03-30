@@ -52,11 +52,9 @@ Django 5.1 + HTMX 2.x + Alpine.js 3.x + Tailwind CSS 3.x (todos via CDN). Postgr
 | `avaliacoes` | Apenas templates (boletim, minhas_notas) — sem models/views próprias. Views estão em `turmas/views.py` |
 | `alunos` | Aluno + importação CSV. Vinculação ao `User` via Google OAuth |
 
-### Módulos auxiliares
+### Google OAuth
 
-| Módulo | Responsabilidade |
-|---|---|
-| `gerador_aulas/` | Extratores de conteúdo (PDF, PPTX, DOCX, URL, RCO) + geração de aulas via IA (OpenRouter). Uso exclusivo do professor/admin. Ver `gerador_aulas/PRD-GeradorAulas-v2.md` |
+Configurado via variáveis de ambiente `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` no `.env` da VPS. Sem elas, o login Google fica indisponível. URI de callback: `https://aulas.tonicoimbra.com/accounts/google/login/callback/`. A função `core.auth.is_google_oauth_configured()` verifica env vars ou SocialApp no banco.
 
 ### URL routing centralizado
 

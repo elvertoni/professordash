@@ -88,7 +88,7 @@
             <button hx-post="{% url 'turmas:aulas_realizada' pk=turma.pk aula_pk=aula.pk %}"
                     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                     hx-swap="none"
-                    hx-on::after-request="htmx.trigger(document.body, 'refresh-page')"
+                    hx-on::after-request="window.location.reload()"
                     class="inline-flex items-center rounded-xl border px-3 py-2 text-[12px] font-medium transition-colors
                            {% if aula.realizada %}border-emerald-500/20 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/16{% else %}border-white/10 bg-white/[0.04] text-white/60 hover:border-white/18 hover:bg-white/[0.07] hover:text-white{% endif %}">
               {% if aula.realizada %}Marcar pendente{% else %}Marcar realizada{% endif %}
