@@ -89,18 +89,21 @@ class GoogleOAuthStartView(View):
             )
             return redirect("login")
 
-        next_url = request.GET.get("next")
+        next_url = request.GET.get("next", "")
         if next_url and not url_has_allowed_host_and_scheme(
             next_url,
             allowed_hosts={request.get_host()},
             require_https=request.is_secure(),
         ):
-            request.GET = request.GET.copy()
-            request.GET.pop("next", None)
+            next_url = ""
 
-        from allauth.socialaccount.providers.google.views import oauth2_login
+        from django.urls import reverse
+        from urllib.parse import urlencode
 
-        return oauth2_login(request)
+        allauth_url = reverse("google_login")
+        if next_url:
+            allauth_url = f"{allauth_url}?{urlencode({'next': next_url})}"
+        return redirect(allauth_url)
 
 
 class FeedEntregasView(ProfessorRequiredMixin, TemplateView):
