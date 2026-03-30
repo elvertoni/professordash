@@ -136,6 +136,7 @@ if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
         "key": "",
     }
 
+SOCIALACCOUNT_ADAPTER = "core.adapters.SocialAccountAdapter"
 SOCIALACCOUNT_ONLY = True
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGIN_METHODS = {"email"}

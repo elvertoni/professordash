@@ -1,6 +1,7 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 
 
@@ -44,5 +45,10 @@ class AlunoAutenticadoMixin(TurmaPublicaMixin, LoginRequiredMixin):
                 ativa=True,
             )
         except Matricula.DoesNotExist:
-            raise PermissionDenied
+            messages.error(
+                request,
+                "Você não está matriculado nesta turma. "
+                "Entre em contato com o professor para ser adicionado.",
+            )
+            return redirect("turmas:portal", token=self.turma.token_publico)
         return super().dispatch(request, *args, **kwargs)
