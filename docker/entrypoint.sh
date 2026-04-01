@@ -57,6 +57,13 @@ python manage.py migrate --noinput --settings=config.settings.production
 echo "Sincronizando domínio do Site e Google OAuth..."
 python manage.py sync_auth_setup --settings=config.settings.production
 
+if [ -n "$IMPORTAR_ALUNOS_SHEET_URL" ]; then
+  echo "Sincronizando alunos e turmas a partir da planilha..."
+  python manage.py importar_excel --url "$IMPORTAR_ALUNOS_SHEET_URL" --settings=config.settings.production
+else
+  echo "IMPORTAR_ALUNOS_SHEET_URL nao configurada. Importacao automatica de alunos ignorada."
+fi
+
 echo "Configurando superuser..."
 python manage.py shell --settings=config.settings.production -c "
 from django.contrib.auth import get_user_model

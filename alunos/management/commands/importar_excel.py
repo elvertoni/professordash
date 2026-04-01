@@ -4,13 +4,22 @@ Management command para importar alunos e turmas a partir do Excel SEED-PR.
 Uso:
     python manage.py importar_excel "Alunos SEED-PR - Toni Coimbra.xlsx"
     python manage.py importar_excel "Alunos SEED-PR - Toni Coimbra.xlsx" --dry-run
+    python manage.py importar_excel --url "https://docs.google.com/spreadsheets/d/.../edit?usp=sharing"
 """
 
+import io
+
 from django.core.management.base import BaseCommand
+from django.db.models import Count, Q
 from django.db import transaction
 
 from alunos.models import Aluno
 from turmas.models import Matricula, Turma
+
+DEFAULT_GOOGLE_SHEET_URL = (
+    "https://docs.google.com/spreadsheets/d/"
+    "1gqroTA8YtupEitRdTwJZGTzvRRLfZLvwVVRdirQrbPQ/edit?usp=sharing"
+)
 
 # Mapeamento: nome da aba -> (nome da turma, codigo, periodo, ano_letivo)
 SHEET_MAP = {
@@ -80,10 +89,23 @@ SHEET_MAP = {
 
 
 class Command(BaseCommand):
-    help = "Importa alunos e turmas do arquivo Excel SEED-PR"
+    help = "Importa alunos e turmas de um arquivo Excel local ou de uma Google Sheet"
 
     def add_arguments(self, parser):
-        parser.add_argument("arquivo", type=str, help="Caminho do arquivo .xlsx")
+        parser.add_argument(
+            "arquivo",
+            nargs="?",
+            type=str,
+            help="Caminho do arquivo .xlsx local",
+        )
+        parser.add_argument(
+            "--url",
+            type=str,
+            help=(
+                "URL da Google Sheet. Se omitida junto com o arquivo, "
+                f"usa a planilha padrao: {DEFAULT_GOOGLE_SHEET_URL}"
+            ),
+        )
         parser.add_argument(
             "--dry-run",
             action="store_true",
@@ -102,14 +124,34 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             import openpyxl
+            import requests
         except ImportError:
-            self.stderr.write(self.style.ERROR("Instale openpyxl: pip install openpyxl"))
+            self.stderr.write(
+                self.style.ERROR("Instale openpyxl e requests: pip install openpyxl requests")
+            )
             return
 
         arquivo = options["arquivo"]
+        url = options.get("url") or None
         dry_run = options["dry_run"]
+        origem = arquivo or url or DEFAULT_GOOGLE_SHEET_URL
 
-        wb = openpyxl.load_workbook(arquivo, read_only=True)
+        if arquivo and url:
+            self.stderr.write(
+                self.style.ERROR("Use apenas uma fonte por vez: arquivo local OU --url.")
+            )
+            return
+
+        if arquivo:
+            self.stdout.write(self.style.HTTP_INFO(f"Lendo arquivo local: {arquivo}"))
+            wb = openpyxl.load_workbook(arquivo, read_only=True)
+        else:
+            url = origem
+            export_url = self._normalizar_url_planilha(url)
+            self.stdout.write(self.style.HTTP_INFO(f"Baixando planilha: {url}"))
+            response = requests.get(export_url, timeout=60)
+            response.raise_for_status()
+            wb = openpyxl.load_workbook(io.BytesIO(response.content), read_only=True)
 
         # Processar mapeamento extra de --incluir-paginas
         sheet_map = dict(SHEET_MAP)
@@ -128,9 +170,11 @@ class Command(BaseCommand):
             "turmas_existentes": 0,
             "alunos_criados": 0,
             "alunos_existentes": 0,
-            "matriculas_criadas": 0,
-            "matriculas_existentes": 0,
+                "matriculas_criadas": 0,
+                "matriculas_existentes": 0,
         }
+
+        self.stdout.write(self.style.HTTP_INFO(f"Fonte selecionada: {origem}"))
 
         with transaction.atomic():
             for sheet_name in wb.sheetnames:
@@ -210,6 +254,41 @@ class Command(BaseCommand):
         self.stdout.write(f"  Alunos existentes:   {stats['alunos_existentes']}")
         self.stdout.write(f"  Matriculas criadas:  {stats['matriculas_criadas']}")
         self.stdout.write(f"  Matriculas existentes: {stats['matriculas_existentes']}")
+        self.stdout.write(f"  Total de turmas no banco: {Turma.objects.count()}")
+        self.stdout.write(f"  Total de alunos no banco: {Aluno.objects.count()}")
+        self.stdout.write(f"  Total de matriculas no banco: {Matricula.objects.count()}")
+
+        conflitos = list(
+            Aluno.objects.annotate(
+                total_matriculas_ativas=Count(
+                    "matriculas",
+                    filter=Q(matriculas__ativa=True),
+                )
+            )
+            .filter(total_matriculas_ativas__gt=2)
+            .order_by("-total_matriculas_ativas", "nome")
+        )
+        if conflitos:
+            self.stdout.write(
+                self.style.WARNING(
+                    "  Aviso: ha alunos com mais de 2 matriculas ativas. "
+                    "Revise a planilha se isso nao for intencional."
+                )
+            )
+            for aluno in conflitos[:10]:
+                self.stdout.write(
+                    self.style.WARNING(
+                        f"    - {aluno.nome} ({aluno.email}): {aluno.total_matriculas_ativas} turmas"
+                    )
+                )
 
         if dry_run:
             self.stdout.write(self.style.WARNING("Nenhuma alteracao foi salva (--dry-run)"))
+
+    @staticmethod
+    def _normalizar_url_planilha(url):
+        if "/edit" in url:
+            return url.split("/edit", 1)[0] + "/export?format=xlsx"
+        if "export?format=xlsx" in url:
+            return url
+        return url.rstrip("/") + "/export?format=xlsx"

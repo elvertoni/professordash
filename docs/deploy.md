@@ -156,6 +156,7 @@ REDIS_URL=redis://redis:6379/0
 # Google OAuth
 GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=xxx
+IMPORTAR_ALUNOS_SHEET_URL=https://docs.google.com/spreadsheets/d/1gqroTA8YtupEitRdTwJZGTzvRRLfZLvwVVRdirQrbPQ/edit?usp=sharing
 
 # Email (opcional — para notificações futuras)
 EMAIL_HOST=smtp.gmail.com
@@ -180,6 +181,13 @@ while ! nc -z redis 6379; do sleep 0.5; done
 
 echo "Executando migrations..."
 python manage.py migrate --noinput
+
+if [ -n "$IMPORTAR_ALUNOS_SHEET_URL" ]; then
+  echo "Sincronizando alunos e turmas a partir da planilha..."
+  python manage.py importar_excel --url "$IMPORTAR_ALUNOS_SHEET_URL"
+else
+  echo "IMPORTAR_ALUNOS_SHEET_URL nao configurada. Importacao automatica de alunos ignorada."
+fi
 
 echo "Criando superuser se não existir..."
 python manage.py shell -c "
