@@ -48,6 +48,7 @@ LOCAL_APPS = [
     # As views que renderizam esses templates estão em turmas/views.py.
     "avaliacoes",
     "alunos",
+    "tarefas",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

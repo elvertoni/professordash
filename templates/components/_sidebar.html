@@ -97,6 +97,18 @@
           Materiais
         </a>
 
+        <a href="{% url 'turmas:tarefas_grade' pk=turma.pk %}"
+           class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
+                  {% if request.resolver_match.url_name == 'tarefas_grade' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0 bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-7 7h6m-6 4h3"/>
+            </svg>
+          </span>
+          Tarefas
+        </a>
+
         <a href="{% url 'turmas:atividades_lista' pk=turma.pk %}"
            class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
                   {% if request.resolver_match.url_name == 'atividades_lista' or request.resolver_match.url_name == 'atividade_detalhe' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">

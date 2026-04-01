@@ -14,6 +14,7 @@ from aulas import views as aulas_views
 from materiais import views as materiais_views
 from alunos import views as alunos_views
 from atividades import views as atividades_views
+from tarefas import views as tarefas_views
 
 from . import views as turmas_views
 
@@ -111,6 +112,26 @@ urlpatterns = [
         "painel/turmas/<int:pk>/materiais/<int:material_pk>/excluir/",
         materiais_views.MaterialDeleteView.as_view(),
         name="materiais_excluir",
+    ),
+    path(
+        "painel/turmas/<int:pk>/tarefas/",
+        tarefas_views.TarefasGradeView.as_view(),
+        name="tarefas_grade",
+    ),
+    path(
+        "painel/turmas/<int:pk>/tarefas/criar/",
+        tarefas_views.TarefaCriarView.as_view(),
+        name="tarefas_criar",
+    ),
+    path(
+        "painel/turmas/<int:pk>/tarefas/<int:tarefa_pk>/toggle/<int:aluno_pk>/",
+        tarefas_views.TarefaToggleView.as_view(),
+        name="tarefas_toggle",
+    ),
+    path(
+        "painel/turmas/<int:pk>/tarefas/<int:tarefa_pk>/excluir/",
+        tarefas_views.TarefaExcluirView.as_view(),
+        name="tarefas_excluir",
     ),
     # Atividades admin
     path(

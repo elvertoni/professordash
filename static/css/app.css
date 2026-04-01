@@ -3,23 +3,23 @@
 
 :root {
   color-scheme: dark;
-  --shell-bg: #040405;
-  --shell-bg-2: #09090b;
-  --shell-surface: rgba(17, 17, 20, 0.92);
-  --shell-surface-strong: rgba(23, 23, 28, 0.96);
-  --shell-surface-soft: rgba(14, 14, 17, 0.82);
-  --shell-border: rgba(255, 255, 255, 0.08);
-  --shell-border-strong: rgba(255, 255, 255, 0.14);
-  --shell-text: #ece8e7;
-  --shell-text-muted: #b0adb5;
-  --shell-text-soft: #84808c;
-  --shell-primary: #10b981;
-  --shell-primary-strong: #059669;
-  --shell-secondary: #06b6d4;
+  --shell-bg: #030810;
+  --shell-bg-2: #050d1a;
+  --shell-surface: rgba(8, 15, 30, 0.92);
+  --shell-surface-strong: rgba(12, 20, 38, 0.96);
+  --shell-surface-soft: rgba(6, 12, 24, 0.82);
+  --shell-border: rgba(0, 180, 216, 0.1);
+  --shell-border-strong: rgba(0, 180, 216, 0.18);
+  --shell-text: #dde9f5;
+  --shell-text-muted: #8fa5c0;
+  --shell-text-soft: #5e7a96;
+  --shell-primary: #00B4D8;
+  --shell-primary-strong: #0096b4;
+  --shell-secondary: #48cae4;
   --shell-danger: #f87171;
   --shell-warning: #fbbf24;
-  --shell-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
-  --shell-shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.22);
+  --shell-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+  --shell-shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.28);
   --shell-radius-xl: 1.25rem;
   --shell-radius-lg: 1rem;
   --shell-radius-md: 0.875rem;
@@ -33,9 +33,9 @@ html {
 body {
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(16, 185, 129, 0.12), transparent 30%),
-    radial-gradient(circle at top right, rgba(6, 182, 212, 0.08), transparent 26%),
-    radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.06), transparent 24%),
+    radial-gradient(circle at top left, rgba(0, 180, 216, 0.1), transparent 32%),
+    radial-gradient(circle at top right, rgba(2, 62, 138, 0.12), transparent 28%),
+    radial-gradient(circle at 50% 0%, rgba(72, 202, 228, 0.06), transparent 24%),
     linear-gradient(180deg, var(--shell-bg) 0%, var(--shell-bg-2) 100%);
   color: var(--shell-text);
   text-rendering: optimizeLegibility;
@@ -48,7 +48,7 @@ body.app-shell {
 }
 
 ::selection {
-  background: rgba(16, 185, 129, 0.24);
+  background: rgba(0, 180, 216, 0.24);
   color: #ffffff;
 }
 
@@ -175,9 +175,9 @@ textarea {
 }
 
 .input-field:focus {
-  border-color: rgba(16, 185, 129, 0.45);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.14);
+  border-color: rgba(0, 180, 216, 0.45);
+  background: rgba(0, 180, 216, 0.04);
+  box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.12);
 }
 
 .input-field:disabled,
@@ -212,7 +212,7 @@ textarea {
 .icon-action:focus-visible,
 .sidebar-link:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.16);
+  box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.18);
 }
 
 .btn:hover {
@@ -228,13 +228,13 @@ textarea {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--shell-primary) 0%, var(--shell-secondary) 130%);
-  color: #08110d;
-  box-shadow: 0 14px 34px rgba(16, 185, 129, 0.22);
+  background: linear-gradient(135deg, #00B4D8 0%, #023E8A 140%);
+  color: #ffffff;
+  box-shadow: 0 14px 34px rgba(0, 180, 216, 0.28);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 18px 42px rgba(16, 185, 129, 0.28);
+  box-shadow: 0 18px 42px rgba(0, 180, 216, 0.38);
 }
 
 .btn-secondary {
@@ -289,15 +289,15 @@ textarea {
 }
 
 .chip-primary {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.22);
-  color: #6ee7b7;
+  background: rgba(0, 180, 216, 0.12);
+  border-color: rgba(0, 180, 216, 0.24);
+  color: #67e8f9;
 }
 
 .chip-secondary {
-  background: rgba(6, 182, 212, 0.12);
-  border-color: rgba(6, 182, 212, 0.22);
-  color: #67e8f9;
+  background: rgba(2, 62, 138, 0.2);
+  border-color: rgba(2, 62, 138, 0.35);
+  color: #90d4f5;
 }
 
 .chip-muted {
@@ -379,15 +379,15 @@ textarea {
 }
 
 .prose :where(a) {
-  color: #6ee7b7;
+  color: #67e8f9;
   text-decoration: underline;
 }
 
 .prose :where(code) {
   border-radius: 0.4rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 180, 216, 0.07);
   padding: 0.15rem 0.35rem;
-  color: #d1fae5;
+  color: #a9e9f5;
 }
 
 .prose :where(pre) {
@@ -399,8 +399,8 @@ textarea {
 }
 
 .prose :where(blockquote) {
-  border-left: 3px solid rgba(16, 185, 129, 0.6);
-  background: rgba(16, 185, 129, 0.08);
+  border-left: 3px solid rgba(0, 180, 216, 0.6);
+  background: rgba(0, 180, 216, 0.07);
   padding: 0.9rem 1rem;
   border-radius: 0 0.85rem 0.85rem 0;
 }
@@ -453,19 +453,19 @@ textarea {
 }
 
 .shell-prose a {
-  color: #6ee7b7;
+  color: #67e8f9;
   text-decoration: underline;
 }
 
 .shell-prose a:hover {
-  color: #86efac;
+  color: #90eeff;
 }
 
 .shell-prose code {
   border-radius: 0.4rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 180, 216, 0.07);
   padding: 0.15rem 0.35rem;
-  color: #d1fae5;
+  color: #a9e9f5;
 }
 
 .shell-prose pre {
@@ -483,11 +483,11 @@ textarea {
 }
 
 .shell-prose blockquote {
-  border-left: 3px solid rgba(16, 185, 129, 0.6);
-  background: rgba(16, 185, 129, 0.08);
+  border-left: 3px solid rgba(0, 180, 216, 0.6);
+  background: rgba(0, 180, 216, 0.07);
   padding: 0.9rem 1rem;
   border-radius: 0 0.85rem 0.85rem 0;
-  color: rgba(236, 232, 231, 0.9);
+  color: rgba(221, 233, 245, 0.9);
 }
 
 .shell-prose table {
