@@ -1,6 +1,24 @@
 from django.db import migrations
 
 
+def remover_fk_gerador(apps, schema_editor):
+    connection = schema_editor.connection
+
+    if connection.vendor != "postgresql":
+        return
+
+    tabelas = connection.introspection.table_names()
+    if "gerador_sessaogeracao" not in tabelas:
+        return
+
+    schema_editor.execute(
+        """
+        ALTER TABLE gerador_sessaogeracao
+        DROP CONSTRAINT IF EXISTS gerador_sessaogeracao_disciplina_id_eb8d6085_fk_turmas_turma_id;
+        """
+    )
+
+
 class Migration(migrations.Migration):
     """
     Remove o FK constraint da tabela gerador_sessaogeracao que referencia
@@ -13,11 +31,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(
-            sql="""
-                ALTER TABLE gerador_sessaogeracao
-                DROP CONSTRAINT IF EXISTS gerador_sessaogeracao_disciplina_id_eb8d6085_fk_turmas_turma_id;
-            """,
-            reverse_sql=migrations.RunSQL.noop,
-        ),
+        migrations.RunPython(remover_fk_gerador, migrations.RunPython.noop),
     ]

@@ -3,6 +3,7 @@ import csv
 from urllib.parse import urlencode
 from decimal import Decimal
 
+from django.db.models import Count, Q
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -81,6 +82,25 @@ class TurmaDetailView(ProfessorRequiredMixin, DetailView):
         ctx["aulas"] = self.object.aulas.all()
         ctx["materiais"] = self.object.materiais.all()
         ctx["atividades"] = self.object.atividades.all().order_by("-prazo")
+        total_alunos_ativos = ctx["matriculas"].count()
+        tarefas = list(
+            self.object.tarefas.annotate(
+                total_realizadas=Count(
+                    "realizacoes",
+                    filter=Q(realizacoes__realizada=True),
+                )
+            )
+            .order_by("ordem", "criado_em")
+        )
+        for tarefa in tarefas:
+            if total_alunos_ativos:
+                tarefa.percentual = round(
+                    (tarefa.total_realizadas / total_alunos_ativos) * 100
+                )
+            else:
+                tarefa.percentual = 0
+        ctx["tarefas"] = tarefas
+        ctx["total_alunos_ativos"] = total_alunos_ativos
         return ctx
 
 

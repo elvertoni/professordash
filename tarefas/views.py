@@ -18,37 +18,89 @@ class TarefasGradeView(ProfessorRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         turma = get_object_or_404(Turma, pk=kwargs["pk"])
         tarefas = list(Tarefa.objects.filter(turma=turma))
-        matriculas = (
+        matriculas = list(
             Matricula.objects.filter(turma=turma, ativa=True)
             .select_related("aluno")
             .order_by("aluno__nome")
         )
+        alunos = [matricula.aluno for matricula in matriculas]
+
+        realizacoes_map = {}
+        if tarefas and alunos:
+            realizacoes_existentes = list(
+                RealizacaoTarefa.objects.filter(tarefa__in=tarefas, aluno__in=alunos)
+                .select_related("tarefa", "aluno")
+                .order_by("tarefa_id", "aluno_id")
+            )
+            realizacoes_map = {
+                (realizacao.tarefa_id, realizacao.aluno_id): realizacao
+                for realizacao in realizacoes_existentes
+            }
+
+            realizacoes_faltantes = []
+            for tarefa in tarefas:
+                for aluno in alunos:
+                    chave = (tarefa.pk, aluno.pk)
+                    if chave in realizacoes_map:
+                        continue
+                    realizacao = RealizacaoTarefa(tarefa=tarefa, aluno=aluno)
+                    realizacoes_faltantes.append(realizacao)
+                    realizacoes_map[chave] = realizacao
+
+            if realizacoes_faltantes:
+                RealizacaoTarefa.objects.bulk_create(realizacoes_faltantes)
 
         linhas = []
-        totais = {tarefa.pk: 0 for tarefa in tarefas}
+        totais_por_tarefa = {tarefa.pk: 0 for tarefa in tarefas}
 
         for matricula in matriculas:
             aluno = matricula.aluno
             realizacoes = []
+            total_realizadas_aluno = 0
 
             for tarefa in tarefas:
-                realizacao, _ = RealizacaoTarefa.objects.get_or_create(
-                    tarefa=tarefa,
-                    aluno=aluno,
-                )
+                realizacao = realizacoes_map[(tarefa.pk, aluno.pk)]
                 realizacoes.append(realizacao)
                 if realizacao.realizada:
-                    totais[tarefa.pk] += 1
+                    totais_por_tarefa[tarefa.pk] += 1
+                    total_realizadas_aluno += 1
 
-            linhas.append({"aluno": aluno, "realizacoes": realizacoes})
+            linhas.append(
+                {
+                    "aluno": aluno,
+                    "realizacoes": realizacoes,
+                    "total_realizadas": total_realizadas_aluno,
+                    "percentual": self._percentual(total_realizadas_aluno, len(tarefas)),
+                }
+            )
+
+        total_checks = len(tarefas) * len(matriculas)
+        checks_realizados = sum(totais_por_tarefa.values())
+        tarefas_com_resumo = [
+            {
+                "obj": tarefa,
+                "total_realizadas": totais_por_tarefa[tarefa.pk],
+                "percentual": self._percentual(totais_por_tarefa[tarefa.pk], len(matriculas)),
+            }
+            for tarefa in tarefas
+        ]
 
         context = {
             "turma": turma,
-            "tarefas": tarefas,
+            "tarefas": tarefas_com_resumo,
             "linhas": linhas,
-            "totais_linha": [totais[tarefa.pk] for tarefa in tarefas],
+            "total_alunos": len(matriculas),
+            "checks_realizados": checks_realizados,
+            "checks_pendentes": max(total_checks - checks_realizados, 0),
+            "percentual_geral": self._percentual(checks_realizados, total_checks),
         }
         return render(request, self.template_name, context)
+
+    @staticmethod
+    def _percentual(parte, total):
+        if not total:
+            return 0
+        return round((parte / total) * 100)
 
 
 class TarefaToggleView(ProfessorRequiredMixin, View):

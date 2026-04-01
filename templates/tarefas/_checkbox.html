@@ -1,17 +1,24 @@
-<td class="p-2 text-center">
+<td class="px-4 py-4 text-center">
   <form method="post" action="{% url 'turmas:tarefas_toggle' turma.pk tarefa.pk aluno.pk %}">
     {% csrf_token %}
     <button type="submit"
             hx-post="{% url 'turmas:tarefas_toggle' turma.pk tarefa.pk aluno.pk %}"
             hx-target="closest td"
             hx-swap="outerHTML"
-            class="w-8 h-8 rounded-lg flex items-center justify-center mx-auto transition-colors
-                   {% if realizacao.realizada %}bg-green-100 text-green-600 border border-green-200
-                   {% else %}bg-gray-50 text-gray-300 border border-gray-200 hover:border-gray-300{% endif %}">
+            aria-label="Alternar tarefa {{ tarefa.nome }} para {{ aluno.nome }}"
+            title="{% if realizacao.realizada %}Marcar como pendente{% else %}Marcar como concluida{% endif %}"
+            class="group mx-auto inline-flex h-11 w-11 items-center justify-center rounded-2xl border transition-colors
+                   {% if realizacao.realizada %}
+                     border-primary/20 bg-primary text-on-primary hover:bg-primary/90
+                   {% else %}
+                     border-outline-variant/15 bg-background text-on-surface-variant/45 hover:border-primary/25 hover:bg-surface-container-high hover:text-primary
+                   {% endif %}">
       {% if realizacao.realizada %}
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
         </svg>
+      {% else %}
+        <span class="h-2.5 w-2.5 rounded-full bg-current opacity-60 transition-opacity group-hover:opacity-100"></span>
       {% endif %}
     </button>
   </form>
