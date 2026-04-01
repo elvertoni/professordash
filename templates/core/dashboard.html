@@ -26,6 +26,14 @@
               {% endif %}
             </p>
           </div>
+          <div class="flex flex-wrap items-center gap-3 pt-1">
+            <a href="{% url 'turmas:alunos_importar_multiturma' %}" class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
+              Importar alunos multi-turma
+            </a>
+            <a href="{% url 'turmas:nova' %}" class="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container-high px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
+              Nova turma
+            </a>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:min-w-[26rem]">

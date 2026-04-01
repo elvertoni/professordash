@@ -4,12 +4,19 @@ from django.urls import reverse
 
 from alunos.forms import AlunoForm
 from alunos.models import Aluno
+from alunos.signals import vincular_ou_criar_aluno_apos_login
 from turmas.models import Matricula, Turma
 
 CSV_BYTES = (
     "nome,email,matricula\n"
     "Ana Silva,ana.silva@escola.pr.gov.br,1001\n"
     "Bruno Lima,bruno.lima@escola.pr.gov.br,1002\n"
+).encode("utf-8")
+
+CSV_MULTITURMA_BYTES = (
+    "nome,email,matricula,turma\n"
+    "Ana Silva,ana.silva@escola.pr.gov.br,1001,ProgramaÃ§Ã£o Web\n"
+    "Bruno Lima,bruno.lima@escola.pr.gov.br,1002,Outra Turma\n"
 ).encode("utf-8")
 
 
@@ -149,6 +156,76 @@ class TestAlunoViews:
         assert response.status_code == 302
         assert Matricula.objects.get(aluno=aluno, turma=turma).ativa is True
 
+    def test_importar_multiturma_csv_cria_alunos_e_matriculas(
+        self, client_professor, turma, outra_turma
+    ):
+        csv_multiturma_bytes = (
+            f"nome,email,matricula,turma\n"
+            f"Ana Silva,ana.silva@escola.pr.gov.br,1001,{turma.nome}\n"
+            f"Bruno Lima,bruno.lima@escola.pr.gov.br,1002,{outra_turma.nome}\n"
+        ).encode("utf-8")
+        arquivo = SimpleUploadedFile(
+            "alunos-multiturma.csv",
+            csv_multiturma_bytes,
+            content_type="text/csv",
+        )
+        url = reverse("turmas:alunos_importar_multiturma")
+
+        response = client_professor.post(url, {"arquivo_csv": arquivo})
+
+        assert response.status_code == 200
+        assert Aluno.objects.filter(email="ana.silva@escola.pr.gov.br").exists()
+        assert Matricula.objects.filter(
+            aluno__email="ana.silva@escola.pr.gov.br",
+            turma=turma,
+            ativa=True,
+        ).exists()
+        assert Matricula.objects.filter(
+            aluno__email="bruno.lima@escola.pr.gov.br",
+            turma=outra_turma,
+            ativa=True,
+        ).exists()
+        assert response.context["report"]["sucesso"] == 2
+
+    def test_importar_multiturma_csv_reativa_matricula_existente(
+        self, client_professor, turma, aluno
+    ):
+        Matricula.objects.create(aluno=aluno, turma=turma, ativa=False)
+        csv_reimport = (
+            f"nome,email,matricula,turma\n{aluno.nome},{aluno.email},{aluno.matricula},{turma.nome}\n"
+        ).encode("utf-8")
+        arquivo = SimpleUploadedFile(
+            "alunos-multiturma.csv",
+            csv_reimport,
+            content_type="text/csv",
+        )
+        url = reverse("turmas:alunos_importar_multiturma")
+
+        response = client_professor.post(url, {"arquivo_csv": arquivo})
+
+        assert response.status_code == 200
+        assert Matricula.objects.get(aluno=aluno, turma=turma).ativa is True
+        assert response.context["report"]["matriculas_reativadas"] == 1
+
+    def test_importar_multiturma_csv_exibe_erro_para_turma_inexistente(
+        self, client_professor
+    ):
+        arquivo = SimpleUploadedFile(
+            "alunos-multiturma.csv",
+            (
+                "nome,email,matricula,turma\n"
+                "Ana Silva,ana.silva@escola.pr.gov.br,1001,Turma Fantasma\n"
+            ).encode("utf-8"),
+            content_type="text/csv",
+        )
+        url = reverse("turmas:alunos_importar_multiturma")
+
+        response = client_professor.post(url, {"arquivo_csv": arquivo})
+
+        assert response.status_code == 200
+        assert response.context["report"]["linhas_com_erro"] == 1
+        assert "Turma Fantasma" in response.content.decode()
+
     def test_busca_htmx_filtra_por_nome(
         self, client_professor, turma, aluno, matricula
     ):
@@ -222,3 +299,27 @@ class TestAlunoViews:
         response = client_professor.post(url, {"nova_turma_pk": turma_inativa.pk})
 
         assert response.status_code == 404
+
+
+@pytest.mark.django_db
+class TestAlunoSignals:
+    def test_login_vincula_usuario_e_reativa_todas_as_matriculas(
+        self, turma, outra_turma, aluno_user
+    ):
+        aluno = Aluno.objects.create(
+            nome="Joao Silva",
+            email=aluno_user.email,
+            matricula="2024001",
+        )
+        Matricula.objects.create(aluno=aluno, turma=turma, ativa=False)
+        Matricula.objects.create(aluno=aluno, turma=outra_turma, ativa=False)
+
+        vincular_ou_criar_aluno_apos_login(
+            sender=type(aluno_user),
+            user=aluno_user,
+            request=None,
+        )
+
+        aluno.refresh_from_db()
+        assert aluno.user == aluno_user
+        assert Matricula.objects.filter(aluno=aluno, ativa=True).count() == 2

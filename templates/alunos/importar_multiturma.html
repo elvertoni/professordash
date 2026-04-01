@@ -1,0 +1,160 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Importacao multi-turma | Prof Toni Coimbra{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-6xl space-y-6">
+  <nav class="flex items-center gap-2 overflow-x-auto whitespace-nowrap text-sm text-on-surface-variant/55">
+    <a href="{% url 'core:dashboard' %}" class="transition-colors hover:text-on-surface">Dashboard</a>
+    <span aria-hidden="true">/</span>
+    <span class="font-medium text-on-surface">Importacao multi-turma</span>
+  </nav>
+
+  <section class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-6 sm:p-8">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+      <div class="max-w-3xl space-y-3">
+        <h1 class="text-2xl font-semibold tracking-tight text-on-background sm:text-3xl">Importar alunos para varias turmas</h1>
+        <p class="text-sm leading-6 text-on-surface-variant/70">
+          Envie um CSV com as colunas <code class="rounded bg-surface-container-high px-1.5 py-0.5 text-xs">nome</code>,
+          <code class="rounded bg-surface-container-high px-1.5 py-0.5 text-xs">email</code>,
+          <code class="rounded bg-surface-container-high px-1.5 py-0.5 text-xs">matricula</code> e
+          <code class="rounded bg-surface-container-high px-1.5 py-0.5 text-xs">turma</code>.
+          Cada linha procura a turma por nome com comparacao case-insensitive.
+        </p>
+      </div>
+      <a href="{% url 'turmas:lista' %}" class="inline-flex items-center justify-center rounded-full border border-outline-variant/15 bg-surface-container-high px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
+        Ver turmas
+      </a>
+    </div>
+  </section>
+
+  <section class="grid gap-6 lg:grid-cols-[1.1fr,0.9fr]">
+    <div class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-6">
+      <h2 class="text-base font-semibold text-on-surface">Upload do arquivo</h2>
+      <p class="mt-1 text-sm text-on-surface-variant/60">O arquivo deve estar em UTF-8, UTF-8 com BOM ou Latin-1.</p>
+
+      <form method="post" enctype="multipart/form-data" class="mt-6 space-y-5">
+        {% csrf_token %}
+        <div>
+          <label for="arquivo_csv" class="mb-2 block text-sm font-medium text-on-surface-variant/70">Arquivo CSV</label>
+          <input
+            type="file"
+            name="arquivo_csv"
+            id="arquivo_csv"
+            required
+            accept=".csv"
+            class="block w-full rounded-2xl border border-outline-variant/15 bg-surface-container-high px-4 py-3 text-sm text-on-surface file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-on-primary hover:file:bg-primary/90"
+          >
+        </div>
+        <div class="flex flex-wrap items-center gap-3 border-t border-outline-variant/10 pt-5">
+          <button type="submit" class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
+            Importar CSV
+          </button>
+          <span class="text-xs text-on-surface-variant/55">Linhas com turma inexistente ou ambigua entram no relatorio como erro.</span>
+        </div>
+      </form>
+    </div>
+
+    <aside class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-6">
+      <h2 class="text-base font-semibold text-on-surface">Colunas esperadas</h2>
+      <div class="mt-4 overflow-hidden rounded-2xl border border-outline-variant/10 bg-surface-container-high/60">
+        <table class="min-w-full text-sm">
+          <thead class="border-b border-outline-variant/10 text-left text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">
+            <tr>
+              <th class="px-4 py-3">Coluna</th>
+              <th class="px-4 py-3">Uso</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-outline-variant/10 text-on-surface-variant/75">
+            <tr>
+              <td class="px-4 py-3 font-medium text-on-surface">nome</td>
+              <td class="px-4 py-3">Obrigatoria. Nome do aluno.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-medium text-on-surface">email</td>
+              <td class="px-4 py-3">Obrigatoria. Chave para localizar ou criar o aluno.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-medium text-on-surface">matricula</td>
+              <td class="px-4 py-3">Opcional. Gravada apenas quando o aluno for criado.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-medium text-on-surface">turma</td>
+              <td class="px-4 py-3">Obrigatoria. Procurada por <code class="rounded bg-surface-container px-1 py-0.5 text-xs">nome__iexact</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-5 rounded-2xl border border-outline-variant/10 bg-surface-container-high/60 p-4 text-sm text-on-surface-variant/70">
+        <p class="font-medium text-on-surface">Exemplo de cabecalho</p>
+        <code class="mt-2 block break-all rounded-xl bg-surface-container px-3 py-2 text-xs text-on-surface">nome,email,matricula,turma</code>
+      </div>
+    </aside>
+  </section>
+
+  {% if report %}
+    <section class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-6">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h2 class="text-base font-semibold text-on-surface">Relatorio de processamento</h2>
+          <p class="mt-1 text-sm text-on-surface-variant/60">Resumo da ultima importacao enviada nesta pagina.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div class="rounded-2xl border border-outline-variant/10 bg-surface-container-high px-4 py-3">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Linhas</p>
+            <p class="mt-1 text-2xl font-semibold text-on-background">{{ report.total_linhas }}</p>
+          </div>
+          <div class="rounded-2xl border border-primary/20 bg-primary/10 px-4 py-3">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/90">Sucesso</p>
+            <p class="mt-1 text-2xl font-semibold text-on-background">{{ report.sucesso }}</p>
+          </div>
+          <div class="rounded-2xl border border-secondary/20 bg-secondary/10 px-4 py-3">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-secondary/90">Alunos criados</p>
+            <p class="mt-1 text-2xl font-semibold text-on-background">{{ report.alunos_criados }}</p>
+          </div>
+          <div class="rounded-2xl border border-error/20 bg-error/10 px-4 py-3">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-error/90">Erros</p>
+            <p class="mt-1 text-2xl font-semibold text-on-background">{{ report.linhas_com_erro }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 overflow-hidden rounded-[1.25rem] border border-outline-variant/10">
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="border-b border-outline-variant/10 bg-surface-container-high/40 text-left text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">
+              <tr>
+                <th class="px-4 py-3">Linha</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Aluno</th>
+                <th class="px-4 py-3">E-mail</th>
+                <th class="px-4 py-3">Turma</th>
+                <th class="px-4 py-3">Mensagem</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10 bg-surface-container-low">
+              {% for item in report.linhas %}
+                <tr class="transition-colors hover:bg-surface-container-high/40">
+                  <td class="px-4 py-3 text-on-surface-variant/70">{{ item.linha }}</td>
+                  <td class="px-4 py-3">
+                    {% if item.status == "sucesso" %}
+                      <span class="inline-flex rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">Sucesso</span>
+                    {% else %}
+                      <span class="inline-flex rounded-full border border-error/20 bg-error/10 px-2.5 py-1 text-[11px] font-semibold text-error">Erro</span>
+                    {% endif %}
+                  </td>
+                  <td class="px-4 py-3 font-medium text-on-surface">{{ item.nome|default:"-" }}</td>
+                  <td class="px-4 py-3 text-on-surface-variant/70">{{ item.email|default:"-" }}</td>
+                  <td class="px-4 py-3 text-on-surface-variant/70">{{ item.turma|default:"-" }}</td>
+                  <td class="px-4 py-3 text-on-surface-variant/70">{{ item.mensagem }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  {% endif %}
+</div>
+{% endblock %}

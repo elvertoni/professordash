@@ -175,6 +175,11 @@ urlpatterns = [
         name="alunos_importar",
     ),
     path(
+        "painel/alunos/importar-multiturma/",
+        alunos_views.AlunoImportarMultiturmaCSVView.as_view(),
+        name="alunos_importar_multiturma",
+    ),
+    path(
         "painel/turmas/<int:pk>/alunos/htmx/busca/",
         alunos_views.AlunosBuscaHTMXView.as_view(),
         name="alunos_busca_htmx",

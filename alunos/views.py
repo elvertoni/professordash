@@ -25,6 +25,34 @@ def _reativar_ou_criar_matricula(aluno, turma):
     return matricula, created
 
 
+def _decode_uploaded_csv_file(csv_file):
+    raw = csv_file.read()
+    for encoding in ("utf-8-sig", "utf-8", "latin-1"):
+        try:
+            return raw.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    return None
+
+
+def _get_csv_reader(csv_file):
+    dataset = _decode_uploaded_csv_file(csv_file)
+    if dataset is None:
+        return None
+    return csv.DictReader(io.StringIO(dataset), delimiter=",")
+
+
+def _row_value(row, *aliases):
+    normalized_row = {
+        (key or "").strip().lower(): (value or "").strip() for key, value in row.items()
+    }
+    for alias in aliases:
+        value = normalized_row.get(alias.strip().lower(), "")
+        if value:
+            return value
+    return ""
+
+
 class AlunoMixin:
     """Resolve self.turma a partir do pk da turma na URL."""
 
@@ -284,6 +312,161 @@ class AlunoImportarCSVView(ProfessorRequiredMixin, AlunoMixin, View):
             request, f"{count} aluno(s) importado(s) com sucesso para a turma."
         )
         return redirect("turmas:alunos_lista", pk=self.turma.pk)
+
+
+class AlunoImportarMultiturmaCSVView(ProfessorRequiredMixin, View):
+    """Importa alunos e matriculas para varias turmas a partir de um CSV."""
+
+    template_name = "alunos/importar_multiturma.html"
+
+    def get(self, request):
+        return render(request, self.template_name, {"report": None})
+
+    def post(self, request):
+        csv_file = request.FILES.get("arquivo_csv")
+        context = {"report": None}
+
+        if not csv_file or not csv_file.name.endswith(".csv"):
+            messages.error(request, "Por favor, envie um arquivo CSV valido.")
+            return render(request, self.template_name, context, status=400)
+
+        reader = _get_csv_reader(csv_file)
+        if reader is None:
+            messages.error(
+                request,
+                "Nao foi possivel decodificar o arquivo CSV. Use UTF-8 ou Latin-1.",
+            )
+            return render(request, self.template_name, context, status=400)
+
+        report = {
+            "total_linhas": 0,
+            "sucesso": 0,
+            "alunos_criados": 0,
+            "alunos_reutilizados": 0,
+            "matriculas_criadas": 0,
+            "matriculas_reativadas": 0,
+            "linhas_com_erro": 0,
+            "linhas": [],
+        }
+
+        for line_number, row in enumerate(reader, start=2):
+            report["total_linhas"] += 1
+            nome = _row_value(row, "nome")
+            email = _row_value(row, "email", "e-mail")
+            matricula_num = _row_value(row, "matricula", "ra")
+            turma_nome = _row_value(row, "turma")
+
+            if not nome or not email or not turma_nome:
+                report["linhas_com_erro"] += 1
+                report["linhas"].append(
+                    {
+                        "linha": line_number,
+                        "status": "erro",
+                        "mensagem": "Campos obrigatorios ausentes. Use nome, email e turma.",
+                        "nome": nome,
+                        "email": email,
+                        "matricula": matricula_num,
+                        "turma": turma_nome,
+                    }
+                )
+                continue
+
+            turmas = list(Turma.objects.filter(nome__iexact=turma_nome).order_by("pk"))
+            if not turmas:
+                report["linhas_com_erro"] += 1
+                report["linhas"].append(
+                    {
+                        "linha": line_number,
+                        "status": "erro",
+                        "mensagem": f'Turma "{turma_nome}" nao encontrada.',
+                        "nome": nome,
+                        "email": email,
+                        "matricula": matricula_num,
+                        "turma": turma_nome,
+                    }
+                )
+                continue
+
+            if len(turmas) > 1:
+                report["linhas_com_erro"] += 1
+                report["linhas"].append(
+                    {
+                        "linha": line_number,
+                        "status": "erro",
+                        "mensagem": f'Turma "{turma_nome}" e ambigua. Ajuste o nome no CSV.',
+                        "nome": nome,
+                        "email": email,
+                        "matricula": matricula_num,
+                        "turma": turma_nome,
+                    }
+                )
+                continue
+
+            turma = turmas[0]
+            email_normalizado = email.lower()
+            aluno = Aluno.objects.filter(email=email_normalizado).first()
+            aluno_criado = False
+
+            if not aluno:
+                aluno = Aluno.objects.create(
+                    nome=nome,
+                    email=email_normalizado,
+                    matricula=matricula_num,
+                )
+                aluno_criado = True
+                report["alunos_criados"] += 1
+            else:
+                report["alunos_reutilizados"] += 1
+
+            matricula, matricula_criada = Matricula.objects.get_or_create(
+                aluno=aluno,
+                turma=turma,
+            )
+            matricula_reativada = False
+            if not matricula_criada and not matricula.ativa:
+                matricula.ativa = True
+                matricula.save(update_fields=["ativa"])
+                matricula_reativada = True
+
+            if matricula_criada:
+                report["matriculas_criadas"] += 1
+            if matricula_reativada:
+                report["matriculas_reativadas"] += 1
+
+            report["sucesso"] += 1
+            report["linhas"].append(
+                {
+                    "linha": line_number,
+                    "status": "sucesso",
+                    "mensagem": (
+                        "Aluno criado e matricula criada."
+                        if aluno_criado and matricula_criada
+                        else "Aluno existente reutilizado e matricula criada."
+                        if matricula_criada
+                        else "Matricula reativada."
+                        if matricula_reativada
+                        else "Aluno e matricula ja existentes."
+                    ),
+                    "nome": aluno.nome,
+                    "email": aluno.email,
+                    "matricula": aluno.matricula,
+                    "turma": turma.nome,
+                }
+            )
+
+        if report["sucesso"]:
+            messages.success(
+                request,
+                f"Importacao concluida: {report['sucesso']} linha(s) processada(s) com sucesso.",
+            )
+        if report["linhas_com_erro"]:
+            messages.warning(
+                request,
+                f"{report['linhas_com_erro']} linha(s) nao puderam ser importadas.",
+            )
+
+        context["report"] = report
+        return render(request, self.template_name, context)
 
 
 class AlunosBuscaHTMXView(ProfessorRequiredMixin, AlunoMixin, View):
