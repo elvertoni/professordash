@@ -149,7 +149,7 @@ class EntregarAtividadeView(AlunoAutenticadoMixin, UpdateView):
         """Retorna a entrega existente ou cria uma instância não salva se for o primeiro envio."""
         atividade_id = self.kwargs.get("atividade_id")
         self.atividade = get_object_or_404(
-            Atividade,
+            Atividade.objects.select_related("turma"),
             id=atividade_id,
             turma=self.turma,
             publicada=True,
@@ -347,7 +347,7 @@ class AvaliarEntregaView(ProfessorRequiredMixin, View):
 
     def get_entrega(self):
         return get_object_or_404(
-            Entrega,
+            Entrega.objects.select_related("aluno", "atividade"),
             id=self.kwargs.get("entrega_pk"),
             atividade_id=self.kwargs.get("atividade_pk"),
             atividade__turma_id=self.kwargs.get("pk"),

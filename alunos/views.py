@@ -197,7 +197,11 @@ class AlunoRemoverView(ProfessorRequiredMixin, AlunoMixin, View):
     """Desativa a matrícula de um aluno nesta turma via POST."""
 
     def post(self, request, pk, aluno_pk):
-        matricula = get_object_or_404(Matricula, aluno__pk=aluno_pk, turma=self.turma)
+        matricula = get_object_or_404(
+            Matricula.objects.select_related("aluno"),
+            aluno__pk=aluno_pk,
+            turma=self.turma,
+        )
         matricula.ativa = False
         matricula.save(update_fields=["ativa"])
         messages.success(request, f"Aluno {matricula.aluno.nome} removido da turma.")
@@ -208,7 +212,11 @@ class AlunoMoverTurmaView(ProfessorRequiredMixin, AlunoMixin, View):
     """Move um aluno de uma Turma para outra (alterando a Matrícula)."""
 
     def get(self, request, pk, aluno_pk):
-        matricula = get_object_or_404(Matricula, aluno__pk=aluno_pk, turma=self.turma)
+        matricula = get_object_or_404(
+            Matricula.objects.select_related("aluno"),
+            aluno__pk=aluno_pk,
+            turma=self.turma,
+        )
         # Turmas ativas do mesmo autor (professor), exceto a atual
         # Assumindo que a Turma tem autorização via ProfessorRequiredMixin no dispatch
         turmas_disponiveis = Turma.objects.filter(ativa=True).exclude(pk=self.turma.pk)
@@ -228,7 +236,11 @@ class AlunoMoverTurmaView(ProfessorRequiredMixin, AlunoMixin, View):
         )
 
     def post(self, request, pk, aluno_pk):
-        matricula = get_object_or_404(Matricula, aluno__pk=aluno_pk, turma=self.turma)
+        matricula = get_object_or_404(
+            Matricula.objects.select_related("aluno"),
+            aluno__pk=aluno_pk,
+            turma=self.turma,
+        )
         nova_turma_pk = request.POST.get("nova_turma_pk")
 
         if nova_turma_pk:
