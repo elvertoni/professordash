@@ -869,6 +869,20 @@ h1.titulo {
   color: #A1A1AA;
   font-size: .92rem;
 }
+.pres-timer {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: #10B981;
+  background: rgba(16,185,129,.08);
+  border: 1px solid rgba(16,185,129,.15);
+  border-radius: 8px;
+  padding: 6px 14px;
+  letter-spacing: .05em;
+  white-space: nowrap;
+  min-width: 72px;
+  text-align: center;
+}
 .pres-shortcuts {
   color: #71717A;
   font-size: 11px;
@@ -2308,6 +2322,68 @@ h1.titulo {
   letter-spacing: 0.05em;
 }
 
+.pres-closing-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 62vh;
+  text-align: left;
+}
+.pres-closing-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.2rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #10B981;
+}
+.pres-closing-kicker::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, #10B981, transparent);
+}
+.pres-closing-h1 {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.04em;
+  color: #F5F5F4;
+  margin-bottom: 1.5rem;
+}
+.pres-closing-topics {
+  list-style: none;
+  margin: 0 0 2rem;
+  padding: 0;
+}
+.pres-closing-topics li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  font-size: 1.05rem;
+  color: #A1A1AA;
+  line-height: 1.6;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.pres-closing-topics li:last-child { border-bottom: none; }
+.pres-closing-check {
+  color: #10B981;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.pres-closing-footer {
+  font-size: .85rem;
+  color: #71717A;
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
 .pres-slide h2 {
   gap: 18px;
   margin-bottom: 1.5rem;
@@ -2712,6 +2788,7 @@ h1.titulo {
         <span class="pres-current-section" id="pres-current-section">Capa</span>
       </div>
     </div>
+    <div class="pres-timer" id="pres-timer" aria-label="Tempo de apresentação">00:00</div>
     <div class="pres-shortcuts" aria-hidden="true">← → navegar · espaço avançar · home/end</div>
     <button class="pres-secondary-btn" id="pres-fullscreen-btn" type="button" onclick="togglePresentationFullscreen()">
       Tela cheia
@@ -2747,6 +2824,8 @@ var presSlides = [];
 var presIndex = 0;
 var presLastFocus = null;
 var SLIDE_MAX_ELEMENTS = 4;
+var presTimerInterval = null;
+var presTimerStart = null;
 
 function cleanText(value) {
   return (value || '').replace(/\s+/g, ' ').trim();
@@ -2954,6 +3033,16 @@ function extractChunkTitle(chunk, fallback) {
   return fallback || '{{ aula.titulo|escapejs }}';
 }
 
+function elementWeight(el) {
+  if (el.tagName === 'PRE' || el.classList.contains('questao')) return 3;
+  if (el.tagName === 'TABLE' || el.tagName === 'BLOCKQUOTE') return 2;
+  if (el.tagName === 'UL' || el.tagName === 'OL') {
+    var items = el.querySelectorAll('li');
+    return items.length > 4 ? 2 : 1;
+  }
+  return 1;
+}
+
 function pushChunkedSlides(elements, sectionTitle, slides) {
   var leaderHTML = '';
   var bodyElements = elements.filter(function(element) {
@@ -2979,12 +3068,28 @@ function pushChunkedSlides(elements, sectionTitle, slides) {
     return;
   }
 
-  for (var index = 0; index < bodyElements.length; index += SLIDE_MAX_ELEMENTS) {
-    var chunk = bodyElements.slice(index, index + SLIDE_MAX_ELEMENTS);
-    var html = '';
+  var index = 0;
+  while (index < bodyElements.length) {
+    var chunk = [];
+    var weight = 0;
 
-    if (index === 0 && leaderHTML) html += leaderHTML;
-    if (index > 0 && normalizedSection) {
+    while (index < bodyElements.length && weight < SLIDE_MAX_ELEMENTS) {
+      var w = elementWeight(bodyElements[index]);
+      if (chunk.length > 0 && weight + w > SLIDE_MAX_ELEMENTS) break;
+      chunk.push(bodyElements[index]);
+      weight += w;
+      index++;
+    }
+
+    var html = '';
+    if (slides.length === 0 || (chunk === bodyElements.slice(0, chunk.length) && leaderHTML)) {
+      if (leaderHTML) { html += leaderHTML; leaderHTML = ''; }
+    } else if (leaderHTML) {
+      html += leaderHTML;
+      leaderHTML = '';
+    }
+
+    if (!html && index > chunk.length && normalizedSection) {
       html += '<div class="pres-subslide-label">' +
         escapeHTML(normalizedSection) + ' &mdash; cont.' +
       '</div>';
@@ -3045,6 +3150,23 @@ function buildSlides() {
 
   if (sectionElements.length) {
     pushChunkedSlides(sectionElements, sectionTitle || 'Visao geral', slides);
+  }
+
+  var closingSections = collectSectionTitles().slice(0, 8);
+  if (closingSections.length > 1) {
+    var topicsHTML = closingSections.map(function(s) {
+      return '<li><svg class="pres-closing-check" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' + escapeHTML(s) + '</li>';
+    }).join('');
+
+    slides.push(createSlide(
+      '<div class="pres-closing-slide">' +
+        '<span class="pres-closing-kicker">Recapitulando</span>' +
+        '<div class="pres-closing-h1">O que vimos hoje</div>' +
+        '<ul class="pres-closing-topics">' + topicsHTML + '</ul>' +
+        '<div class="pres-closing-footer">{{ aula.turma.nome|escapejs }} · Aula {{ aula.numero }}</div>' +
+      '</div>',
+      { section: 'Encerramento', title: 'Recapitulacao' }
+    ));
   }
 
   return slides;
@@ -3197,6 +3319,34 @@ function updateFullscreenButton() {
   button.textContent = document.fullscreenElement ? 'Sair da tela cheia' : 'Tela cheia';
 }
 
+function startPresTimer() {
+  presTimerStart = Date.now();
+  var timerEl = document.getElementById('pres-timer');
+  if (presTimerInterval) clearInterval(presTimerInterval);
+  presTimerInterval = setInterval(function() {
+    var elapsed = Math.floor((Date.now() - presTimerStart) / 1000);
+    var mins = Math.floor(elapsed / 60);
+    var secs = elapsed % 60;
+    timerEl.textContent = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+    if (mins >= 15) {
+      timerEl.style.color = '#FCD34D';
+      timerEl.style.borderColor = 'rgba(252,211,77,.25)';
+      timerEl.style.background = 'rgba(252,211,77,.08)';
+    }
+  }, 1000);
+}
+
+function stopPresTimer() {
+  if (presTimerInterval) { clearInterval(presTimerInterval); presTimerInterval = null; }
+  var timerEl = document.getElementById('pres-timer');
+  if (timerEl) {
+    timerEl.textContent = '00:00';
+    timerEl.style.color = '';
+    timerEl.style.borderColor = '';
+    timerEl.style.background = '';
+  }
+}
+
 function startPresentation() {
   presSlides = buildSlides();
   if (!presSlides.length) return;
@@ -3213,10 +3363,12 @@ function startPresentation() {
   buildAgenda();
   renderSlide();
   updateFullscreenButton();
+  startPresTimer();
   overlay.focus();
 }
 
 function exitPresentation() {
+  stopPresTimer();
   var overlay = document.getElementById('pres-overlay');
   overlay.classList.remove('active');
   document.body.style.overflow = '';

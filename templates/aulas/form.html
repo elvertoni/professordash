@@ -165,6 +165,27 @@
         {% endif %}
       </div>
 
+      <!-- Imagem de capa -->
+      <div>
+        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.imagem_capa.id_for_label }}">
+          Imagem de capa <span class="text-zinc-500">(opcional)</span>
+        </label>
+        {% if aula.imagem_capa %}
+          <div class="mb-2 rounded-lg overflow-hidden border border-zinc-700 max-w-sm">
+            <img src="{{ aula.imagem_capa.url }}" alt="Capa atual" class="w-full h-auto">
+          </div>
+        {% endif %}
+        <input type="file"
+               id="{{ form.imagem_capa.id_for_label }}"
+               name="imagem_capa"
+               accept="image/*"
+               class="block w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:border-zinc-600 file:text-sm file:bg-zinc-800 file:text-zinc-300 hover:file:bg-zinc-700 transition-colors">
+        {% if form.imagem_capa.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ form.imagem_capa.errors|join:", " }}</p>
+        {% endif %}
+        <p class="text-xs text-zinc-500 mt-1">Exibida no topo da aula. Proporcao 16:9 recomendada.</p>
+      </div>
+
       <!-- ── Conteúdo Markdown: Abas ───────────────────────── -->
       <div>
         <label class="block text-sm font-medium text-zinc-400 mb-2">

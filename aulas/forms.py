@@ -11,7 +11,7 @@ class AulaForm(forms.ModelForm):
 
     class Meta:
         model = Aula
-        fields = ["titulo", "numero", "data", "conteudo", "ordem"]
+        fields = ["titulo", "numero", "data", "imagem_capa", "conteudo", "ordem"]
         widgets = {
             "titulo": forms.TextInput(attrs={"class": "input-field"}),
             "numero": forms.NumberInput(attrs={"class": "input-field"}),

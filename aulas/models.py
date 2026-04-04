@@ -16,6 +16,11 @@ class Aula(BaseModel):
     numero = models.PositiveIntegerField()
     data = models.DateField(null=True, blank=True)
     conteudo = MarkdownxField(blank=True)
+    imagem_capa = models.ImageField(
+        upload_to="aulas/capas/%Y/%m/",
+        blank=True,
+        verbose_name="Imagem de capa",
+    )
     realizada = models.BooleanField(default=False)
     ordem = models.PositiveIntegerField(default=0)
 
