@@ -181,6 +181,7 @@ MARKDOWNX_MARKDOWN_EXTENSIONS = [
     'markdown.extensions.codehilite',
     'markdown.extensions.toc',
     'markdown.extensions.nl2br',
+    'core.markdown_extensions',
 ]
 
 # --- Segurança ---
