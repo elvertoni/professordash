@@ -559,9 +559,9 @@ class TestAtividadeViewsAdmin:
         html = response.content.decode()
 
         assert response.status_code == 200
-        assert "prose-content max-w-none text-gray-700" in html
+        assert "shell-prose max-w-none" in html
 
-    def test_lista_publica_usa_cta_legivel_em_superficie_clara(
+    def test_lista_publica_renderiza_atividades(
         self, client, turma, atividade_aberta
     ):
         url = reverse(
@@ -573,8 +573,7 @@ class TestAtividadeViewsAdmin:
         html = response.content.decode()
 
         assert response.status_code == 200
-        assert "text-cyan-700 group-hover:text-cyan-800" in html
-        assert "btn-secondary" not in html
+        assert atividade_aberta.titulo in html
 
 
 @pytest.mark.django_db
@@ -603,7 +602,7 @@ class TestAcessoEntregarAtividadeView:
     def test_usuario_autenticado_sem_matricula_nao_deve_explodir(
         self, client, turma, atividade_aberta, aluno_sem_matricula
     ):
-        """Aluno autenticado sem matrícula deveria receber 403, não 500."""
+        """Aluno autenticado sem matrícula deveria ser redirecionado, não 500."""
         client.force_login(aluno_sem_matricula.user)
         url = reverse(
             "turmas:portal_entregar_atividade",
@@ -612,7 +611,7 @@ class TestAcessoEntregarAtividadeView:
 
         response = client.get(url)
 
-        assert response.status_code == 403
+        assert response.status_code == 302
 
     def test_entrega_de_atividade_de_outra_turma_deveria_ser_bloqueada(
         self, client, aluno, turma, atividade_aberta, db

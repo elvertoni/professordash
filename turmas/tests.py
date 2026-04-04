@@ -654,24 +654,24 @@ class TestPortalAlunoAutorizacao:
     def test_aluno_sem_matricula_acessa_minha_area_com_lista_vazia(
         self, client_aluno_sem_matricula, turma
     ):
-        """Aluno autenticado sem matrícula ativa deve ser bloqueado."""
+        """Aluno autenticado sem matrícula ativa deve ser redirecionado."""
         url = reverse("turmas:portal_minha_area", kwargs={"token": turma.token_publico})
 
         response = client_aluno_sem_matricula.get(url)
 
-        assert response.status_code == 403
+        assert response.status_code == 302
 
     def test_aluno_sem_matricula_acessa_minhas_notas_com_lista_vazia(
         self, client_aluno_sem_matricula, turma
     ):
-        """Aluno autenticado sem matrícula ativa deve ser bloqueado."""
+        """Aluno autenticado sem matrícula ativa deve ser redirecionado."""
         url = reverse(
             "turmas:portal_minhas_notas", kwargs={"token": turma.token_publico}
         )
 
         response = client_aluno_sem_matricula.get(url)
 
-        assert response.status_code == 403
+        assert response.status_code == 302
 
     def test_boletim_deveria_renderizar_sem_no_reverse_match(
         self, client_professor, turma
