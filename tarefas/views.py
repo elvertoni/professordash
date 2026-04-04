@@ -12,6 +12,16 @@ from turmas.models import Matricula, Turma
 from .models import RealizacaoTarefa, Tarefa
 
 
+def _is_htmx(request):
+    return request.META.get("HTTP_HX_REQUEST") == "true"
+
+
+def _htmx_redirect(url):
+    response = HttpResponse(status=204)
+    response["HX-Redirect"] = url
+    return response
+
+
 class TarefasGradeView(ProfessorRequiredMixin, View):
     template_name = "tarefas/grade.html"
 
@@ -140,11 +150,13 @@ class TarefaCriarView(ProfessorRequiredMixin, View):
         nome = request.POST.get("nome", "").strip()
         data_raw = request.POST.get("data", "").strip()
         data = parse_date(data_raw) if data_raw else None
-        is_htmx = bool(getattr(request, "htmx", False))
+        url = reverse("turmas:tarefas_grade", kwargs={"pk": turma.pk})
 
         if not nome:
             messages.error(request, "Informe o nome da tarefa.")
-            return self._redirect(turma, is_htmx)
+            if _is_htmx(request):
+                return _htmx_redirect(url)
+            return redirect(url)
 
         max_ordem = Tarefa.objects.filter(turma=turma).aggregate(max_ordem=Max("ordem"))[
             "max_ordem"
@@ -169,30 +181,54 @@ class TarefaCriarView(ProfessorRequiredMixin, View):
         )
 
         messages.success(request, f'Tarefa "{tarefa.nome}" adicionada com sucesso.')
-        return self._redirect(turma, is_htmx)
+        if _is_htmx(request):
+            return _htmx_redirect(url)
+        return redirect(url)
 
-    def _redirect(self, turma, is_htmx):
+
+class TarefaEditarView(ProfessorRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        turma = get_object_or_404(Turma, pk=kwargs["pk"])
+        tarefa = get_object_or_404(Tarefa, pk=kwargs["tarefa_pk"], turma=turma)
+        return render(
+            request,
+            "tarefas/_editar_form.html",
+            {"turma": turma, "tarefa": tarefa},
+        )
+
+    def post(self, request, *args, **kwargs):
+        turma = get_object_or_404(Turma, pk=kwargs["pk"])
+        tarefa = get_object_or_404(Tarefa, pk=kwargs["tarefa_pk"], turma=turma)
+        nome = request.POST.get("nome", "").strip()
+        data_raw = request.POST.get("data", "").strip()
         url = reverse("turmas:tarefas_grade", kwargs={"pk": turma.pk})
-        if is_htmx:
-            response = HttpResponse(status=204)
-            response["HX-Redirect"] = url
-            return response
-        return redirect("turmas:tarefas_grade", pk=turma.pk)
+
+        if not nome:
+            messages.error(request, "Informe o nome da tarefa.")
+            if _is_htmx(request):
+                return _htmx_redirect(url)
+            return redirect(url)
+
+        tarefa.nome = nome
+        tarefa.data = parse_date(data_raw) if data_raw else None
+        tarefa.save(update_fields=["nome", "data", "atualizado_em"])
+
+        messages.success(request, f'Tarefa "{tarefa.nome}" atualizada.')
+        if _is_htmx(request):
+            return _htmx_redirect(url)
+        return redirect(url)
 
 
 class TarefaExcluirView(ProfessorRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         turma = get_object_or_404(Turma, pk=kwargs["pk"])
         tarefa = get_object_or_404(Tarefa, pk=kwargs["tarefa_pk"], turma=turma)
-        is_htmx = bool(getattr(request, "htmx", False))
 
         nome_tarefa = tarefa.nome
         tarefa.delete()
         messages.success(request, f'Tarefa "{nome_tarefa}" excluida.')
 
         url = reverse("turmas:tarefas_grade", kwargs={"pk": turma.pk})
-        if is_htmx:
-            response = HttpResponse(status=204)
-            response["HX-Redirect"] = url
-            return response
-        return redirect("turmas:tarefas_grade", pk=turma.pk)
+        if _is_htmx(request):
+            return _htmx_redirect(url)
+        return redirect(url)

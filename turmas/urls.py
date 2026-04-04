@@ -129,6 +129,11 @@ urlpatterns = [
         name="tarefas_toggle",
     ),
     path(
+        "painel/turmas/<int:pk>/tarefas/<int:tarefa_pk>/editar/",
+        tarefas_views.TarefaEditarView.as_view(),
+        name="tarefas_editar",
+    ),
+    path(
         "painel/turmas/<int:pk>/tarefas/<int:tarefa_pk>/excluir/",
         tarefas_views.TarefaExcluirView.as_view(),
         name="tarefas_excluir",

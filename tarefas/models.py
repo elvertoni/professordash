@@ -17,8 +17,10 @@ class Tarefa(BaseModel):
 
     class Meta:
         ordering = ["ordem", "criado_em"]
+        verbose_name = "Tarefa"
+        verbose_name_plural = "Tarefas"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.nome
 
 
@@ -37,6 +39,8 @@ class RealizacaoTarefa(BaseModel):
 
     class Meta:
         unique_together = ("tarefa", "aluno")
+        verbose_name = "Realização de Tarefa"
+        verbose_name_plural = "Realizações de Tarefas"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.aluno} - {self.tarefa}"
