@@ -22,7 +22,19 @@ class AulaMixin:
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        self.turma = get_object_or_404(Turma, pk=kwargs["pk"])
+        turma_pk = kwargs.get("pk") or kwargs.get("turma_pk")
+        self.aula = None
+
+        if turma_pk is not None:
+            self.turma = get_object_or_404(Turma, pk=turma_pk)
+            return
+
+        aula_pk = kwargs.get("aula_pk")
+        if aula_pk is None:
+            raise KeyError("Expected 'pk', 'turma_pk', or 'aula_pk' in URL kwargs.")
+
+        self.aula = get_object_or_404(Aula.objects.select_related("turma"), pk=aula_pk)
+        self.turma = self.aula.turma
 
 
 class AulaListView(ProfessorRequiredMixin, AulaMixin, ListView):
@@ -45,6 +57,17 @@ class AulaNavMixin:
 
     def get_nav_queryset(self):
         return Aula.objects.filter(turma=self.turma).order_by("ordem", "numero")
+
+    def get_sidebar_aulas(self):
+        return [
+            {
+                "pk": aula.pk,
+                "numero": aula.numero,
+                "titulo": aula.titulo,
+                "href": self._build_aula_url(aula.pk),
+            }
+            for aula in self.get_nav_queryset()
+        ]
 
     def get_nav_context(self, aula):
         aulas = list(
@@ -76,6 +99,8 @@ class AulaDetailView(ProfessorRequiredMixin, AulaMixin, AulaNavMixin, DetailView
     context_object_name = "aula"
 
     def get_object(self):
+        if self.aula is not None and self.aula.turma_id == self.turma.pk:
+            return self.aula
         return get_object_or_404(Aula, pk=self.kwargs["aula_pk"], turma=self.turma)
 
     def _build_aula_url(self, aula_pk):
@@ -86,19 +111,13 @@ class AulaDetailView(ProfessorRequiredMixin, AulaMixin, AulaNavMixin, DetailView
         ctx["turma"] = self.turma
         ctx["back_url"] = reverse_lazy("turmas:aulas_lista", kwargs={"pk": self.turma.pk})
         ctx["back_label"] = "Aulas"
+        ctx["is_admin_view"] = True
+        ctx["edit_url"] = reverse(
+            "turmas:aulas_editar",
+            kwargs={"pk": self.turma.pk, "aula_pk": self.object.pk},
+        )
         ctx["atividades_url"] = f"{reverse('turmas:detalhe', kwargs={'pk': self.turma.pk})}?tab=atividades"
-        ctx["sidebar_aulas"] = [
-            {
-                "pk": aula.pk,
-                "numero": aula.numero,
-                "titulo": aula.titulo,
-                "href": reverse(
-                    "turmas:aulas_detalhe",
-                    kwargs={"pk": self.turma.pk, "aula_pk": aula.pk},
-                ),
-            }
-            for aula in Aula.objects.filter(turma=self.turma).order_by("ordem", "numero")
-        ]
+        ctx["sidebar_aulas"] = self.get_sidebar_aulas()
         ctx.update(self.get_nav_context(self.object))
         return ctx
 
@@ -246,7 +265,16 @@ class AulaMarcarRealizadaView(ProfessorRequiredMixin, AulaMixin, View):
         aula.realizada = not aula.realizada
         aula.save(update_fields=["realizada", "atualizado_em"])
         logger.info(f"Aula pk={aula_pk} marcada como realizada={aula.realizada}")
-        return JsonResponse({"realizada": aula.realizada})
+        if request.headers.get("HX-Request") == "true":
+            return render(
+                request,
+                "aulas/_aula_item.html",
+                {
+                    "turma": self.turma,
+                    "aula": aula,
+                },
+            )
+        return redirect("turmas:aulas_lista", pk=self.turma.pk)
 
 
 # ---------------------------------------------------------------------------
@@ -304,23 +332,12 @@ class AulaDetalhePublicoView(TurmaPublicaMixin, AulaNavMixin, DetailView):
             "turmas:portal_aulas_lista", kwargs={"token": self.turma.token_publico}
         )
         ctx["back_label"] = "Aulas"
+        ctx["is_admin_view"] = False
+        ctx["edit_url"] = None
         ctx["atividades_url"] = reverse(
             "turmas:portal_atividades_lista",
             kwargs={"token": self.turma.token_publico},
         )
-        ctx["sidebar_aulas"] = [
-            {
-                "pk": aula.pk,
-                "numero": aula.numero,
-                "titulo": aula.titulo,
-                "href": reverse(
-                    "turmas:portal_aulas_detalhe",
-                    kwargs={"token": self.turma.token_publico, "aula_pk": aula.pk},
-                ),
-            }
-            for aula in Aula.objects.filter(turma=self.turma, realizada=True).order_by(
-                "ordem", "numero"
-            )
-        ]
+        ctx["sidebar_aulas"] = self.get_sidebar_aulas()
         ctx.update(self.get_nav_context(self.object))
         return ctx

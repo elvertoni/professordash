@@ -52,6 +52,8 @@ class TestTarefasGradeView:
         assert response.status_code == 200
         assert "Checklist de tarefas da turma" in html
         assert "Caderno IA 1" in html
+        assert f'id="tarefa-header-{tarefa_base.pk}"' in html
+        assert f'hx-target="#tarefa-header-{tarefa_base.pk}"' in html
         assert RealizacaoTarefa.objects.filter(tarefa=tarefa_base).count() == 2
 
     def test_aluno_nao_acessa_grade(self, client_aluno, turma):
@@ -107,10 +109,79 @@ class TestTarefaToggleView:
         response = client_professor.post(url, HTTP_HX_REQUEST="true")
 
         realizacao = RealizacaoTarefa.objects.get(tarefa=tarefa_base, aluno=aluno)
+        html = response.content.decode()
 
         assert response.status_code == 200
         assert realizacao.realizada is True
-        assert "Marcar como pendente" in response.content.decode()
+        assert html.lstrip().startswith("<td")
+        assert 'name="csrfmiddlewaretoken"' in html
+        assert "Marcar como pendente" in html
+
+
+@pytest.mark.django_db
+class TestTarefaEditarView:
+    def test_get_htmx_retorna_formulario_inline(
+        self, client_professor, turma, tarefa_base
+    ):
+        url = reverse(
+            "turmas:tarefas_editar",
+            kwargs={"pk": turma.pk, "tarefa_pk": tarefa_base.pk},
+        )
+
+        response = client_professor.get(url, HTTP_HX_REQUEST="true")
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "<form" in html
+        assert 'hx-target="closest th"' in html
+        assert reverse(
+            "turmas:tarefas_editar",
+            kwargs={"pk": turma.pk, "tarefa_pk": tarefa_base.pk},
+        ) in html
+
+    def test_post_htmx_retorna_cabecalho_atualizado(
+        self, client_professor, turma, tarefa_base
+    ):
+        url = reverse(
+            "turmas:tarefas_editar",
+            kwargs={"pk": turma.pk, "tarefa_pk": tarefa_base.pk},
+        )
+
+        response = client_professor.post(
+            url,
+            {"nome": "Caderno IA revisado", "data": "2026-04-02"},
+            HTTP_HX_REQUEST="true",
+        )
+
+        tarefa_base.refresh_from_db()
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "HX-Redirect" not in response
+        assert tarefa_base.nome == "Caderno IA revisado"
+        assert str(tarefa_base.data) == "2026-04-02"
+        assert "Caderno IA revisado" in html
+        assert "Editar tarefa" in html
+
+
+@pytest.mark.django_db
+class TestTarefaExcluirView:
+    def test_post_htmx_retorna_redirect_e_remove_tarefa(
+        self, client_professor, turma, tarefa_base
+    ):
+        url = reverse(
+            "turmas:tarefas_excluir",
+            kwargs={"pk": turma.pk, "tarefa_pk": tarefa_base.pk},
+        )
+
+        response = client_professor.post(url, HTTP_HX_REQUEST="true")
+
+        assert response.status_code == 204
+        assert response["HX-Redirect"] == reverse(
+            "turmas:tarefas_grade",
+            kwargs={"pk": turma.pk},
+        )
+        assert not Tarefa.objects.filter(pk=tarefa_base.pk).exists()
 
 
 @pytest.mark.django_db

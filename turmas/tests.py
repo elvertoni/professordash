@@ -393,6 +393,31 @@ class TestTurmaArquivarView:
 
 
 @pytest.mark.django_db
+class TestTurmaDeleteView:
+    """Testes para exclusao permanente de turma via POST."""
+
+    def test_professor_pode_excluir_turma_e_redireciona_para_lista(
+        self, client_professor, turma
+    ):
+        url = reverse("turmas:excluir", kwargs={"pk": turma.pk})
+
+        response = client_professor.post(url)
+
+        assert response.status_code == 302
+        assert response.url == reverse("turmas:lista")
+        from turmas.models import Turma
+
+        assert not Turma.objects.filter(pk=turma.pk).exists()
+
+    def test_aluno_nao_pode_excluir_turma(self, client_aluno, turma):
+        url = reverse("turmas:excluir", kwargs={"pk": turma.pk})
+
+        response = client_aluno.post(url)
+
+        assert response.status_code == 403
+
+
+@pytest.mark.django_db
 class TestBoletimTurmaView:
     """Testes para o boletim de turma."""
 

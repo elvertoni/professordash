@@ -31,7 +31,10 @@
         </svg>
         Salvar
       </button>
-      <a href="{% url 'turmas:tarefas_grade' turma.pk %}"
+      <a href="{% url 'turmas:tarefas_cabecalho' turma.pk tarefa.pk %}"
+         hx-get="{% url 'turmas:tarefas_cabecalho' turma.pk tarefa.pk %}"
+         hx-target="closest th"
+         hx-swap="innerHTML"
          class="inline-flex items-center gap-1.5 rounded-full border border-outline-variant/15 px-3 py-1.5 text-xs font-medium text-on-surface-variant/70 transition-colors hover:bg-surface-container-high">
         Cancelar
       </a>

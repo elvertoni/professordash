@@ -29,11 +29,19 @@
          this.show = true;
        },
        confirm() {
-         if (this.formId) {
-           document.getElementById(this.formId).submit();
-         }
-         this.show = false;
-       }
+          if (this.formId) {
+            const form = document.getElementById(this.formId);
+
+            if (form) {
+              if (typeof form.requestSubmit === 'function') {
+                form.requestSubmit();
+              } else {
+                form.submit();
+              }
+            }
+          }
+          this.show = false;
+        }
      }"
      @modal-confirm.window="open($event)"
      x-show="show"

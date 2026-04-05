@@ -22,15 +22,56 @@ def _htmx_redirect(url):
     return response
 
 
+def _percentual(parte, total):
+    if not total:
+        return 0
+    return round((parte / total) * 100)
+
+
+def _get_tarefa_resumo(tarefa, total_alunos=None):
+    if total_alunos is None:
+        total_alunos = Matricula.objects.filter(turma=tarefa.turma, ativa=True).count()
+
+    total_realizadas = (
+        RealizacaoTarefa.objects.filter(
+            tarefa=tarefa,
+            realizada=True,
+            aluno__matriculas__turma=tarefa.turma,
+            aluno__matriculas__ativa=True,
+        )
+        .distinct()
+        .count()
+    )
+
+    return {
+        "obj": tarefa,
+        "total_realizadas": total_realizadas,
+        "percentual": _percentual(total_realizadas, total_alunos),
+    }
+
+
+def _render_tarefa_header(request, turma, tarefa):
+    total_alunos = Matricula.objects.filter(turma=turma, ativa=True).count()
+    return render(
+        request,
+        "tarefas/_tarefa_header.html",
+        {
+            "turma": turma,
+            "tarefa": _get_tarefa_resumo(tarefa, total_alunos=total_alunos),
+            "total_alunos": total_alunos,
+        },
+    )
+
+
 class TarefasGradeView(ProfessorRequiredMixin, View):
     template_name = "tarefas/grade.html"
 
     def get(self, request, *args, **kwargs):
         turma = get_object_or_404(Turma, pk=kwargs["pk"])
-        tarefas = list(Tarefa.objects.filter(turma=turma))
+        tarefas = list(Tarefa.objects.filter(turma=turma).select_related("turma"))
         matriculas = list(
             Matricula.objects.filter(turma=turma, ativa=True)
-            .select_related("aluno")
+            .select_related("aluno", "turma")
             .order_by("aluno__nome")
         )
         alunos = [matricula.aluno for matricula in matriculas]
@@ -80,7 +121,7 @@ class TarefasGradeView(ProfessorRequiredMixin, View):
                     "aluno": aluno,
                     "realizacoes": realizacoes,
                     "total_realizadas": total_realizadas_aluno,
-                    "percentual": self._percentual(total_realizadas_aluno, len(tarefas)),
+                    "percentual": _percentual(total_realizadas_aluno, len(tarefas)),
                 }
             )
 
@@ -90,7 +131,7 @@ class TarefasGradeView(ProfessorRequiredMixin, View):
             {
                 "obj": tarefa,
                 "total_realizadas": totais_por_tarefa[tarefa.pk],
-                "percentual": self._percentual(totais_por_tarefa[tarefa.pk], len(matriculas)),
+                "percentual": _percentual(totais_por_tarefa[tarefa.pk], len(matriculas)),
             }
             for tarefa in tarefas
         ]
@@ -102,15 +143,9 @@ class TarefasGradeView(ProfessorRequiredMixin, View):
             "total_alunos": len(matriculas),
             "checks_realizados": checks_realizados,
             "checks_pendentes": max(total_checks - checks_realizados, 0),
-            "percentual_geral": self._percentual(checks_realizados, total_checks),
+            "percentual_geral": _percentual(checks_realizados, total_checks),
         }
         return render(request, self.template_name, context)
-
-    @staticmethod
-    def _percentual(parte, total):
-        if not total:
-            return 0
-        return round((parte / total) * 100)
 
 
 class TarefaToggleView(ProfessorRequiredMixin, View):
@@ -142,6 +177,17 @@ class TarefaToggleView(ProfessorRequiredMixin, View):
                 "realizacao": realizacao,
             },
         )
+
+
+class TarefaCabecalhoView(ProfessorRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        turma = get_object_or_404(Turma, pk=kwargs["pk"])
+        tarefa = get_object_or_404(
+            Tarefa.objects.select_related("turma"),
+            pk=kwargs["tarefa_pk"],
+            turma=turma,
+        )
+        return _render_tarefa_header(request, turma, tarefa)
 
 
 class TarefaCriarView(ProfessorRequiredMixin, View):
@@ -215,7 +261,7 @@ class TarefaEditarView(ProfessorRequiredMixin, View):
 
         messages.success(request, f'Tarefa "{tarefa.nome}" atualizada.')
         if _is_htmx(request):
-            return _htmx_redirect(url)
+            return _render_tarefa_header(request, turma, tarefa)
         return redirect(url)
 
 

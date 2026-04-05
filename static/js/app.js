@@ -41,3 +41,11 @@ document.addEventListener("alpine:init", () => {
   });
 
 });
+
+document.addEventListener("htmx:afterSwap", (event) => {
+  if (!window.Alpine || !event.target) {
+    return;
+  }
+
+  window.Alpine.initTree(event.target);
+});

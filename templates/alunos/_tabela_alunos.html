@@ -1,5 +1,5 @@
 {# Fragment HTMX: tabela completa + paginação, para troca segura no container. #}
-<div class="bg-zinc-900 rounded-xl border border-zinc-700 overflow-hidden shadow-sm">
+<div x-data class="bg-zinc-900 rounded-xl border border-zinc-700 overflow-hidden shadow-sm">
   <div class="overflow-x-auto">
     <table class="w-full text-sm text-left">
       <thead class="bg-zinc-950 text-zinc-400 text-xs uppercase tracking-wide border-b border-zinc-700">
@@ -32,7 +32,7 @@
                 </div>
               </td>
               <td class="px-6 py-4 text-zinc-400">{{ matricula.aluno.email }}</td>
-              <td class="px-6 py-4 text-zinc-400 hidden sm:table-cell">{{ matricula.aluno.matricula|default:"—" }}</td>
+              <td class="px-6 py-4 text-zinc-400 hidden sm:table-cell">{{ matricula.aluno.matricula|default:"-" }}</td>
               <td class="px-6 py-4 text-center">
                 {% if matricula.ativa and matricula.aluno.ativo %}
                   <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Ativo</span>
@@ -50,7 +50,7 @@
                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                     </svg>
                   </a>
-                  <form id="form-remover-{{ matricula.aluno.pk }}"
+                  <form id="form-remover-matricula-{{ matricula.pk }}"
                         method="post"
                         action="{% url 'turmas:alunos_remover' pk=turma.pk aluno_pk=matricula.aluno.pk %}"
                         class="hidden">
@@ -59,9 +59,9 @@
                   <button type="button"
                           @click="$dispatch('modal-confirm', {
                             title: 'Remover aluno da turma',
-                            message: 'Deseja remover {{ matricula.aluno.nome }} da turma? A matrícula será desativada.',
+                            message: 'Deseja remover {{ matricula.aluno.nome|escapejs }} da turma? A matrícula será desativada.',
                             confirmLabel: 'Remover',
-                            formId: 'form-remover-{{ matricula.aluno.pk }}'
+                            formId: 'form-remover-matricula-{{ matricula.pk }}'
                           })"
                           class="inline-flex items-center justify-center p-2 text-zinc-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg border border-transparent hover:border-rose-500/20 transition-colors"
                           title="Remover aluno da turma">

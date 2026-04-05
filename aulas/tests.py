@@ -1,10 +1,17 @@
 import json
 
 import pytest
+from django.test import RequestFactory
 from django.urls import reverse
+from django.views import View
 
 from aulas.forms import AulaForm
 from aulas.models import Aula
+from aulas.views import AulaMixin
+
+
+class DummyAulaSetupView(AulaMixin, View):
+    pass
 
 
 @pytest.fixture
@@ -56,6 +63,14 @@ class TestAulaForm:
 
 @pytest.mark.django_db
 class TestAulasViews:
+    def test_aula_mixin_resolve_turma_a_partir_de_aula_pk(self, rf: RequestFactory, aula_base):
+        view = DummyAulaSetupView()
+
+        view.setup(rf.get("/"), aula_pk=aula_base.pk)
+
+        assert view.turma == aula_base.turma
+        assert view.aula == aula_base
+
     def test_lista_publica_eh_acessivel_por_token(self, client, turma, aula_base):
         url = reverse(
             "turmas:portal_aulas_lista", kwargs={"token": turma.token_publico}
@@ -167,6 +182,56 @@ class TestAulasViews:
             kwargs={"pk": turma.pk, "aula_pk": aula_base.pk},
         ) not in content
 
+    def test_detalhe_publico_nao_exibe_acoes_admin_para_staff_no_portal(
+        self, client_professor, turma, aula_base
+    ):
+        url = reverse(
+            "turmas:portal_aulas_detalhe",
+            kwargs={"token": turma.token_publico, "aula_pk": aula_base.pk},
+        )
+
+        response = client_professor.get(url)
+        content = response.content.decode()
+
+        assert response.status_code == 200
+        assert response.context["is_admin_view"] is False
+        assert reverse(
+            "turmas:aulas_editar",
+            kwargs={"pk": turma.pk, "aula_pk": aula_base.pk},
+        ) not in content
+
+    def test_detalhe_publico_navegacao_ignora_aulas_nao_realizadas(
+        self, client, turma, aula_base
+    ):
+        Aula.objects.create(
+            turma=turma,
+            titulo="Rascunho Interno",
+            numero=2,
+            conteudo="Nao deveria entrar na navegacao publica",
+            realizada=False,
+            ordem=2,
+        )
+        aula_publica = Aula.objects.create(
+            turma=turma,
+            titulo="Aula Publica 2",
+            numero=3,
+            conteudo="Conteudo publico",
+            realizada=True,
+            ordem=3,
+        )
+        url = reverse(
+            "turmas:portal_aulas_detalhe",
+            kwargs={"token": turma.token_publico, "aula_pk": aula_base.pk},
+        )
+
+        response = client.get(url)
+
+        assert response.status_code == 200
+        assert response.context["next_url"] == reverse(
+            "turmas:portal_aulas_detalhe",
+            kwargs={"token": turma.token_publico, "aula_pk": aula_publica.pk},
+        )
+
     def test_importar_markdown_define_numero_sequencial(self, client_professor, turma):
         url = reverse("turmas:aulas_importar_md", kwargs={"pk": turma.pk})
         arquivo = b"# Aula Nova\n\nConteudo"
@@ -205,8 +270,11 @@ class TestAulasViews:
             kwargs={"pk": turma.pk, "aula_pk": aula_base.pk},
         )
 
-        response = client_professor.post(url)
+        response = client_professor.post(url, HTTP_HX_REQUEST="true")
+        content = response.content.decode()
 
         assert response.status_code == 200
         aula_base.refresh_from_db()
         assert aula_base.realizada is False
+        assert "<article" in content
+        assert "Marcar realizada" in content

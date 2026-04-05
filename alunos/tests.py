@@ -256,6 +256,46 @@ class TestAlunoViews:
         assert 'id="tabela-alunos-body"' in html
         assert "hover:bg-zinc-800/70" in html
 
+    def test_busca_htmx_renderiza_fragmento_com_x_data_e_form_ids_unicos(
+        self, client_professor, turma, aluno, matricula
+    ):
+        outro_aluno = Aluno.objects.create(
+            nome="Maria D'Avila",
+            email="maria.davila@escola.pr.gov.br",
+            matricula="3003",
+        )
+        outra_matricula = Matricula.objects.create(
+            aluno=outro_aluno,
+            turma=turma,
+            ativa=True,
+        )
+        url = reverse("turmas:alunos_busca_htmx", kwargs={"pk": turma.pk})
+
+        response = client_professor.get(url)
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert '<div x-data class="bg-zinc-900' in html
+        assert f'form-remover-matricula-{matricula.pk}' in html
+        assert f'form-remover-matricula-{outra_matricula.pk}' in html
+        assert "form-remover-{{ matricula.aluno.pk }}" not in html
+        assert "\\u0027" in html
+
+    def test_remover_aluno_desativa_matricula_e_redireciona(
+        self, client_professor, turma, aluno, matricula
+    ):
+        url = reverse(
+            "turmas:alunos_remover",
+            kwargs={"pk": turma.pk, "aluno_pk": aluno.pk},
+        )
+
+        response = client_professor.post(url)
+
+        assert response.status_code == 302
+        assert response.url == reverse("turmas:alunos_lista", kwargs={"pk": turma.pk})
+        matricula.refresh_from_db()
+        assert matricula.ativa is False
+
     def test_mover_turma_altera_matricula(
         self, client_professor, turma, aluno, matricula, outra_turma
     ):
@@ -323,3 +363,12 @@ class TestAlunoSignals:
         aluno.refresh_from_db()
         assert aluno.user == aluno_user
         assert Matricula.objects.filter(aluno=aluno, ativa=True).count() == 2
+
+
+@pytest.mark.django_db
+def test_app_js_reinicializa_alpine_apos_swap_htmx():
+    with open("static/js/app.js", encoding="utf-8") as app_js:
+        content = app_js.read()
+
+    assert "htmx:afterSwap" in content
+    assert "Alpine.initTree" in content

@@ -33,7 +33,10 @@ TIPOS_PERMITIDOS_ENTREGA = TIPOS_PERMITIDOS_MATERIAL + [
 def _sniff_mime_type(arquivo):
     try:
         import magic
-    except ImportError:
+        mime = magic.from_buffer(arquivo.read(2048), mime=True)
+        arquivo.seek(0)
+        return mime
+    except Exception:
         content_type = getattr(arquivo, "content_type", "")
         guessed_type = mimetypes.guess_type(getattr(arquivo, "name", ""))[0]
         fallback = (
@@ -42,10 +45,6 @@ def _sniff_mime_type(arquivo):
             else guessed_type
         )
         return fallback or "application/octet-stream"
-
-    mime = magic.from_buffer(arquivo.read(2048), mime=True)
-    arquivo.seek(0)
-    return mime
 
 
 def validar_arquivo(arquivo, tipos_permitidos=None):
