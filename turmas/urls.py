@@ -68,6 +68,11 @@ urlpatterns = [
         name="aulas_reordenar",
     ),
     path(
+        "painel/turmas/<int:pk>/aulas/sincronizar-github/",
+        aulas_views.AulasSincronizarGithubView.as_view(),
+        name="aulas_sincronizar_github",
+    ),
+    path(
         "painel/turmas/<int:pk>/aulas/<int:aula_pk>/",
         aulas_views.AulaDetailView.as_view(),
         name="aulas_detalhe",

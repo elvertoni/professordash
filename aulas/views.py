@@ -241,6 +241,44 @@ class AulaImportarMdView(ProfessorRequiredMixin, AulaMixin, View):
         return redirect("turmas:aulas_editar", pk=self.turma.pk, aula_pk=aula.pk)
 
 
+class AulasSincronizarGithubView(ProfessorRequiredMixin, AulaMixin, View):
+    """Sincroniza as aulas de uma turma com o repositório GitHub ProfToniCoimbra."""
+
+    def post(self, request, pk):
+        from .github_sync import build_lessons_index, fetch_manifest, get_subject_from_codigo, sync_turma
+
+        subject = get_subject_from_codigo(self.turma.codigo)
+        if not subject:
+            messages.error(
+                request,
+                f"A turma {self.turma.codigo} não tem mapeamento no GitHub. "
+                "Verifique o código da turma.",
+            )
+            return redirect("turmas:aulas_lista", pk=self.turma.pk)
+
+        try:
+            manifest = fetch_manifest()
+        except Exception as exc:
+            messages.error(request, f"Erro ao acessar o GitHub: {exc}")
+            return redirect("turmas:aulas_lista", pk=self.turma.pk)
+
+        lessons_index = build_lessons_index(manifest)
+        resultado = sync_turma(self.turma, lessons_index)
+
+        total = resultado["criadas"] + resultado["atualizadas"]
+        msg = (
+            f"Sincronização concluída: {resultado['criadas']} aulas novas, "
+            f"{resultado['atualizadas']} atualizadas."
+        )
+        if resultado["erros"]:
+            msg += f" ({resultado['erros']} erros — veja os logs.)"
+        if total == 0 and resultado["erros"] == 0:
+            msg = "Tudo já estava atualizado. Nenhuma alteração necessária."
+
+        messages.success(request, msg)
+        return redirect("turmas:aulas_lista", pk=self.turma.pk)
+
+
 class AulaReordenarView(ProfessorRequiredMixin, AulaMixin, View):
     """Recebe lista de IDs via JSON/POST e atualiza a ordem das aulas."""
 
