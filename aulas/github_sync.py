@@ -8,6 +8,11 @@ O mapeamento entre o prefixo do código da turma e o subject do GitHub:
   ITE → inovacao-tecnologia-e-empreendedorismo
   PS  → programacao-no-desenvolvimento-de-sistemas
   APS → analise-e-projeto-de-sistemas
+  IA  → inteligencia-artificial
+
+Para adicionar uma nova matéria/turma, basta incluir uma entrada em
+CODIGO_TO_SUBJECT com o prefixo do código da turma (antes do primeiro "-")
+e o "subject" correspondente no manifest.json do repositório GitHub.
 """
 
 import logging
@@ -22,12 +27,15 @@ GITHUB_RAW = "https://raw.githubusercontent.com/elvertoni/ProfToniCoimbra/main"
 MANIFEST_URL = f"{GITHUB_RAW}/manifest.json"
 
 CODIGO_TO_SUBJECT = {
+    # Matérias regulares por série
     "AMS": "analise-e-metodos-para-sistemas",
     "IC": "introducao-a-computacao",
     "PFE": "programacao-front-end",
     "ITE": "inovacao-tecnologia-e-empreendedorismo",
     "PS": "programacao-no-desenvolvimento-de-sistemas",
     "APS": "analise-e-projeto-de-sistemas",
+    # Disciplinas extras (qualquer turma com prefixo IA usa este catálogo)
+    "IA": "inteligencia-artificial",
 }
 
 
