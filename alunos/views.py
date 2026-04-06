@@ -4,6 +4,7 @@ import logging
 
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
@@ -19,10 +20,12 @@ logger = logging.getLogger(__name__)
 
 def _reativar_ou_criar_matricula(aluno, turma):
     matricula, created = Matricula.objects.get_or_create(aluno=aluno, turma=turma)
+    reactivated = False
     if not created and not matricula.ativa:
         matricula.ativa = True
         matricula.save(update_fields=["ativa"])
-    return matricula, created
+        reactivated = True
+    return matricula, created, reactivated
 
 
 def _decode_uploaded_csv_file(csv_file):
@@ -53,6 +56,160 @@ def _row_value(row, *aliases):
     return ""
 
 
+def _build_csv_report():
+    return {
+        "total_linhas": 0,
+        "sucesso": 0,
+        "alunos_criados": 0,
+        "alunos_reutilizados": 0,
+        "matriculas_criadas": 0,
+        "matriculas_reativadas": 0,
+        "ja_matriculados": 0,
+        "linhas_com_erro": 0,
+        "linhas": [],
+    }
+
+
+def _processar_importacao_turma(reader, turma):
+    report = _build_csv_report()
+
+    for line_number, row in enumerate(reader, start=2):
+        report["total_linhas"] += 1
+        nome = _row_value(row, "nome")
+        email = _row_value(row, "email", "e-mail")
+        matricula_num = _row_value(row, "matricula", "ra")
+
+        if not nome or not email:
+            report["linhas_com_erro"] += 1
+            report["linhas"].append(
+                {
+                    "linha": line_number,
+                    "status": "erro",
+                    "mensagem": "Campos obrigatorios ausentes. Use nome e email.",
+                    "nome": nome,
+                    "email": email,
+                    "matricula": matricula_num,
+                }
+            )
+            continue
+
+        email_normalizado = email.lower()
+        aluno = Aluno.objects.filter(email=email_normalizado).first()
+        aluno_criado = False
+
+        if not aluno:
+            aluno = Aluno.objects.create(
+                nome=nome,
+                email=email_normalizado,
+                matricula=matricula_num,
+            )
+            aluno_criado = True
+            report["alunos_criados"] += 1
+        else:
+            report["alunos_reutilizados"] += 1
+
+        _, matricula_criada, matricula_reativada = _reativar_ou_criar_matricula(
+            aluno,
+            turma,
+        )
+
+        if matricula_criada:
+            report["matriculas_criadas"] += 1
+        elif matricula_reativada:
+            report["matriculas_reativadas"] += 1
+        else:
+            report["ja_matriculados"] += 1
+
+        report["sucesso"] += 1
+        report["linhas"].append(
+            {
+                "linha": line_number,
+                "status": "sucesso",
+                "mensagem": (
+                    "Aluno criado e matriculado."
+                    if aluno_criado and matricula_criada
+                    else "Cadastro existente reutilizado e matricula criada."
+                    if matricula_criada
+                    else "Cadastro existente reutilizado e matricula reativada."
+                    if matricula_reativada
+                    else "Aluno ja cadastrado e matricula ja ativa."
+                ),
+                "nome": aluno.nome,
+                "email": aluno.email,
+                "matricula": aluno.matricula,
+            }
+        )
+
+    return report
+
+
+def _build_csv_preview(reader, turma, preview_limit=6):
+    preview = {
+        "headers": [header.strip() for header in (reader.fieldnames or []) if header],
+        "rows": [],
+        "total_linhas_lidas": 0,
+        "has_more_rows": False,
+        "criar": 0,
+        "reutilizar": 0,
+        "ja_matriculado": 0,
+        "erros": 0,
+    }
+
+    for index, row in enumerate(reader, start=2):
+        preview["total_linhas_lidas"] += 1
+        nome = _row_value(row, "nome")
+        email = _row_value(row, "email", "e-mail")
+        matricula_num = _row_value(row, "matricula", "ra")
+
+        if not nome or not email:
+            status = "erro"
+            acao = "Corrigir linha"
+            detalhe = "Nome e e-mail sao obrigatorios."
+            preview["erros"] += 1
+        else:
+            aluno = Aluno.objects.filter(email=email.lower()).first()
+            matricula_existente = False
+            if aluno:
+                matricula_existente = Matricula.objects.filter(
+                    aluno=aluno,
+                    turma=turma,
+                    ativa=True,
+                ).exists()
+
+            if not aluno:
+                status = "novo"
+                acao = "Criar aluno e matricular"
+                detalhe = "Cadastro novo."
+                preview["criar"] += 1
+            elif matricula_existente:
+                status = "matriculado"
+                acao = "Manter matricula ativa"
+                detalhe = "Aluno ja esta nesta turma."
+                preview["ja_matriculado"] += 1
+            else:
+                status = "existente"
+                acao = "Reutilizar cadastro"
+                detalhe = "Aluno existente sera matriculado nesta turma."
+                preview["reutilizar"] += 1
+
+        if len(preview["rows"]) < preview_limit:
+            preview["rows"].append(
+                {
+                    "linha": index,
+                    "nome": nome,
+                    "email": email,
+                    "matricula": matricula_num,
+                    "status": status,
+                    "acao": acao,
+                    "detalhe": detalhe,
+                }
+            )
+        else:
+            preview["has_more_rows"] = True
+
+    return preview
+
+
 class AlunoMixin:
     """Resolve self.turma a partir do pk da turma na URL."""
 
@@ -62,26 +219,23 @@ class AlunoMixin:
 
 
 class AlunoListView(ProfessorRequiredMixin, AlunoMixin, ListView):
-    """Lista os alunos matriculados numa turma com paginação e busca."""
+    """Lista os alunos matriculados numa turma com paginacao e busca."""
 
     template_name = "alunos/lista.html"
     context_object_name = "matriculas_page"
     paginate_by = 20
 
     def get_queryset(self):
-        qs = Matricula.objects.filter(turma=self.turma).select_related("aluno")
+        qs = Matricula.objects.filter(turma=self.turma).select_related("aluno", "turma")
         q = self.request.GET.get("q", "").strip()
         if q:
-            qs = qs.filter(aluno__nome__icontains=q) | qs.filter(
-                aluno__email__icontains=q
-            )
+            qs = qs.filter(Q(aluno__nome__icontains=q) | Q(aluno__email__icontains=q))
         return qs.order_by("aluno__nome")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["turma"] = self.turma
         ctx["q"] = self.request.GET.get("q", "")
-        # Compatibilidade: ctx["matriculas"] aponta para a queryset paginada
         ctx["matriculas"] = ctx["matriculas_page"]
         return ctx
 
@@ -98,9 +252,24 @@ class AlunoCreateView(ProfessorRequiredMixin, AlunoMixin, CreateView):
         kwargs["allow_existing_email"] = True
         return kwargs
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields["email"].widget.attrs.update(
+            {
+                "hx-get": reverse_lazy(
+                    "turmas:alunos_email_feedback",
+                    kwargs={"pk": self.turma.pk},
+                ),
+                "hx-trigger": "blur changed delay:300ms",
+                "hx-target": "#email-feedback",
+                "hx-swap": "innerHTML",
+            }
+        )
+        return form
+
     def form_valid(self, form):
-        email = form.cleaned_data["email"].strip().lower()
-        aluno = Aluno.objects.filter(email=email).first()
+        email = form.cleaned_data["email"]
+        aluno = form.existing_email_aluno or Aluno.objects.filter(email=email).first()
         created = False
 
         if not aluno:
@@ -108,12 +277,13 @@ class AlunoCreateView(ProfessorRequiredMixin, AlunoMixin, CreateView):
                 nome=form.cleaned_data["nome"],
                 email=email,
                 matricula=form.cleaned_data.get("matricula", ""),
-                avatar=form.cleaned_data.get("avatar"),
-                ativo=form.cleaned_data.get("ativo", True),
             )
             created = True
 
-        matricula, matricula_created = _reativar_ou_criar_matricula(aluno, self.turma)
+        _, matricula_created, matricula_reativada = _reativar_ou_criar_matricula(
+            aluno,
+            self.turma,
+        )
 
         logger.info(
             "Aluno %s (%s) %smatriculado na turma pk=%s",
@@ -122,11 +292,26 @@ class AlunoCreateView(ProfessorRequiredMixin, AlunoMixin, CreateView):
             "criado e " if created else "",
             self.turma.pk,
         )
-        messages.success(self.request, f'Aluno "{aluno.nome}" matriculado com sucesso.')
-        if not created and not matricula_created and matricula.ativa:
+
+        if created:
+            messages.success(
+                self.request,
+                f'Aluno "{aluno.nome}" criado e matriculado com sucesso.',
+            )
+        elif matricula_created:
+            messages.success(
+                self.request,
+                f'Aluno "{aluno.nome}" ja existia e foi matriculado nesta turma.',
+            )
+        elif matricula_reativada:
+            messages.success(
+                self.request,
+                f'A matricula de "{aluno.nome}" foi reativada nesta turma.',
+            )
+        else:
             messages.info(
                 self.request,
-                f'O cadastro existente de "{aluno.nome}" foi reaproveitado sem sobrescrever dados globais.',
+                f'O cadastro de "{aluno.nome}" ja existia e a matricula desta turma ja estava ativa.',
             )
 
         self.object = aluno
@@ -138,6 +323,9 @@ class AlunoCreateView(ProfessorRequiredMixin, AlunoMixin, CreateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["turma"] = self.turma
+        ctx["is_create"] = True
+        ctx["show_avatar_field"] = "avatar" in ctx["form"].fields
+        ctx["show_ativo_field"] = "ativo" in ctx["form"].fields
         return ctx
 
 
@@ -157,7 +345,6 @@ class AlunoDetailView(ProfessorRequiredMixin, AlunoMixin, DetailView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["turma"] = self.turma
-        # Pega as entregas deste aluno relacionadas às atividades desta turma
         ctx["entregas"] = self.object.entregas.filter(
             atividade__turma=self.turma
         ).select_related("atividade")
@@ -165,7 +352,7 @@ class AlunoDetailView(ProfessorRequiredMixin, AlunoMixin, DetailView):
 
 
 class AlunoUpdateView(ProfessorRequiredMixin, AlunoMixin, UpdateView):
-    """Edita os dados de um aluno (nome, email, etc)."""
+    """Edita os dados de um aluno."""
 
     model = Aluno
     form_class = AlunoForm
@@ -190,11 +377,14 @@ class AlunoUpdateView(ProfessorRequiredMixin, AlunoMixin, UpdateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["turma"] = self.turma
+        ctx["is_create"] = False
+        ctx["show_avatar_field"] = "avatar" in ctx["form"].fields
+        ctx["show_ativo_field"] = "ativo" in ctx["form"].fields
         return ctx
 
 
 class AlunoRemoverView(ProfessorRequiredMixin, AlunoMixin, View):
-    """Desativa a matrícula de um aluno nesta turma via POST."""
+    """Desativa a matricula de um aluno nesta turma via POST."""
 
     def post(self, request, pk, aluno_pk):
         matricula = get_object_or_404(
@@ -209,7 +399,7 @@ class AlunoRemoverView(ProfessorRequiredMixin, AlunoMixin, View):
 
 
 class AlunoMoverTurmaView(ProfessorRequiredMixin, AlunoMixin, View):
-    """Move um aluno de uma Turma para outra (alterando a Matrícula)."""
+    """Move um aluno de uma turma para outra."""
 
     def get(self, request, pk, aluno_pk):
         matricula = get_object_or_404(
@@ -217,11 +407,8 @@ class AlunoMoverTurmaView(ProfessorRequiredMixin, AlunoMixin, View):
             aluno__pk=aluno_pk,
             turma=self.turma,
         )
-        # Turmas ativas do mesmo autor (professor), exceto a atual
-        # Assumindo que a Turma tem autorização via ProfessorRequiredMixin no dispatch
         turmas_disponiveis = Turma.objects.filter(ativa=True).exclude(pk=self.turma.pk)
 
-        # Filtro de turmas do usuário logado (o professor)
         if hasattr(Turma, "autor"):
             turmas_disponiveis = turmas_disponiveis.filter(autor=request.user)
 
@@ -248,19 +435,19 @@ class AlunoMoverTurmaView(ProfessorRequiredMixin, AlunoMixin, View):
             if hasattr(Turma, "autor"):
                 turmas_disponiveis = turmas_disponiveis.filter(autor=request.user)
             nova_turma = get_object_or_404(turmas_disponiveis, pk=nova_turma_pk)
-            # Verifica se já existe matrícula ativa na nova turma para não dar IntegrityError
-            if Matricula.objects.filter(
-                aluno=matricula.aluno, turma=nova_turma
-            ).exists():
+            if Matricula.objects.filter(aluno=matricula.aluno, turma=nova_turma).exists():
                 messages.warning(
                     request,
-                    f"O aluno {matricula.aluno.nome} já possui matrícula na turma {nova_turma.nome}. A matrícula atual foi mantida.",
+                    f"O aluno {matricula.aluno.nome} ja possui matricula na turma {nova_turma.nome}. A matricula atual foi mantida.",
                 )
             else:
                 matricula.turma = nova_turma
                 matricula.save(update_fields=["turma"])
                 logger.info(
-                    f"Aluno {matricula.aluno.nome} movido da turma {self.turma.pk} para {nova_turma.pk}"
+                    "Aluno %s movido da turma %s para %s",
+                    matricula.aluno.nome,
+                    self.turma.pk,
+                    nova_turma.pk,
                 )
                 messages.success(
                     request,
@@ -271,59 +458,87 @@ class AlunoMoverTurmaView(ProfessorRequiredMixin, AlunoMixin, View):
 
 
 class AlunoImportarCSVView(ProfessorRequiredMixin, AlunoMixin, View):
-    """Importa alunos de um arquivo CSV associando-os à Turma."""
+    """Importa alunos de um arquivo CSV associando-os a turma."""
 
     def get(self, request, pk):
-        return render(request, "alunos/importar.html", {"turma": self.turma})
+        return render(
+            request,
+            "alunos/importar.html",
+            {"turma": self.turma, "report": None},
+        )
+
+    def post(self, request, pk):
+        csv_file = request.FILES.get("arquivo_csv")
+        context = {"turma": self.turma, "report": None}
+
+        if not csv_file or not csv_file.name.endswith(".csv"):
+            messages.error(request, "Por favor, envie um arquivo CSV valido.")
+            return render(request, "alunos/importar.html", context, status=400)
+
+        reader = _get_csv_reader(csv_file)
+        if reader is None:
+            messages.error(
+                request,
+                "Nao foi possivel decodificar o arquivo CSV. Use UTF-8 ou Latin-1.",
+            )
+            return render(request, "alunos/importar.html", context, status=400)
+
+        report = _processar_importacao_turma(reader, self.turma)
+        context["report"] = report
+
+        if report["sucesso"]:
+            messages.success(
+                request,
+                (
+                    f"Importacao concluida: {report['alunos_criados']} criado(s), "
+                    f"{report['alunos_reutilizados']} reutilizado(s) e "
+                    f"{report['linhas_com_erro']} linha(s) com erro."
+                ),
+            )
+        if report["linhas_com_erro"]:
+            messages.warning(
+                request,
+                f"{report['linhas_com_erro']} linha(s) precisam de ajuste antes de uma nova importacao.",
+            )
+
+        return render(request, "alunos/importar.html", context)
+
+
+class AlunoImportarCSVPreviewView(ProfessorRequiredMixin, AlunoMixin, View):
+    """Retorna uma pre-visualizacao HTMX das primeiras linhas do CSV."""
 
     def post(self, request, pk):
         csv_file = request.FILES.get("arquivo_csv")
 
         if not csv_file or not csv_file.name.endswith(".csv"):
-            messages.error(request, "Por favor, envie um arquivo CSV válido.")
-            return redirect("turmas:alunos_importar", pk=self.turma.pk)
-
-        # Lendo arquivo CSV (suporta UTF-8 com BOM, UTF-8 e Latin-1)
-        raw = csv_file.read()
-        for encoding in ("utf-8-sig", "utf-8", "latin-1"):
-            try:
-                dataset = raw.decode(encoding)
-                break
-            except UnicodeDecodeError:
-                continue
-        else:
-            messages.error(
+            return render(
                 request,
-                "Não foi possível decodificar o arquivo CSV. Use UTF-8 ou Latin-1.",
-            )
-            return redirect("turmas:alunos_importar", pk=self.turma.pk)
-        io_string = io.StringIO(dataset)
-        reader = csv.DictReader(io_string, delimiter=",")
-
-        count = 0
-        for row in reader:
-            nome = row.get("nome") or row.get("Nome")
-            email = row.get("email") or row.get("Email") or row.get("E-mail")
-            matricula_num = (
-                row.get("matricula") or row.get("Matricula") or row.get("RA")
+                "alunos/_csv_preview.html",
+                {
+                    "turma": self.turma,
+                    "preview_error": "Selecione um arquivo CSV valido para gerar a pre-visualizacao.",
+                },
+                status=400,
             )
 
-            if nome and email:
-                email_normalizado = email.strip().lower()
-                aluno = Aluno.objects.filter(email=email_normalizado).first()
-                if not aluno:
-                    aluno = Aluno.objects.create(
-                        nome=nome.strip(),
-                        email=email_normalizado,
-                        matricula=matricula_num.strip() if matricula_num else "",
-                    )
-                _reativar_ou_criar_matricula(aluno, self.turma)
-                count = count + 1
+        reader = _get_csv_reader(csv_file)
+        if reader is None:
+            return render(
+                request,
+                "alunos/_csv_preview.html",
+                {
+                    "turma": self.turma,
+                    "preview_error": "Nao foi possivel ler o arquivo. Use UTF-8 ou Latin-1.",
+                },
+                status=400,
+            )
 
-        messages.success(
-            request, f"{count} aluno(s) importado(s) com sucesso para a turma."
+        preview = _build_csv_preview(reader, self.turma)
+        return render(
+            request,
+            "alunos/_csv_preview.html",
+            {"turma": self.turma, "preview": preview},
         )
-        return redirect("turmas:alunos_lista", pk=self.turma.pk)
 
 
 class AlunoImportarMultiturmaCSVView(ProfessorRequiredMixin, View):
@@ -350,16 +565,7 @@ class AlunoImportarMultiturmaCSVView(ProfessorRequiredMixin, View):
             )
             return render(request, self.template_name, context, status=400)
 
-        report = {
-            "total_linhas": 0,
-            "sucesso": 0,
-            "alunos_criados": 0,
-            "alunos_reutilizados": 0,
-            "matriculas_criadas": 0,
-            "matriculas_reativadas": 0,
-            "linhas_com_erro": 0,
-            "linhas": [],
-        }
+        report = _build_csv_report()
 
         for line_number, row in enumerate(reader, start=2):
             report["total_linhas"] += 1
@@ -430,20 +636,17 @@ class AlunoImportarMultiturmaCSVView(ProfessorRequiredMixin, View):
             else:
                 report["alunos_reutilizados"] += 1
 
-            matricula, matricula_criada = Matricula.objects.get_or_create(
-                aluno=aluno,
-                turma=turma,
+            _, matricula_criada, matricula_reativada = _reativar_ou_criar_matricula(
+                aluno,
+                turma,
             )
-            matricula_reativada = False
-            if not matricula_criada and not matricula.ativa:
-                matricula.ativa = True
-                matricula.save(update_fields=["ativa"])
-                matricula_reativada = True
 
             if matricula_criada:
                 report["matriculas_criadas"] += 1
-            if matricula_reativada:
+            elif matricula_reativada:
                 report["matriculas_reativadas"] += 1
+            else:
+                report["ja_matriculados"] += 1
 
             report["sucesso"] += 1
             report["linhas"].append(
@@ -486,11 +689,14 @@ class AlunosBuscaHTMXView(ProfessorRequiredMixin, AlunoMixin, View):
 
     def get(self, request, pk):
         q = request.GET.get("q", "").strip()
-        matriculas = Matricula.objects.filter(turma=self.turma).select_related("aluno")
+        matriculas = Matricula.objects.filter(turma=self.turma).select_related(
+            "aluno",
+            "turma",
+        )
         if q:
             matriculas = matriculas.filter(
-                aluno__nome__icontains=q
-            ) | matriculas.filter(aluno__email__icontains=q)
+                Q(aluno__nome__icontains=q) | Q(aluno__email__icontains=q)
+            )
         matriculas = matriculas.order_by("aluno__nome")
 
         paginator = Paginator(matriculas, 20)
@@ -508,8 +714,24 @@ class AlunosBuscaHTMXView(ProfessorRequiredMixin, AlunoMixin, View):
         )
 
 
+class AlunoEmailFeedbackView(ProfessorRequiredMixin, AlunoMixin, View):
+    """Retorna feedback visual sobre e-mail ja existente."""
+
+    def get(self, request, pk):
+        email = (request.GET.get("email") or "").strip().lower()
+        existing_aluno = Aluno.objects.filter(email=email).first() if email else None
+        return render(
+            request,
+            "alunos/_email_feedback.html",
+            {
+                "email": email,
+                "existing_aluno": existing_aluno,
+            },
+        )
+
+
 class MinhaAreaView(AlunoAutenticadoMixin, ListView):
-    """Dashboard público do Aluno, acessível via token da turma e exigindo login."""
+    """Dashboard publico do aluno, acessivel via token da turma e exigindo login."""
 
     template_name = "alunos/minha_area.html"
     context_object_name = "atividades_status"

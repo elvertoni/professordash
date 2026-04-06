@@ -1,11 +1,11 @@
 """
 URL configuration centralizada para o app turmas.
 
-Incluída em config/urls.py sem prefixo:
+IncluÃ­da em config/urls.py sem prefixo:
     path("", include("turmas.urls"))
 
 Os prefixos /painel/turmas/ e /turma/ ficam definidos aqui diretamente,
-garantindo que reverse() sempre funcione com um único namespace "turmas".
+garantindo que reverse() sempre funcione com um Ãºnico namespace "turmas".
 """
 
 from django.urls import path
@@ -206,9 +206,19 @@ urlpatterns = [
         name="alunos_importar",
     ),
     path(
+        "painel/turmas/<int:pk>/alunos/importar/preview/",
+        alunos_views.AlunoImportarCSVPreviewView.as_view(),
+        name="alunos_importar_preview",
+    ),
+    path(
         "painel/alunos/importar-multiturma/",
         alunos_views.AlunoImportarMultiturmaCSVView.as_view(),
         name="alunos_importar_multiturma",
+    ),
+    path(
+        "painel/turmas/<int:pk>/alunos/htmx/email-feedback/",
+        alunos_views.AlunoEmailFeedbackView.as_view(),
+        name="alunos_email_feedback",
     ),
     path(
         "painel/turmas/<int:pk>/alunos/htmx/busca/",
@@ -252,8 +262,10 @@ urlpatterns = [
         name="alunos_mover",
     ),
     # ------------------------------------------------------------------
-    # Portal público (/turma/<uuid:token>/...)
+    # Portal pÃºblico (/turma/<uuid:token>/...)
     # ------------------------------------------------------------------
+    # URLs PÚBLICAS (sem login): portal_publico, aulas_lista, aulas_detalhe,
+    # materiais, tarefas_grade
     path(
         "turma/<uuid:token>/",
         turmas_views.TurmaPortalPublicoView.as_view(),
@@ -263,16 +275,6 @@ urlpatterns = [
         "turma/<uuid:token>/entrar/",
         turmas_views.TurmaEntrarView.as_view(),
         name="entrar",
-    ),
-    path(
-        "turma/<uuid:token>/minha-area/",
-        alunos_views.MinhaAreaView.as_view(),
-        name="portal_minha_area",
-    ),
-    path(
-        "turma/<uuid:token>/minhas-notas/",
-        turmas_views.MinhasNotasView.as_view(),
-        name="portal_minhas_notas",
     ),
     path(
         "turma/<uuid:token>/aulas/",
@@ -295,6 +297,16 @@ urlpatterns = [
         name="portal_materiais_download",
     ),
     path(
+        "turma/<uuid:token>/tarefas/",
+        turmas_views.TarefasGradePublicaView.as_view(),
+        name="portal_tarefas_grade",
+    ),
+    path(
+        "turma/<uuid:token>/tarefas/",
+        turmas_views.TarefasGradePublicaView.as_view(),
+        name="portal_tarefas",
+    ),
+    path(
         "turma/<uuid:token>/atividades/",
         atividades_views.AtividadeListaPublicaView.as_view(),
         name="portal_atividades_lista",
@@ -303,6 +315,18 @@ urlpatterns = [
         "turma/<uuid:token>/atividades/<int:atividade_id>/",
         atividades_views.AtividadeDetalhePublicoView.as_view(),
         name="portal_atividade_detalhe",
+    ),
+    # URLs QUE REQUEREM LOGIN GOOGLE (AlunoAutenticadoMixin): minha_area,
+    # minhas_notas, entregar_atividade
+    path(
+        "turma/<uuid:token>/minha-area/",
+        alunos_views.MinhaAreaView.as_view(),
+        name="portal_minha_area",
+    ),
+    path(
+        "turma/<uuid:token>/minhas-notas/",
+        turmas_views.MinhasNotasView.as_view(),
+        name="portal_minhas_notas",
     ),
     path(
         "turma/<uuid:token>/atividades/<int:atividade_id>/entregar/",

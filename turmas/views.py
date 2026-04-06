@@ -3,7 +3,7 @@ import csv
 from urllib.parse import urlencode
 from decimal import Decimal
 
-from django.db.models import Count, Q
+from django.db.models import Count, Prefetch, Q
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -24,9 +24,15 @@ from core.auth import is_google_oauth_configured
 from core.mixins import AlunoAutenticadoMixin, ProfessorRequiredMixin, TurmaPublicaMixin
 
 from .forms import TurmaForm
-from .models import Turma
+from .models import Matricula, Turma
 
 logger = logging.getLogger(__name__)
+
+
+def _percentual_conclusao(parte, total):
+    if not total:
+        return 0
+    return round((parte / total) * 100)
 
 
 class TurmaListView(ProfessorRequiredMixin, ListView):
@@ -74,15 +80,38 @@ class TurmaDetailView(ProfessorRequiredMixin, DetailView):
     template_name = "turmas/detalhe.html"
     context_object_name = "turma"
 
+    def get_queryset(self):
+        return Turma.objects.prefetch_related(
+            Prefetch(
+                "matriculas",
+                queryset=Matricula.objects.select_related("aluno").order_by(
+                    "aluno__nome"
+                ),
+            ),
+            "aulas",
+            "materiais",
+            "atividades",
+        )
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx["matriculas"] = self.object.matriculas.filter(ativa=True).select_related(
-            "aluno"
-        )
+        matriculas_todas = list(self.object.matriculas.all())
+        matriculas_ativas = [
+            matricula
+            for matricula in matriculas_todas
+            if matricula.ativa and matricula.aluno.ativo
+        ]
+        matriculas_inativas = [
+            matricula
+            for matricula in matriculas_todas
+            if not matricula.ativa or not matricula.aluno.ativo
+        ]
+
+        ctx["matriculas"] = matriculas_ativas
         ctx["aulas"] = self.object.aulas.all()
         ctx["materiais"] = self.object.materiais.all()
         ctx["atividades"] = self.object.atividades.all().order_by("-prazo")
-        total_alunos_ativos = ctx["matriculas"].count()
+        total_alunos_ativos = len(matriculas_ativas)
         tarefas = list(
             self.object.tarefas.annotate(
                 total_realizadas=Count(
@@ -93,14 +122,13 @@ class TurmaDetailView(ProfessorRequiredMixin, DetailView):
             .order_by("ordem", "criado_em")
         )
         for tarefa in tarefas:
-            if total_alunos_ativos:
-                tarefa.percentual = round(
-                    (tarefa.total_realizadas / total_alunos_ativos) * 100
-                )
-            else:
-                tarefa.percentual = 0
+            tarefa.percentual = _percentual_conclusao(
+                tarefa.total_realizadas,
+                total_alunos_ativos,
+            )
         ctx["tarefas"] = tarefas
         ctx["total_alunos_ativos"] = total_alunos_ativos
+        ctx["total_alunos_inativos"] = len(matriculas_inativas)
         return ctx
 
 
@@ -142,27 +170,25 @@ class TurmaDeleteView(ProfessorRequiredMixin, View):
         turma = get_object_or_404(Turma, pk=pk)
         nome = turma.nome
         turma.delete()
-        logger.info(f"Turma pk={pk} excluída")
-        messages.success(request, f'Turma "{nome}" excluída permanentemente.')
+        logger.info(f"Turma pk={pk} excluÃ­da")
+        messages.success(request, f'Turma "{nome}" excluÃ­da permanentemente.')
         return redirect("turmas:lista")
 
 
 class TurmaPortalPublicoView(TurmaPublicaMixin, TemplateView):
-    """Portal público da turma acessível via token UUID."""
+    """Portal pÃºblico da turma acessÃ­vel via token UUID."""
 
     template_name = "turmas/portal.html"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["turma"] = self.turma
-        ctx["aulas"] = self.turma.aulas.all().order_by(
-            "ordem", "numero"
-        )
+        ctx["aulas"] = self.turma.aulas.all().order_by("ordem", "numero")
         return ctx
 
 
 class TurmaEntrarView(TurmaPublicaMixin, View):
-    """Redireciona para o Google OAuth, mantendo o token da turma na sessão."""
+    """Mantem o fluxo de entrada da turma sem iniciar OAuth automaticamente."""
 
     def get(self, request, token):
         request.session["turma_token"] = str(token)
@@ -175,16 +201,122 @@ class TurmaEntrarView(TurmaPublicaMixin, View):
         ):
             next_url = default_next
 
-        if not is_google_oauth_configured():
-            messages.error(
-                request,
-                "O login com Google está indisponível no momento.",
-            )
-            return redirect("turmas:portal", token=token)
+        if request.GET.get("oauth") == "1":
+            if not is_google_oauth_configured():
+                messages.error(
+                    request,
+                    "O login com Google estÃ¡ indisponÃ­vel no momento.",
+                )
+                return redirect("turmas:portal", token=token)
 
-        return redirect(
-            f"{reverse('google_oauth_start')}?{urlencode({'next': next_url})}"
+            return redirect(
+                f"{reverse('google_oauth_start')}?{urlencode({'next': next_url})}"
+            )
+
+        portal_url = reverse("turmas:portal", kwargs={"token": token})
+        if next_url != default_next:
+            portal_url = f"{portal_url}?{urlencode({'next': next_url})}"
+        return redirect(portal_url)
+
+
+class TarefasGradePublicaView(TurmaPublicaMixin, TemplateView):
+    """Exibe a grade de tarefas da turma em modo somente leitura."""
+
+    template_name = "tarefas/grade_publica.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        turma = self.turma
+        matriculas = list(
+            turma.matriculas.filter(ativa=True)
+            .select_related("aluno")
+            .order_by("aluno__nome")
         )
+        alunos_ids = [matricula.aluno_id for matricula in matriculas]
+
+        tarefas_qs = turma.tarefas.select_related("turma")
+        if alunos_ids:
+            from tarefas.models import RealizacaoTarefa
+
+            tarefas_qs = tarefas_qs.prefetch_related(
+                Prefetch(
+                    "realizacoes",
+                    queryset=RealizacaoTarefa.objects.filter(aluno_id__in=alunos_ids)
+                    .select_related("aluno")
+                    .order_by("aluno__nome", "pk"),
+                    to_attr="realizacoes_publicas",
+                )
+            )
+
+        tarefas = list(tarefas_qs)
+        realizacoes_por_tarefa = {
+            tarefa.pk: {
+                realizacao.aluno_id: realizacao
+                for realizacao in getattr(tarefa, "realizacoes_publicas", [])
+            }
+            for tarefa in tarefas
+        }
+
+        linhas = []
+        totais_por_tarefa = {tarefa.pk: 0 for tarefa in tarefas}
+
+        for matricula in matriculas:
+            aluno = matricula.aluno
+            realizacoes = []
+            total_realizadas_aluno = 0
+
+            for tarefa in tarefas:
+                realizacao = realizacoes_por_tarefa[tarefa.pk].get(aluno.pk)
+                realizada = bool(realizacao and realizacao.realizada)
+                realizacoes.append(
+                    {
+                        "tarefa": tarefa,
+                        "realizacao": realizacao,
+                        "realizada": realizada,
+                    }
+                )
+                if realizada:
+                    totais_por_tarefa[tarefa.pk] += 1
+                    total_realizadas_aluno += 1
+
+            linhas.append(
+                {
+                    "aluno": aluno,
+                    "realizacoes": realizacoes,
+                    "total_realizadas": total_realizadas_aluno,
+                    "percentual": _percentual_conclusao(
+                        total_realizadas_aluno, len(tarefas)
+                    ),
+                }
+            )
+
+        total_checks = len(tarefas) * len(matriculas)
+        checks_realizados = sum(totais_por_tarefa.values())
+        tarefas_com_resumo = [
+            {
+                "obj": tarefa,
+                "total_realizadas": totais_por_tarefa[tarefa.pk],
+                "percentual": _percentual_conclusao(
+                    totais_por_tarefa[tarefa.pk], len(matriculas)
+                ),
+            }
+            for tarefa in tarefas
+        ]
+
+        ctx.update(
+            {
+                "turma": turma,
+                "tarefas": tarefas_com_resumo,
+                "linhas": linhas,
+                "total_alunos": len(matriculas),
+                "checks_realizados": checks_realizados,
+                "checks_pendentes": max(total_checks - checks_realizados, 0),
+                "percentual_geral": _percentual_conclusao(
+                    checks_realizados, total_checks
+                ),
+            }
+        )
+        return ctx
 
 
 class BoletimTurmaView(ProfessorRequiredMixin, DetailView):
@@ -262,7 +394,7 @@ class ExportarBoletimCSVView(ProfessorRequiredMixin, View):
             publicada=True, valor_pontos__gt=0
         ).order_by("prazo")
 
-        header = ["Aluno", "Matrícula"]
+        header = ["Aluno", "MatrÃ­cula"]
         for ativ in atividades:
             header.append(f"{ativ.titulo} (Max: {ativ.valor_pontos})")
         header.extend(["Total", "Media (%)"])
@@ -366,7 +498,7 @@ class ExportarBoletimPDFView(ProfessorRequiredMixin, DetailView):
 
 
 class MinhasNotasView(AlunoAutenticadoMixin, TemplateView):
-    """Exibe as notas e feedbacks das atividades de uma turma para o aluno logado na área pública."""
+    """Exibe as notas e feedbacks das atividades de uma turma para o aluno logado na Ã¡rea pÃºblica."""
 
     template_name = "avaliacoes/minhas_notas.html"
 

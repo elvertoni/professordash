@@ -1,0 +1,147 @@
+{% extends "base_publico.html" %}
+
+{% block title %}Tarefas - {{ turma.nome }}{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="space-y-2">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Portal da turma</p>
+      <div>
+        <h1 class="text-2xl font-semibold tracking-tight text-on-surface">Grade de tarefas</h1>
+        <p class="mt-2 max-w-3xl text-sm leading-6 text-on-surface-variant/65">
+          Acompanhe o andamento da turma em uma grade somente leitura, com percentuais por tarefa e progresso consolidado por aluno.
+        </p>
+      </div>
+    </div>
+    <span class="inline-flex items-center rounded-full border border-outline-variant/15 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-on-surface-variant/55">
+      Somente leitura
+    </span>
+  </div>
+
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="panel-soft border border-outline-variant/10 p-4">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Tarefas</p>
+      <p class="mt-2 text-3xl font-semibold tracking-tight text-on-surface">{{ tarefas|length }}</p>
+    </div>
+    <div class="panel-soft border border-outline-variant/10 p-4">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Alunos ativos</p>
+      <p class="mt-2 text-3xl font-semibold tracking-tight text-on-surface">{{ total_alunos }}</p>
+    </div>
+    <div class="panel-soft border border-outline-variant/10 p-4">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Checks feitos</p>
+      <p class="mt-2 text-3xl font-semibold tracking-tight text-on-surface">{{ checks_realizados }}</p>
+    </div>
+    <div class="panel-soft border border-outline-variant/10 p-4">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Conclusao geral</p>
+          <p class="mt-2 text-3xl font-semibold tracking-tight text-on-surface">{{ percentual_geral }}%</p>
+        </div>
+        <span class="inline-flex rounded-full border border-outline-variant/15 bg-white/[0.04] px-3 py-1 text-xs font-semibold text-on-surface-variant/65">
+          {{ checks_pendentes }} pendentes
+        </span>
+      </div>
+    </div>
+  </section>
+
+  {% if tarefas %}
+    <section class="overflow-hidden panel border border-outline-variant/10">
+      {% if not total_alunos %}
+        <div class="border-b border-outline-variant/10 bg-amber-500/10 px-5 py-4 text-sm text-amber-100">
+          Ha tarefas cadastradas, mas ainda nao existem alunos ativos nesta turma.
+        </div>
+      {% endif %}
+
+      <div class="border-b border-outline-variant/10 bg-white/[0.03] px-5 py-3">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm font-semibold text-on-surface">Visao consolidada</p>
+            <p class="text-xs text-on-surface-variant/55">A grade funciona bem em mobile: deslize horizontalmente para ver todas as tarefas.</p>
+          </div>
+          <a href="{% url 'turmas:portal' token=turma.token_publico %}"
+             class="text-sm font-medium text-primary transition-colors hover:text-primary/80">
+            Voltar ao portal
+          </a>
+        </div>
+      </div>
+
+      <div class="max-h-[72vh] overflow-auto">
+        <table class="w-max min-w-full border-separate border-spacing-0 text-sm">
+          <thead>
+            <tr class="align-top">
+              <th class="sticky left-0 top-0 z-50 w-[20rem] min-w-[20rem] border-b border-r border-outline-variant/10 bg-[#121826] px-4 py-4 text-left">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Aluno</p>
+                <p class="mt-1 text-sm font-medium text-on-surface-variant/70">Nome completo, matricula e contato</p>
+              </th>
+              {% for tarefa in tarefas %}
+                <th class="sticky top-0 z-40 w-[15rem] min-w-[15rem] border-b border-r border-outline-variant/10 bg-[#121826] px-4 py-4 text-left">
+                  {% include "tarefas/_tarefa_header.html" with turma=turma tarefa=tarefa total_alunos=total_alunos readonly=True %}
+                </th>
+              {% endfor %}
+              <th class="sticky right-0 top-0 z-50 w-[12rem] min-w-[12rem] border-b border-l border-outline-variant/10 bg-[#121826] px-4 py-4 text-left">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Conclusao</p>
+                <div class="mt-2 space-y-2">
+                  <div class="flex items-center justify-between gap-3 text-sm font-semibold text-on-surface">
+                    <span>{{ checks_realizados }} checks</span>
+                    <span>{{ percentual_geral }}%</span>
+                  </div>
+                  <div class="h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+                    <div class="h-full rounded-full bg-emerald-400 transition-all duration-300" style="width: {{ percentual_geral }}%"></div>
+                  </div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for aluno in alunos %}
+              <tr class="group">
+                <th class="sticky left-0 z-30 w-[20rem] min-w-[20rem] border-b border-r border-outline-variant/10 bg-[#101621] px-4 py-4 text-left align-top transition-colors group-hover:bg-white/[0.05]">
+                  <div class="space-y-2">
+                    <p class="text-sm font-semibold text-on-surface">{{ aluno.aluno.nome }}</p>
+                    <div class="flex flex-wrap items-center gap-2 text-xs text-on-surface-variant/55">
+                      {% if aluno.aluno.matricula %}
+                        <span class="rounded-full border border-outline-variant/15 bg-white/[0.04] px-2.5 py-1 font-medium text-on-surface-variant/70">
+                          Matricula {{ aluno.aluno.matricula }}
+                        </span>
+                      {% endif %}
+                      <span class="truncate">{{ aluno.aluno.email }}</span>
+                    </div>
+                  </div>
+                </th>
+
+                {% for celula in aluno.celulas %}
+                  {% include "tarefas/_checkbox.html" with tarefa=celula.tarefa aluno=aluno.aluno realizada=celula.realizada readonly=True %}
+                {% endfor %}
+
+                <td class="sticky right-0 z-30 w-[12rem] min-w-[12rem] border-b border-l border-outline-variant/10 bg-[#101621] px-4 py-4 align-middle transition-colors group-hover:bg-white/[0.05]">
+                  <div class="space-y-2">
+                    <div class="flex items-center justify-between gap-3 text-sm font-semibold text-on-surface">
+                      <span>{{ aluno.total_realizadas }}/{{ tarefas|length }}</span>
+                      <span>{{ aluno.percentual }}%</span>
+                    </div>
+                    <div class="h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+                      <div class="h-full rounded-full bg-emerald-400 transition-all duration-300" style="width: {{ aluno.percentual }}%"></div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="{{ tarefas|length|add:'2' }}" class="px-6 py-12 text-center text-sm text-on-surface-variant/60">
+                  Nenhum aluno ativo encontrado para esta turma.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  {% else %}
+    <div class="panel-soft border border-dashed border-outline-variant/15 p-8 text-center">
+      <p class="text-sm text-on-surface-variant/55">Nenhuma tarefa cadastrada ainda.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
