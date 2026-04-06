@@ -5,39 +5,37 @@
 {% block content %}
 <div class="max-w-5xl mx-auto">
 
-  <!-- Breadcrumb -->
-  <nav class="flex items-center gap-2 text-sm text-zinc-500 mb-6">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-emerald-400 transition-colors">Turmas</a>
-    <span aria-hidden="true">/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-emerald-400 transition-colors">{{ turma.nome }}</a>
-    <span aria-hidden="true">/</span>
-    <a href="{% url 'turmas:alunos_lista' pk=turma.pk %}" class="hover:text-emerald-400 transition-colors">Alunos</a>
-    <span aria-hidden="true">/</span>
-    <span class="text-zinc-100 font-medium">{{ aluno.nome }}</span>
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/50 mb-6 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-on-surface transition-colors shrink-0">Turmas</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-on-surface transition-colors shrink-0">{{ turma.nome }}</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <a href="{% url 'turmas:alunos_lista' pk=turma.pk %}" class="hover:text-on-surface transition-colors shrink-0">Alunos</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <span class="text-on-surface font-medium">{{ aluno.nome }}</span>
   </nav>
 
-  <!-- Cabeçalho -->
-  <div class="bg-zinc-900 rounded-xl border border-zinc-700 p-6 mb-6 shadow-sm flex flex-col sm:flex-row items-center sm:items-start gap-6">
+  <div class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-6 mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-6">
     <div class="shrink-0">
       {% if aluno.avatar %}
-        <img src="{{ aluno.avatar.url }}" alt="{{ aluno.nome }}" class="w-24 h-24 rounded-full object-cover border-4 border-zinc-800">
+        <img src="{{ aluno.avatar.url }}" alt="{{ aluno.nome }}" class="w-24 h-24 rounded-full object-cover ring-4 ring-outline-variant/20">
       {% else %}
-        <div class="w-24 h-24 rounded-full bg-emerald-950 flex items-center justify-center text-emerald-300 font-bold text-3xl uppercase border-4 border-emerald-500/10">
+        <div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-3xl uppercase border-2 border-primary/20">
           {{ aluno.nome|slice:":2" }}
         </div>
       {% endif %}
     </div>
-    
+
     <div class="flex-1 text-center sm:text-left">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-zinc-100 flex items-center justify-center sm:justify-start gap-2">
+          <h1 class="text-2xl font-semibold tracking-tight text-on-background flex items-center justify-center sm:justify-start gap-2">
             {{ aluno.nome }}
             {% if not aluno.ativo %}
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-300 border border-rose-500/20">Inativo</span>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-error/10 text-error border border-error/20">Inativo</span>
             {% endif %}
           </h1>
-          <div class="mt-2 text-sm text-zinc-400 space-y-1">
+          <div class="mt-2 text-sm text-on-surface-variant/60 space-y-1">
             <p class="flex items-center justify-center sm:justify-start gap-1.5">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               {{ aluno.email }}
@@ -52,7 +50,7 @@
         </div>
         <div class="shrink-0 flex gap-2 justify-center sm:justify-start">
           <a href="{% url 'turmas:alunos_editar' pk=turma.pk aluno_pk=aluno.pk %}"
-             class="text-sm border border-zinc-700 bg-zinc-950 hover:bg-zinc-800 text-zinc-200 px-4 py-2 rounded-lg font-medium transition-colors">
+             class="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container-high px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
             Editar aluno
           </a>
         </div>
@@ -60,57 +58,58 @@
     </div>
   </div>
 
-  <!-- Resumo de Entregas -->
   <div class="mb-6">
-    <h2 class="text-lg font-bold text-zinc-100 mb-4">Entregas de Atividades</h2>
-    
+    <h2 class="text-base font-semibold text-on-surface mb-4">Entregas de Atividades</h2>
+
     {% if entregas %}
-      <div class="bg-zinc-900 rounded-xl border border-zinc-700 overflow-hidden shadow-sm">
-        <table class="w-full text-sm text-left whitespace-nowrap">
-          <thead class="bg-zinc-950 text-zinc-400 text-xs uppercase tracking-wide">
-            <tr>
-              <th class="px-6 py-4 font-medium">Atividade</th>
-              <th class="px-6 py-4 font-medium">Status</th>
-              <th class="px-6 py-4 font-medium">Enviado em</th>
-              <th class="px-6 py-4 font-medium">Nota / Avaliação</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-zinc-800">
-            {% for entrega in entregas %}
-              <tr class="hover:bg-zinc-800/70 transition-colors">
-                <td class="px-6 py-4">
-                  <span class="font-medium text-zinc-100">{{ entrega.atividade.titulo }}</span>
-                </td>
-                <td class="px-6 py-4">
-                  {% if entrega.status == 'pendente' %}
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20">Pendente</span>
-                  {% elif entrega.status == 'entregue' %}
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Entregue</span>
-                  {% elif entrega.status == 'atrasada' %}
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-300 border border-rose-500/20">Atrasado</span>
-                  {% elif entrega.status == 'avaliada' %}
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Avaliado</span>
-                  {% endif %}
-                </td>
-                <td class="px-6 py-4 text-zinc-400">
-                  {{ entrega.data_envio|date:"d/m/Y H:i"|default:"—" }}
-                </td>
-                <td class="px-6 py-4 font-medium text-zinc-100">
-                  {% if entrega.nota is not None %}
-                    {{ entrega.nota }} / {{ entrega.atividade.valor_pontos }}
-                  {% else %}
-                    <span class="text-zinc-500 font-normal">Não avaliado</span>
-                  {% endif %}
-                </td>
+      <div class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-surface-container-high/40 border-b border-outline-variant/10 text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">
+              <tr>
+                <th class="px-6 py-4 font-medium">Atividade</th>
+                <th class="px-6 py-4 font-medium">Status</th>
+                <th class="px-6 py-4 font-medium hidden sm:table-cell">Enviado em</th>
+                <th class="px-6 py-4 font-medium">Nota / Avaliação</th>
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10">
+              {% for entrega in entregas %}
+                <tr class="hover:bg-surface-container-high/50 transition-colors">
+                  <td class="px-6 py-4">
+                    <span class="font-medium text-on-surface">{{ entrega.atividade.titulo }}</span>
+                  </td>
+                  <td class="px-6 py-4">
+                    {% if entrega.status == 'pendente' %}
+                      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-200 border border-amber-500/20">Pendente</span>
+                    {% elif entrega.status == 'entregue' %}
+                      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">Entregue</span>
+                    {% elif entrega.status == 'atrasada' %}
+                      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-error/10 text-error border border-error/20">Atrasado</span>
+                    {% elif entrega.status == 'avaliada' %}
+                      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">Avaliado</span>
+                    {% endif %}
+                  </td>
+                  <td class="px-6 py-4 text-on-surface-variant/60 hidden sm:table-cell">
+                    {{ entrega.data_envio|date:"d/m/Y H:i"|default:"—" }}
+                  </td>
+                  <td class="px-6 py-4 font-medium text-on-surface">
+                    {% if entrega.nota is not None %}
+                      {{ entrega.nota }} / {{ entrega.atividade.valor_pontos }}
+                    {% else %}
+                      <span class="text-on-surface-variant/45 font-normal">Não avaliado</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     {% else %}
-      <div class="bg-zinc-900 rounded-xl border border-dashed border-zinc-700 p-8 text-center">
-        <p class="text-sm text-zinc-400">O aluno ainda não tem entregas registradas nesta turma.</p>
-        <p class="text-xs text-zinc-500 mt-1">Isso será preenchido automaticamente quando houver atividades resolvidas.</p>
+      <div class="rounded-[1.35rem] border border-dashed border-outline-variant/15 bg-surface-container-low/50 p-8 text-center">
+        <p class="text-sm text-on-surface-variant/60">O aluno ainda não tem entregas registradas nesta turma.</p>
+        <p class="text-xs text-on-surface-variant/40 mt-1">Isso será preenchido automaticamente quando houver atividades resolvidas.</p>
       </div>
     {% endif %}
   </div>

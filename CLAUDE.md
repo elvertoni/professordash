@@ -51,10 +51,13 @@ Django 5.1 + HTMX 2.x + Alpine.js 3.x + Tailwind CSS 3.x (todos via CDN). Postgr
 | `atividades` | Atividade + Entrega. Status automático: `entregue` vs `atrasada` |
 | `avaliacoes` | Apenas templates (boletim, minhas_notas) — sem models/views próprias. Views estão em `turmas/views.py` |
 | `alunos` | Aluno + importação CSV. Vinculação ao `User` via Google OAuth |
+| `tarefas` | Tarefa + RealizacaoTarefa. Grade de tarefas por turma (checkbox por aluno via HTMX) |
 
 ### Google OAuth
 
 Configurado via variáveis de ambiente `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` no `.env` da VPS. Sem elas, o login Google fica indisponível. URI de callback: `https://aulas.tonicoimbra.com/accounts/google/login/callback/`. A função `core.auth.is_google_oauth_configured()` verifica env vars ou SocialApp no banco.
+
+`core/adapters.py` — `SocialAccountAdapter` vincula automaticamente o `User` ao `Aluno` cadastrado com o mesmo e-mail no primeiro login Google (e em logins subsequentes via `pre_social_login`). Isso é o que permite que `AlunoAutenticadoMixin` encontre a matrícula via `aluno__user`.
 
 ### URL routing centralizado
 
@@ -89,6 +92,17 @@ if self.request.htmx:
     return render(request, 'componente/_parcial.html', context)
 return render(request, 'pagina_completa.html', context)
 ```
+
+### Extensões Markdown customizadas (`core/markdown_extensions.py`)
+
+Blocos `:::tipo` são convertidos em componentes HTML ricos pelo `ProfessorDashPreprocessor`. Tipos suportados:
+
+- Callouts: `:::objetivo`, `:::importante`, `:::dica`, `:::exemplo`, `:::atencao`, `:::conceito`, `:::exercicio`, `:::curiosidade`
+- `:::roteiro` — notas de fala do professor (ocultas no modo aluno)
+- `:::resumo` — lista de tópicos com checkmarks
+- `:::questao Enunciado?` — questão de múltipla escolha com alternativas (`a) Texto *` para marcar correta) e gabarito (linha `> Explicação`)
+
+O templatetag `|markdownify` (em `core/templatetags/markdownx.py`) strip frontmatter YAML antes de renderizar. Carregado com `{% load markdownx %}`.
 
 ### Third-party libs relevantes
 

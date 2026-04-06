@@ -1,40 +1,29 @@
 {% extends "base_admin.html" %}
 
-{% block title %}Atividades - {{ turma.nome }} | {{ block.super }}{% endblock %}
-
-{% block page_title %}Atividades: {{ turma.nome }}{% endblock %}
-
-{% block page_actions %}
-<a href="{% url 'turmas:atividades_nova' pk=turma.pk %}"
-   class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-3.5 py-2 text-[13px] font-semibold text-black transition-colors hover:bg-emerald-400">
-  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-  </svg>
-  Nova atividade
-</a>
-{% endblock %}
+{% block title %}Atividades - {{ turma.nome }} | Prof Toni Coimbra{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-  <nav class="flex items-center gap-2 text-sm text-white/35 overflow-x-auto whitespace-nowrap">
-    <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-white/70">Turmas</a>
-    <span class="" aria-hidden="true">/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}?tab=atividades" class="transition-colors hover:text-white/70">{{ turma.nome }}</a>
-    <span class="" aria-hidden="true">/</span>
-    <span class="font-medium text-white/72">Atividades</span>
+<div class="space-y-6 max-w-5xl mx-auto">
+
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/50 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-on-surface shrink-0">Turmas</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}?tab=atividades" class="transition-colors hover:text-on-surface shrink-0">{{ turma.nome }}</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <span class="font-medium text-on-surface">Atividades</span>
   </nav>
 
-  <section class="rounded-3xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
+  <section class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-5 sm:p-6">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div class="max-w-2xl">
-        <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-300/80">Entrega e avaliação</p>
-        <h1 class="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-white/90">Atividades de {{ turma.nome }}</h1>
-        <p class="mt-2 text-sm leading-6 text-white/50">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary/80">Entrega e avaliação</p>
+        <h1 class="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-on-background">Atividades de {{ turma.nome }}</h1>
+        <p class="mt-2 text-sm leading-6 text-on-surface-variant/60">
           Acompanhe prazos, publique tarefas e revise entregas com uma leitura mais limpa e direta.
         </p>
       </div>
       <a href="{% url 'turmas:atividades_nova' pk=turma.pk %}"
-         class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-3.5 py-2 text-[13px] font-semibold text-black transition-colors hover:bg-emerald-400">
+         class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-[13px] font-semibold text-on-primary transition-colors hover:bg-primary/90">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>

@@ -1,13 +1,13 @@
-<article class="aula-item group flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/[0.045] p-4 transition-all duration-200 hover:border-white/18 hover:bg-white/[0.065] lg:flex-row lg:items-center"
+<article class="aula-item group flex flex-col gap-4 rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-4 transition-all duration-200 hover:border-outline-variant/18 hover:bg-surface-container-high/70 lg:flex-row lg:items-center"
          data-id="{{ aula.pk }}">
   <div class="flex items-center gap-3">
-    <div class="shrink-0 cursor-grab rounded-xl border border-white/10 bg-black/20 p-2 text-white/28 transition-colors group-hover:text-white/55 active:cursor-grabbing">
+    <div class="shrink-0 cursor-grab rounded-xl border border-outline-variant/10 bg-background/40 p-2 text-on-surface-variant/28 transition-colors group-hover:text-on-surface-variant/55 active:cursor-grabbing">
       <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
         <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z"/>
       </svg>
     </div>
     <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border text-sm font-semibold
-                 {% if aula.realizada %}border-emerald-500/20 bg-emerald-500/10 text-emerald-300{% else %}border-white/10 bg-white/[0.04] text-white/68{% endif %}">
+                 {% if aula.realizada %}border-primary/20 bg-primary/10 text-primary{% else %}border-outline-variant/10 bg-surface-container-high text-on-surface-variant/60{% endif %}">
       {{ aula.numero }}
     </span>
   </div>
@@ -15,22 +15,22 @@
   <div class="min-w-0 flex-1">
     <div class="flex flex-wrap items-center gap-2">
       <a href="{% url 'turmas:aulas_detalhe' pk=turma.pk aula_pk=aula.pk %}"
-         class="block min-w-0 text-[15px] font-semibold tracking-tight text-white/90 transition-colors hover:text-emerald-300">
+         class="block min-w-0 text-[15px] font-semibold tracking-tight text-on-surface transition-colors hover:text-primary">
         {{ aula.titulo }}
       </a>
       <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-medium
-                   {% if aula.realizada %}border-emerald-500/20 bg-emerald-500/10 text-emerald-300{% else %}border-white/10 bg-white/[0.04] text-white/45{% endif %}">
+                   {% if aula.realizada %}border-primary/20 bg-primary/10 text-primary{% else %}border-outline-variant/10 bg-surface-container-high text-on-surface-variant/45{% endif %}">
         {% if aula.realizada %}Concluida{% else %}Pendente{% endif %}
       </span>
     </div>
-    <div class="mt-2 flex flex-wrap items-center gap-2 text-[12px] text-white/40">
-      <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-2.5 py-1">
+    <div class="mt-2 flex flex-wrap items-center gap-2 text-[12px] text-on-surface-variant/50">
+      <span class="inline-flex items-center gap-1.5 rounded-full border border-outline-variant/10 bg-surface-container-high/60 px-2.5 py-1">
         <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
         </svg>
         {% if aula.data %}{{ aula.data|date:"d/m/Y" }}{% else %}Sem data definida{% endif %}
       </span>
-      <span class="inline-flex items-center rounded-full border border-white/10 bg-black/20 px-2.5 py-1">Aula {{ aula.numero }}</span>
+      <span class="inline-flex items-center rounded-full border border-outline-variant/10 bg-surface-container-high/60 px-2.5 py-1">Aula {{ aula.numero }}</span>
     </div>
   </div>
 
@@ -40,14 +40,14 @@
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
             hx-target="closest article"
             hx-swap="outerHTML"
-            class="inline-flex items-center rounded-xl border px-3 py-2 text-[12px] font-medium transition-colors
-                   {% if aula.realizada %}border-emerald-500/20 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/16{% else %}border-white/10 bg-white/[0.04] text-white/60 hover:border-white/18 hover:bg-white/[0.07] hover:text-white{% endif %}">
+            class="inline-flex items-center rounded-full border px-3.5 py-2 text-[12px] font-medium transition-colors
+                   {% if aula.realizada %}border-primary/20 bg-primary/10 text-primary hover:bg-primary/15{% else %}border-outline-variant/10 bg-surface-container-high text-on-surface-variant/60 hover:border-outline-variant/20 hover:bg-surface-container-highest hover:text-on-surface{% endif %}">
       {% if aula.realizada %}Marcar pendente{% else %}Marcar realizada{% endif %}
     </button>
     <a href="{% url 'turmas:aulas_detalhe' pk=turma.pk aula_pk=aula.pk %}"
        target="_blank"
        rel="noopener noreferrer"
-       class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-[12px] font-medium text-white/70 transition-colors hover:border-emerald-500/25 hover:bg-emerald-500/10 hover:text-emerald-300"
+       class="inline-flex items-center gap-2 rounded-full border border-outline-variant/10 bg-surface-container-high px-3.5 py-2 text-[12px] font-medium text-on-surface-variant/70 transition-colors hover:border-primary/20 hover:bg-primary/10 hover:text-primary"
        title="Apresentar aula">
       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
@@ -56,7 +56,7 @@
       <span class="hidden sm:inline">Apresentar</span>
     </a>
     <a href="{% url 'turmas:aulas_editar' pk=turma.pk aula_pk=aula.pk %}"
-       class="inline-flex items-center rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white/50 transition-colors hover:border-white/18 hover:bg-white/[0.07] hover:text-white/90"
+       class="inline-flex items-center rounded-full border border-outline-variant/10 bg-surface-container-high p-2.5 text-on-surface-variant/50 transition-colors hover:border-outline-variant/20 hover:bg-surface-container-highest hover:text-on-surface"
        title="Editar aula">
       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -73,7 +73,7 @@
               confirmLabel: 'Excluir',
               formId: 'form-excluir-aula-{{ aula.pk }}'
             })"
-            class="inline-flex items-center rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-white/52 transition-colors hover:border-rose-500/25 hover:bg-rose-500/10 hover:text-rose-300"
+            class="inline-flex items-center rounded-full border border-outline-variant/10 bg-surface-container-high p-2.5 text-on-surface-variant/50 transition-colors hover:border-error/20 hover:bg-error/10 hover:text-error"
             title="Excluir aula">
       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

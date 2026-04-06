@@ -64,7 +64,8 @@
         <a href="{% url 'turmas:alunos_lista' pk=turma.pk %}"
            class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
                   {% if request.resolver_match.url_name == 'alunos_lista' or request.resolver_match.url_name == 'alunos_detalhe' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
-          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0 bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0
+                       {% if request.resolver_match.url_name == 'alunos_lista' or request.resolver_match.url_name == 'alunos_detalhe' %}bg-primary/15 text-primary border border-primary/15{% else %}bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface{% endif %}">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -76,7 +77,8 @@
         <a href="{% url 'turmas:aulas_lista' pk=turma.pk %}"
            class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
                   {% if request.resolver_match.url_name == 'aulas_lista' or request.resolver_match.url_name == 'aulas_detalhe' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
-          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0 bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0
+                       {% if request.resolver_match.url_name == 'aulas_lista' or request.resolver_match.url_name == 'aulas_detalhe' %}bg-primary/15 text-primary border border-primary/15{% else %}bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface{% endif %}">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
@@ -88,7 +90,8 @@
         <a href="{% url 'turmas:materiais_lista' pk=turma.pk %}"
            class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
                   {% if request.resolver_match.url_name == 'materiais_lista' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
-          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0 bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0
+                       {% if request.resolver_match.url_name == 'materiais_lista' %}bg-primary/15 text-primary border border-primary/15{% else %}bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface{% endif %}">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -100,7 +103,8 @@
         <a href="{% url 'turmas:tarefas_grade' pk=turma.pk %}"
            class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
                   {% if request.resolver_match.url_name == 'tarefas_grade' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
-          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0 bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0
+                       {% if request.resolver_match.url_name == 'tarefas_grade' %}bg-primary/15 text-primary border border-primary/15{% else %}bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface{% endif %}">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-7 7h6m-6 4h3"/>
@@ -112,7 +116,8 @@
         <a href="{% url 'turmas:atividades_lista' pk=turma.pk %}"
            class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent
                   {% if request.resolver_match.url_name == 'atividades_lista' or request.resolver_match.url_name == 'atividade_detalhe' %}is-active text-on-surface{% else %}text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface{% endif %}">
-          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0 bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl shrink-0
+                       {% if request.resolver_match.url_name == 'atividades_lista' or request.resolver_match.url_name == 'atividade_detalhe' %}bg-primary/15 text-primary border border-primary/15{% else %}bg-white/[0.04] text-on-surface-variant/60 group-hover:text-on-surface{% endif %}">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
@@ -142,15 +147,5 @@
       </span>
       <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">Configuracoes</span>
     </a>
-
-    <div class="flex items-center gap-3 px-2.5 py-2" x-show="!$store.sidebar.collapsed" x-cloak>
-      <div class="shrink-0">
-        {% include "components/_logo.html" with size="w-9 h-9" %}
-      </div>
-      <div class="min-w-0">
-        <p class="text-xs font-semibold text-on-surface truncate">Prof. Toni Coimbra</p>
-        <p class="text-[10px] tracking-[0.16em] uppercase text-on-surface-variant/50 truncate">SEED-PR</p>
-      </div>
-    </div>
   </div>
 </aside>

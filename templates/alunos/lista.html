@@ -5,24 +5,22 @@
 {% block content %}
 <div class="max-w-5xl mx-auto" x-data>
 
-  {# Breadcrumb #}
-  <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6 overflow-x-auto whitespace-nowrap">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-emerald-400 shrink-0">Turmas</a>
-    <span aria-hidden="true">/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-emerald-400 shrink-0">{{ turma.nome }}</a>
-    <span aria-hidden="true">/</span>
-    <span class="text-zinc-100 font-medium">Alunos</span>
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/50 mb-6 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="hover:text-on-surface shrink-0 transition-colors">Turmas</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-on-surface shrink-0 transition-colors">{{ turma.nome }}</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <span class="text-on-surface font-medium">Alunos</span>
   </nav>
 
-  {# Cabeçalho responsivo #}
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
     <div>
-      <h1 class="text-xl sm:text-2xl font-bold text-zinc-100">Alunos matriculados</h1>
-      <p class="text-sm text-zinc-400 mt-1">Gerencie os alunos da turma {{ turma.nome }}</p>
+      <h1 class="text-xl sm:text-2xl font-semibold tracking-tight text-on-background">Alunos matriculados</h1>
+      <p class="text-sm text-on-surface-variant/60 mt-1">Gerencie os alunos da turma {{ turma.nome }}</p>
     </div>
     <div class="flex items-center gap-2 shrink-0">
       <a href="{% url 'turmas:alunos_importar' pk=turma.pk %}"
-         class="inline-flex items-center gap-2 bg-zinc-900 hover:bg-zinc-950 text-zinc-300 border border-zinc-700 text-sm font-medium px-3 py-2 rounded-lg transition-colors">
+         class="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container-high px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"/>
@@ -31,7 +29,7 @@
         <span class="sm:hidden">CSV</span>
       </a>
       <a href="{% url 'turmas:alunos_novo' pk=turma.pk %}"
-         class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-3 py-2 rounded-lg transition-colors">
+         class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
@@ -42,10 +40,9 @@
   </div>
 
   {% if page_obj.paginator.count > 0 or q %}
-    {# Busca ao vivo HTMX (task 4.10) #}
     <div class="mb-4">
       <div class="relative">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none"
+        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/45 pointer-events-none"
              fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -60,11 +57,10 @@
                hx-trigger="input changed delay:300ms, search"
                hx-target="#tabela-alunos-container"
                hx-swap="innerHTML"
-               class="w-full pl-10 pr-4 py-2.5 text-sm border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors">
+               class="w-full pl-10 pr-4 py-2.5 text-sm rounded-2xl border border-outline-variant/15 bg-surface-container-high text-on-surface placeholder:text-on-surface-variant/40 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20">
       </div>
     </div>
 
-    {# Resultado da busca / tabela #}
     <div id="tabela-alunos-container"
          hx-get="{% url 'turmas:alunos_busca_htmx' pk=turma.pk %}?q={{ q }}"
          hx-trigger="load"
@@ -74,15 +70,14 @@
     </div>
 
   {% else %}
-    {# Estado vazio #}
     {% include "components/_empty_state.html" with title="Nenhum aluno matriculado" subtitle="Comece adicionando um novo aluno ou importando via CSV." %}
     <div class="mt-6 flex flex-col sm:flex-row justify-center gap-3">
       <a href="{% url 'turmas:alunos_importar' pk=turma.pk %}"
-         class="inline-flex items-center justify-center gap-2 bg-zinc-900 border border-zinc-700 text-zinc-300 text-sm font-medium px-4 py-2 rounded-lg hover:bg-zinc-950 transition-colors">
+         class="inline-flex items-center justify-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container-high px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
         Importar CSV
       </a>
       <a href="{% url 'turmas:alunos_novo' pk=turma.pk %}"
-         class="inline-flex items-center justify-center gap-2 bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors">
+         class="inline-flex items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
         Adicionar aluno
       </a>
     </div>
@@ -90,6 +85,5 @@
 
 </div>
 
-{# Modal de confirmação global (task 4.7) #}
 {% include "components/_modal_confirm.html" %}
 {% endblock %}
