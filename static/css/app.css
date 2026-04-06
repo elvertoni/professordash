@@ -15,7 +15,8 @@
   --shell-text-soft: #84808c;
   --shell-primary: #10b981;
   --shell-primary-strong: #059669;
-  --shell-secondary: #06b6d4;
+  --shell-secondary: #8b5cf6;
+  --shell-tertiary: #06b6d4;
   --shell-danger: #f87171;
   --shell-warning: #fbbf24;
   --shell-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
@@ -228,7 +229,7 @@ textarea {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--shell-primary) 0%, var(--shell-secondary) 130%);
+  background: linear-gradient(135deg, var(--shell-primary) 0%, var(--shell-tertiary) 130%);
   color: #08110d;
   box-shadow: 0 14px 34px rgba(16, 185, 129, 0.22);
 }
@@ -295,9 +296,9 @@ textarea {
 }
 
 .chip-secondary {
-  background: rgba(6, 182, 212, 0.12);
-  border-color: rgba(6, 182, 212, 0.22);
-  color: #67e8f9;
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.22);
+  color: #c4b5fd;
 }
 
 .chip-muted {

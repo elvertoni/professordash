@@ -1,7 +1,27 @@
 {% load static %}
+
+{# Backdrop — visível apenas no mobile quando a sidebar está aberta #}
+<div x-show="$store.sidebar.mobileOpen"
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @click="$store.sidebar.close()"
+     class="fixed inset-0 z-20 bg-black/60 backdrop-blur-sm lg:hidden"
+     x-cloak></div>
+
 <aside class="fixed top-0 left-0 h-full z-30 flex flex-col panel-strong overflow-hidden"
-       :class="$store.sidebar.collapsed ? 'w-14' : 'w-64'"
-       style="transition: width 0.2s ease">
+       :class="{
+         'w-64': true,
+         'lg:w-14': $store.sidebar.collapsed,
+         'lg:w-64': !$store.sidebar.collapsed,
+         '-translate-x-full': !$store.sidebar.mobileOpen,
+         'translate-x-0': $store.sidebar.mobileOpen,
+         'lg:translate-x-0': true
+       }"
+       style="transition: width 0.2s ease, transform 0.2s ease">
 
   <div class="flex items-center gap-3 px-4 h-16 border-b border-white/[0.08] shrink-0">
     {% include "components/_logo.html" with size="w-10 h-10 shrink-0" %}

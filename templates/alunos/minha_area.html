@@ -19,7 +19,7 @@
     <div class="panel p-6">
       <h3 class="text-sm font-semibold text-on-surface-variant/65 mb-1 uppercase tracking-[0.14em]">Status na turma</h3>
       {% if matricula.ativa %}
-        <p class="text-lg font-bold text-emerald-300">Matriculado</p>
+        <p class="text-lg font-bold text-primary">Matriculado</p>
       {% else %}
         <p class="text-lg font-bold text-error">Inativo</p>
       {% endif %}
@@ -57,7 +57,7 @@
                     {% elif item.entrega.status == 'entregue' %}
                       <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20">Entregue</span>
                     {% elif item.entrega.status == 'avaliada' %}
-                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Avaliada</span>
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">Avaliada</span>
                     {% elif item.entrega.status == 'atrasada' %}
                       <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-error/10 text-error border border-error/20">Entregue com atraso</span>
                     {% endif %}
@@ -80,7 +80,7 @@
                 {% if item.entrega and item.entrega.status == 'avaliada' %}
                   <div class="text-right mr-4">
                     <p class="text-xs text-on-surface-variant/45">Nota</p>
-                    <p class="text-lg font-bold text-emerald-300">{{ item.entrega.nota }} / {{ item.atividade.valor_pontos }}</p>
+                    <p class="text-lg font-bold text-primary">{{ item.entrega.nota }} / {{ item.atividade.valor_pontos }}</p>
                   </div>
                 {% endif %}
                 <button class="btn btn-secondary px-4 py-2 text-sm" disabled title="Funcionalidade em desenvolvimento">

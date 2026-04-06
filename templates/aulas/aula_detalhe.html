@@ -7,8 +7,7 @@
 <title>{{ aula.titulo }} — {{ aula.turma.nome }}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 <style>
 /* ── Reset ─────────────────────────────────────────────────────── */
@@ -23,7 +22,7 @@
   --border2:   rgba(255,255,255,.15);
   --text:      #E5E2E1;
   --text2:     #A1A1AA;
-  --text3:     #71717A;
+  --text3:     #8e8e98;
   --accent:    #10B981;
   --accent-bg: rgba(16,185,129,.08);
   --amber:     #FCD34D;
@@ -38,8 +37,8 @@
   --radius:    10px;
   --radius-lg: 16px;
   --max-w:     780px;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-head: 'Geist', 'Inter', system-ui, sans-serif;
+  --font-body: 'Geist', system-ui, sans-serif;
+  --font-head: 'Geist', system-ui, sans-serif;
   --font-mono: 'DM Mono', monospace;
   --ease:      cubic-bezier(.4,0,.2,1);
 }
@@ -884,7 +883,7 @@ h1.titulo {
   text-align: center;
 }
 .pres-shortcuts {
-  color: #71717A;
+  color: #8e8e98;
   font-size: 11px;
   letter-spacing: .05em;
   white-space: nowrap;
@@ -893,7 +892,7 @@ h1.titulo {
 .pres-exit {
   background: rgba(255,255,255,.03);
   border: 1px solid rgba(255,255,255,.08);
-  color: #71717A;
+  color: #8e8e98;
   border-radius: 8px;
   padding: 8px 16px;
   font-size: 11px;
@@ -966,7 +965,7 @@ h1.titulo {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .12em;
-  color: #71717A;
+  color: #8e8e98;
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 99px;
@@ -989,7 +988,7 @@ h1.titulo {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .2em;
-  color: #71717A;
+  color: #8e8e98;
   margin-bottom: 20px;
   padding: 6px 16px;
   border: 1px solid rgba(139,92,246,.15);
@@ -1015,7 +1014,7 @@ h1.titulo {
 }
 .pres-title-date {
   font-size: 13px;
-  color: #71717A;
+  color: #8e8e98;
   font-weight: 400;
   letter-spacing: .03em;
 }
@@ -1227,7 +1226,7 @@ h1.titulo {
 .pres-counter {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: #71717A;
+  color: #8e8e98;
   font-weight: 500;
   min-width: 55px;
   text-align: center;
@@ -1235,7 +1234,7 @@ h1.titulo {
 }
 .pres-section-label {
   font-size: 11px;
-  color: #52525B;
+  color: #8e8e98;
   font-weight: 500;
   max-width: 320px;
   overflow: hidden;
@@ -1291,7 +1290,7 @@ h1.titulo {
 .pres-exit {
   background: rgba(255,255,255,.03);
   border: 1px solid rgba(255,255,255,.08);
-  color: #71717A;
+  color: #8e8e98;
   border-radius: 8px;
   padding: 8px 16px;
   font-size: 11px;
@@ -1354,6 +1353,102 @@ h1.titulo {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MODO TV — fontes grandes para projeção / TV (distância 3–4m)
+   Ativar com botão "TV" no topbar ou tecla T durante apresentação
+   ═══════════════════════════════════════════════════════════════ */
+.pres-overlay.tv-mode .pres-slide {
+  max-width: 1600px;
+  padding: 2.5rem 5rem;
+  max-height: calc(100vh - 200px);
+}
+.pres-overlay.tv-mode .pres-title-h1 {
+  font-size: clamp(3.5rem, 7vw, 6rem);
+}
+.pres-overlay.tv-mode .pres-title-turma,
+.pres-overlay.tv-mode .pres-title-num,
+.pres-overlay.tv-mode .pres-title-date {
+  font-size: 1.1rem;
+}
+.pres-overlay.tv-mode .pres-slide h2 {
+  font-size: 3.2rem;
+  margin-bottom: 2rem;
+}
+.pres-overlay.tv-mode .pres-slide h3 {
+  font-size: 2rem;
+  margin: 2rem 0 1rem;
+}
+.pres-overlay.tv-mode .pres-slide p,
+.pres-overlay.tv-mode .pres-slide ul,
+.pres-overlay.tv-mode .pres-slide ol {
+  font-size: 1.65rem;
+  line-height: 1.7;
+}
+.pres-overlay.tv-mode .pres-slide li {
+  margin-bottom: 10px;
+}
+.pres-overlay.tv-mode .pres-slide strong {
+  font-size: inherit;
+}
+.pres-overlay.tv-mode .pres-slide code {
+  font-size: 1.4rem;
+}
+.pres-overlay.tv-mode .pres-slide pre code {
+  font-size: 1.3rem;
+  line-height: 1.6;
+}
+.pres-overlay.tv-mode .pres-slide blockquote {
+  font-size: 1.6rem;
+}
+.pres-overlay.tv-mode .pres-slide table {
+  font-size: 1.4rem;
+}
+.pres-overlay.tv-mode .pres-slide th {
+  font-size: 1rem;
+}
+.pres-overlay.tv-mode .pres-slide .callout {
+  padding: 1.5rem 2rem;
+}
+.pres-overlay.tv-mode .pres-slide .callout-title {
+  font-size: 1.3rem;
+}
+.pres-overlay.tv-mode .pres-slide .callout-text {
+  font-size: 1.5rem;
+}
+.pres-overlay.tv-mode .pres-slide .questao-enunciado {
+  font-size: 1.75rem;
+}
+.pres-overlay.tv-mode .pres-slide .alt {
+  font-size: 1.45rem;
+  padding: 14px 16px;
+}
+.pres-overlay.tv-mode .pres-slide .resumo-list li {
+  font-size: 1.5rem;
+  padding: 12px 0;
+}
+.pres-overlay.tv-mode .pres-arrow {
+  width: 72px;
+  height: 72px;
+}
+.pres-overlay.tv-mode .pres-arrow svg {
+  width: 32px;
+  height: 32px;
+}
+.pres-overlay.tv-mode .pres-bottom {
+  min-height: 80px;
+}
+.pres-overlay.tv-mode .pres-counter,
+.pres-overlay.tv-mode .pres-section-label {
+  font-size: 1rem;
+}
+.pres-overlay.tv-mode .pres-dot {
+  width: 14px;
+  height: 14px;
+}
+.pres-overlay.tv-mode .pres-dot.active {
+  width: 44px;
 }
 </style>
 <style>
@@ -3019,7 +3114,10 @@ h1.titulo {
       </div>
     </div>
     <div class="pres-timer" id="pres-timer" aria-label="Tempo de apresentação">00:00</div>
-    <div class="pres-shortcuts" aria-hidden="true">← → navegar · espaço avançar · home/end</div>
+    <div class="pres-shortcuts" aria-hidden="true">← → navegar · espaço avançar · T modo TV</div>
+    <button class="pres-secondary-btn" id="pres-tv-btn" type="button" onclick="toggleTVMode()" title="Modo TV: fontes grandes para projeção (tecla T)">
+      TV
+    </button>
     <button class="pres-secondary-btn" id="pres-fullscreen-btn" type="button" onclick="togglePresentationFullscreen()">
       Tela cheia
     </button>
@@ -3056,6 +3154,19 @@ var presLastFocus = null;
 var SLIDE_MAX_ELEMENTS = 4;
 var presTimerInterval = null;
 var presTimerStart = null;
+var tvModeActive = false;
+
+function toggleTVMode() {
+  tvModeActive = !tvModeActive;
+  var overlay = document.getElementById('pres-overlay');
+  overlay.classList.toggle('tv-mode', tvModeActive);
+  var btn = document.getElementById('pres-tv-btn');
+  if (btn) {
+    btn.textContent = tvModeActive ? 'TV ✓' : 'TV';
+    btn.style.color = tvModeActive ? '#10B981' : '';
+    btn.style.borderColor = tvModeActive ? 'rgba(16,185,129,.3)' : '';
+  }
+}
 
 function cleanText(value) {
   return (value || '').replace(/\s+/g, ' ').trim();
@@ -3696,6 +3807,9 @@ document.addEventListener('keydown', function(event) {
   } else if (event.key === 'Escape') {
     event.preventDefault();
     exitPresentation();
+  } else if (event.key === 't' || event.key === 'T') {
+    event.preventDefault();
+    toggleTVMode();
   }
 });
 

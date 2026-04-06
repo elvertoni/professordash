@@ -13,7 +13,7 @@
         <span class="font-medium text-on-surface">{% widthratio aulas_realizadas total_aulas 100 %}%</span>
       </div>
       <div class="h-2 bg-white/[0.06] rounded-full overflow-hidden">
-        <div class="h-full bg-emerald-500 rounded-full transition-all duration-500"
+        <div class="h-full bg-primary rounded-full transition-all duration-500"
              style="width: {% widthratio aulas_realizadas total_aulas 100 %}%"></div>
       </div>
     </div>
@@ -24,32 +24,32 @@
     <div class="space-y-2.5">
       {% for aula in aulas %}
         {% if aula.pk == proxima_aula_pk %}
-        <div class="group flex items-stretch panel-strong border-2 border-emerald-500/30 transition-all overflow-hidden">
-          <div class="w-1.5 bg-emerald-500 shrink-0"></div>
+        <div class="group flex items-stretch panel-strong border-2 border-primary/30 transition-all overflow-hidden">
+          <div class="w-1.5 bg-primary shrink-0"></div>
           <div class="flex items-center gap-3 px-4 py-3.5 flex-1 min-w-0">
-            <span class="w-9 h-9 flex items-center justify-center rounded-lg text-xs font-bold shrink-0 bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+            <span class="w-9 h-9 flex items-center justify-center rounded-lg text-xs font-bold shrink-0 bg-primary/10 text-primary border border-primary/20">
               {{ aula.numero }}
             </span>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
                 <p class="text-sm font-semibold text-on-surface truncate">{{ aula.titulo }}</p>
-                <span class="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">Proxima</span>
+                <span class="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full">Proxima</span>
               </div>
               {% if aula.data %}
                 <p class="text-xs text-on-surface-variant/45 mt-0.5">{{ aula.data|date:"d/m/Y" }}</p>
               {% endif %}
             </div>
-            <span class="shrink-0 text-xs font-medium text-emerald-300">Em breve</span>
+            <span class="shrink-0 text-xs font-medium text-primary">Em breve</span>
           </div>
         </div>
         {% else %}
         {% if aula.realizada %}
         <a href="{% url 'turmas:portal_aulas_detalhe' token=turma.token_publico aula_pk=aula.pk %}"
            class="group flex items-stretch panel border hover:border-white/16 transition-all overflow-hidden">
-          <div class="w-1.5 shrink-0 {% if aula.realizada %}bg-emerald-500{% else %}bg-white/[0.08]{% endif %}"></div>
+          <div class="w-1.5 shrink-0 {% if aula.realizada %}bg-primary{% else %}bg-white/[0.08]{% endif %}"></div>
           <div class="flex items-center gap-3 px-4 py-3 flex-1 min-w-0">
             <span class="w-9 h-9 flex items-center justify-center rounded-lg text-xs font-bold shrink-0
-                         {% if aula.realizada %}bg-emerald-500/10 text-emerald-300 border border-emerald-500/20{% else %}bg-white/[0.04] text-on-surface-variant/55 border border-outline-variant/10{% endif %}">
+                         {% if aula.realizada %}bg-primary/10 text-primary border border-primary/20{% else %}bg-white/[0.04] text-on-surface-variant/55 border border-outline-variant/10{% endif %}">
               {{ aula.numero }}
             </span>
             <div class="flex-1 min-w-0">
@@ -59,7 +59,7 @@
               {% endif %}
             </div>
             {% if aula.realizada %}
-              <span class="shrink-0 flex items-center gap-1 text-xs text-emerald-300 font-medium">
+              <span class="shrink-0 flex items-center gap-1 text-xs text-primary font-medium">
                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                 </svg>
@@ -101,7 +101,7 @@
 
   <div class="pt-2">
     <a href="{% url 'turmas:portal' token=turma.token_publico %}"
-       class="text-sm text-emerald-300 hover:underline">&larr; Voltar ao portal</a>
+       class="text-sm text-primary hover:underline">&larr; Voltar ao portal</a>
   </div>
 </div>
 {% endblock %}

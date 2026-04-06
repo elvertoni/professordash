@@ -1,10 +1,23 @@
 document.addEventListener("alpine:init", () => {
 
-  // Sidebar collapse/expand — colapsa por padrão em mobile (< 640px)
+  // Sidebar collapse/expand
+  // Desktop (≥1024px): colapsa/expande a rail (w-14 / w-64)
+  // Mobile (<1024px): abre/fecha como overlay por cima do conteúdo
   Alpine.store("sidebar", {
-    collapsed: window.innerWidth < 640,
+    collapsed: false,
+    mobileOpen: false,
+    get isMobile() {
+      return window.innerWidth < 1024;
+    },
     toggle() {
-      this.collapsed = !this.collapsed;
+      if (this.isMobile) {
+        this.mobileOpen = !this.mobileOpen;
+      } else {
+        this.collapsed = !this.collapsed;
+      }
+    },
+    close() {
+      this.mobileOpen = false;
     },
   });
 
