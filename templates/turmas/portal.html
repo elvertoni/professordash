@@ -52,6 +52,7 @@
     {% if aulas %}
       <div class="space-y-3">
         {% for aula in aulas %}
+          {% if aula.realizada %}
           <a href="{% url 'turmas:portal_aulas_detalhe' token=turma.token_publico aula_pk=aula.pk %}" class="flex items-center gap-3 rounded-[1.15rem] border border-outline-variant/10 bg-surface-container-low px-4 py-4 transition-all hover:-translate-y-0.5 hover:border-outline-variant/20 hover:bg-surface-container-high">
             <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-sm font-semibold text-primary">
               {{ aula.numero }}
@@ -66,6 +67,20 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
           </a>
+          {% else %}
+          <div class="flex items-center gap-3 rounded-[1.15rem] border border-dashed border-outline-variant/10 bg-surface-container-low/50 px-4 py-4 opacity-60">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-outline-variant/15 bg-surface-container text-sm font-semibold text-on-surface-variant/45">
+              {{ aula.numero }}
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-medium text-on-surface-variant/70">{{ aula.titulo }}</p>
+              {% if aula.data %}
+                <p class="mt-0.5 text-xs text-on-surface-variant/45">{{ aula.data|date:"d/m/Y" }}</p>
+              {% endif %}
+            </div>
+            <span class="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant/45 bg-surface-container border border-outline-variant/10 px-2 py-0.5 rounded-full">Em breve</span>
+          </div>
+          {% endif %}
         {% endfor %}
       </div>
     {% else %}
