@@ -10,6 +10,7 @@ class TipoMaterial(models.TextChoices):
     MARKDOWN = "markdown", "Conteúdo Markdown/HTML"
     LINK = "link", "Link Externo"
     ARQUIVO = "arquivo", "Outro Arquivo"
+    HTML = "html", "Apostila HTML Estática"
 
 
 class VisibilidadeMaterial(models.TextChoices):

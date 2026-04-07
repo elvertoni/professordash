@@ -3,7 +3,7 @@ import os
 
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView, View
@@ -224,3 +224,43 @@ class MaterialDownloadPublicoView(TurmaPublicaMixin, View):
             as_attachment=True,
             filename=os.path.basename(material.arquivo.name),
         )
+
+
+class MaterialHTMLAdminView(ProfessorRequiredMixin, MaterialMixin, View):
+    """Serve o HTML estático de uma apostila para o professor."""
+
+    def get(self, request, *args, **kwargs):
+        material = get_object_or_404(
+            Material.objects.select_related("turma", "aula"),
+            pk=self.kwargs["material_pk"],
+            turma=self.turma,
+        )
+        if not material.arquivo:
+            raise Http404("Material sem arquivo.")
+
+        conteudo = material.arquivo.read().decode("utf-8", errors="replace")
+        return HttpResponse(conteudo, content_type="text/html; charset=utf-8")
+
+
+class MaterialHTMLPublicaView(TurmaPublicaMixin, View):
+    """Serve o HTML estático de uma apostila respeitando visibilidade."""
+
+    def get(self, request, *args, **kwargs):
+        material = get_object_or_404(
+            Material.objects.select_related("turma", "aula"),
+            pk=self.kwargs["material_pk"],
+            turma=self.turma,
+        )
+        if not material.arquivo:
+            raise Http404("Material sem arquivo.")
+
+        if not _usuario_pode_acessar_material(request, self.turma, material):
+            if (
+                material.visibilidade == VisibilidadeMaterial.RESTRITO
+                and not request.user.is_authenticated
+            ):
+                return redirect("turmas:entrar", token=self.turma.token_publico)
+            raise PermissionDenied
+
+        conteudo = material.arquivo.read().decode("utf-8", errors="replace")
+        return HttpResponse(conteudo, content_type="text/html; charset=utf-8")

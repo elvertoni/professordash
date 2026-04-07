@@ -119,6 +119,11 @@ urlpatterns = [
         name="materiais_excluir",
     ),
     path(
+        "painel/turmas/<int:pk>/materiais/<int:material_pk>/html/",
+        materiais_views.MaterialHTMLAdminView.as_view(),
+        name="materiais_html_admin",
+    ),
+    path(
         "painel/turmas/<int:pk>/tarefas/",
         tarefas_views.TarefasGradeView.as_view(),
         name="tarefas_grade",
@@ -300,6 +305,11 @@ urlpatterns = [
         "turma/<uuid:token>/materiais/<int:material_pk>/download/",
         materiais_views.MaterialDownloadPublicoView.as_view(),
         name="portal_materiais_download",
+    ),
+    path(
+        "turma/<uuid:token>/materiais/<int:material_pk>/html/",
+        materiais_views.MaterialHTMLPublicaView.as_view(),
+        name="portal_materiais_html",
     ),
     path(
         "turma/<uuid:token>/tarefas/",
