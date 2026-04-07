@@ -19,8 +19,8 @@
             </h1>
             <p class="max-w-2xl text-base leading-7 text-on-surface-variant/80 sm:text-lg">
               {% if kpi_turmas %}
-                Voce tem <span class="text-on-surface font-medium">{{ kpi_turmas }} turma{{ kpi_turmas|pluralize }}</span> ativa{{ kpi_turmas|pluralize }}
-                {% if kpi_entregas_pendentes %} e <span class="text-on-surface font-medium">{{ kpi_entregas_pendentes }} entrega{{ kpi_entregas_pendentes|pluralize }}</span> aguardando avaliacao.{% else %}.{% endif %}
+                Você tem <span class="text-on-surface font-medium">{{ kpi_turmas }} turma{{ kpi_turmas|pluralize }}</span> ativa{{ kpi_turmas|pluralize }}
+                {% if kpi_entregas_pendentes %} e <span class="text-on-surface font-medium">{{ kpi_entregas_pendentes }} entrega{{ kpi_entregas_pendentes|pluralize }}</span> aguardando avaliação.{% else %}.{% endif %}
               {% else %}
                 Nenhuma turma ativa no momento. <a href="{% url 'turmas:nova' %}" class="font-medium text-primary hover:text-primary/80">Criar turma</a>.
               {% endif %}
@@ -60,7 +60,7 @@
         <div class="flex items-center justify-between gap-4 border-b border-outline-variant/10 px-6 py-4">
           <div>
             <h2 class="text-sm font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Turmas ativas</h2>
-            <p class="mt-1 text-sm text-on-surface-variant/60">Acesso rapido as salas mais recentes.</p>
+            <p class="mt-1 text-sm text-on-surface-variant/60">Acesso rápido às salas mais recentes.</p>
           </div>
           <a href="{% url 'turmas:lista' %}" class="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 px-3.5 py-2 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface">
             Ver todas
@@ -113,7 +113,7 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span class="text-sm">Carregando estatisticas...</span>
+            <span class="text-sm">Carregando estatísticas...</span>
           </div>
         </div>
       </section>
@@ -158,8 +158,8 @@
               </svg>
             </div>
             <div class="min-w-0 flex-1">
-              <h3 class="text-sm font-semibold text-error/90">Prazos nas proximas 48h</h3>
-              <p class="text-xs text-on-surface-variant/55">{{ alertas_prazo|length }} item{{ alertas_prazo|length|pluralize }} exigem atencao.</p>
+              <h3 class="text-sm font-semibold text-error/90">Prazos nas próximas 48h</h3>
+              <p class="text-xs text-on-surface-variant/55">{{ alertas_prazo|length }} item{{ alertas_prazo|length|pluralize }} exigem atenção.</p>
             </div>
           </div>
           <ul class="divide-y divide-outline-variant/10">
@@ -185,7 +185,7 @@
               </svg>
             </div>
             <div class="min-w-0 flex-1">
-              <h3 class="text-sm font-semibold text-on-surface">Aguardando avaliacao</h3>
+              <h3 class="text-sm font-semibold text-on-surface">Aguardando avaliação</h3>
               <p class="text-xs text-on-surface-variant/55">{{ alertas_avaliacao|length }} entrega{{ alertas_avaliacao|length|pluralize }} sem nota.</p>
             </div>
           </div>
@@ -253,7 +253,7 @@
       <div class="mb-4 flex items-center justify-between gap-3">
         <div>
           <h2 class="text-sm font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Alunos recentes</h2>
-          <p class="mt-1 text-sm text-on-surface-variant/60">Ultimos nomes adicionados a sua base.</p>
+          <p class="mt-1 text-sm text-on-surface-variant/60">Últimos nomes adicionados à sua base.</p>
         </div>
         <a href="{% url 'turmas:lista' %}" class="inline-flex items-center gap-1 text-sm font-medium text-on-surface-variant transition-colors hover:text-on-surface">
           Ver turmas

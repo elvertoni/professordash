@@ -2,99 +2,93 @@
 
 {% load markdownx %}
 
-{% block title %}{{ atividade.titulo }} | {{ block.super }}{% endblock %}
-
-{% block page_title %}{{ atividade.titulo }}{% endblock %}
-
-{% block page_actions %}
-<div class="flex flex-wrap items-center gap-2">
-  <a href="{% url 'turmas:atividades_editar' pk=turma.pk atividade_pk=atividade.pk %}"
-     class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-[13px] font-medium text-white/72 transition-colors hover:border-white/18 hover:bg-white/[0.07] hover:text-white">
-    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-    </svg>
-    <span class="hidden sm:inline">Editar</span>
-  </a>
-  <a href="{% url 'turmas:atividades_excluir' pk=turma.pk atividade_pk=atividade.pk %}"
-     class="inline-flex items-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-3.5 py-2 text-[13px] font-medium text-rose-200 transition-colors hover:bg-rose-500/20 hover:text-rose-100">
-    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-    </svg>
-    <span class="hidden sm:inline">Excluir</span>
-  </a>
-</div>
-{% endblock %}
+{% block title %}{{ atividade.titulo }} | Prof Toni Coimbra{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-  <nav class="flex items-center gap-2 text-sm text-white/35 overflow-x-auto whitespace-nowrap">
-    <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-white/70">Turmas</a>
-    <span class="" aria-hidden="true">/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}?tab=atividades" class="transition-colors hover:text-white/70">{{ turma.nome }}</a>
-    <span class="" aria-hidden="true">/</span>
-    <a href="{% url 'turmas:atividades_lista' pk=turma.pk %}" class="transition-colors hover:text-white/70">Atividades</a>
-    <span class="" aria-hidden="true">/</span>
-    <span class="min-w-0 truncate font-medium text-white/72">{{ atividade.titulo }}</span>
+<div class="space-y-6 max-w-5xl mx-auto">
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/55 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-on-surface shrink-0">Turmas</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}?tab=atividades" class="transition-colors hover:text-on-surface shrink-0">{{ turma.nome }}</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <a href="{% url 'turmas:atividades_lista' pk=turma.pk %}" class="transition-colors hover:text-on-surface shrink-0">Atividades</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <span class="min-w-0 truncate font-medium text-on-surface">{{ atividade.titulo }}</span>
   </nav>
 
-  <section class="rounded-3xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
+  <section class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-5 sm:p-6">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
       <div class="min-w-0">
         <div class="flex flex-wrap items-center gap-2">
-          <h1 class="min-w-0 text-2xl sm:text-3xl font-semibold tracking-tight text-white/90">{{ atividade.titulo }}</h1>
-          <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-medium
-                       {% if atividade.publicada %}border-emerald-500/20 bg-emerald-500/10 text-emerald-300{% else %}border-white/10 bg-white/[0.04] text-white/45{% endif %}">
+          <h1 class="min-w-0 text-2xl sm:text-3xl font-semibold tracking-tight text-on-background">{{ atividade.titulo }}</h1>
+          <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold
+                       {% if atividade.publicada %}border-primary/20 bg-primary/10 text-primary{% else %}border-outline-variant/10 bg-surface-container-high text-on-surface-variant/45{% endif %}">
             {% if atividade.publicada %}Publicada{% else %}Rascunho{% endif %}
           </span>
         </div>
-        <div class="mt-3 flex flex-wrap items-center gap-2 text-[12px] text-white/42">
-          <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-2.5 py-1">
+        <div class="mt-3 flex flex-wrap items-center gap-2 text-[12px] text-on-surface-variant/55">
+          <span class="inline-flex items-center gap-1.5 rounded-full border border-outline-variant/10 bg-surface-container-high/60 px-2.5 py-1">
             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
             Prazo: {{ atividade.prazo|date:"d/m/Y H:i" }}
           </span>
-          <span class="inline-flex items-center rounded-full border border-white/10 bg-black/20 px-2.5 py-1">{{ atividade.get_tipo_entrega_display }}</span>
-          <span class="inline-flex items-center rounded-full border border-white/10 bg-black/20 px-2.5 py-1">{{ atividade.valor_pontos }} pontos</span>
+          <span class="inline-flex items-center rounded-full border border-outline-variant/10 bg-surface-container-high/60 px-2.5 py-1">{{ atividade.get_tipo_entrega_display }}</span>
+          <span class="inline-flex items-center rounded-full border border-outline-variant/10 bg-surface-container-high/60 px-2.5 py-1">{{ atividade.valor_pontos }} pontos</span>
           {% if atividade.aula %}
-            <span class="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-emerald-300">Aula {{ atividade.aula.numero }}</span>
+            <span class="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-primary">Aula {{ atividade.aula.numero }}</span>
           {% endif %}
         </div>
       </div>
 
-      {% if atividade.tipo_entrega == 'arquivo' %}
-        <a href="{% url 'turmas:atividades_baixar_entregas' pk=turma.pk atividade_pk=atividade.pk %}"
-           class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-[13px] font-medium text-white/72 transition-colors hover:border-emerald-500/25 hover:bg-emerald-500/10 hover:text-emerald-300">
+      <div class="flex flex-wrap items-center gap-2 shrink-0">
+        {% if atividade.tipo_entrega == 'arquivo' %}
+          <a href="{% url 'turmas:atividades_baixar_entregas' pk=turma.pk atividade_pk=atividade.pk %}"
+             class="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container-high px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:border-primary/20 hover:bg-primary/10 hover:text-primary">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            Baixar todas
+          </a>
+        {% endif %}
+        <a href="{% url 'turmas:atividades_editar' pk=turma.pk atividade_pk=atividade.pk %}"
+           class="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container-high px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
           </svg>
-          Baixar todas
+          Editar
         </a>
-      {% endif %}
+        <a href="{% url 'turmas:atividades_excluir' pk=turma.pk atividade_pk=atividade.pk %}"
+           class="inline-flex items-center gap-2 rounded-full border border-error/20 bg-error/10 px-4 py-2.5 text-sm font-medium text-error transition-colors hover:bg-error/15">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+          Excluir
+        </a>
+      </div>
     </div>
 
     {% if atividade.descricao %}
-      <div class="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4 sm:p-5">
-        <div class="text-[13px] font-semibold uppercase tracking-[0.22em] text-white/38">Descrição</div>
-        <div class="mt-4 space-y-4 text-[15px] leading-7 text-white/72 [&_p]:mb-4 [&_ul]:ml-5 [&_ul]:list-disc [&_ol]:ml-5 [&_ol]:list-decimal [&_li]:mb-1 [&_blockquote]:border-l-2 [&_blockquote]:border-emerald-500/30 [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-emerald-300 [&_a]:underline [&_code]:rounded [&_code]:bg-white/5 [&_code]:px-1.5 [&_code]:py-0.5 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-white/10 [&_pre]:bg-black/40 [&_pre]:p-4">
+      <div class="mt-5 rounded-2xl border border-outline-variant/10 bg-surface-container-high/40 p-4 sm:p-5">
+        <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-on-surface-variant/50 mb-4">Descrição</div>
+        <div class="shell-prose max-w-none">
           {{ atividade.descricao|markdownify }}
         </div>
       </div>
     {% endif %}
   </section>
 
-  <section class="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04]">
-    <div class="flex flex-col gap-2 border-b border-white/10 bg-black/20 p-4 sm:flex-row sm:items-center sm:justify-between">
+  <section class="overflow-hidden rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low">
+    <div class="flex flex-col gap-2 border-b border-outline-variant/10 bg-surface-container-high/40 p-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 class="text-lg font-semibold tracking-tight text-white/90">Entregas dos alunos</h2>
-        <p class="mt-1 text-sm text-white/42">Tabela revisada para leitura em tema escuro, com estados mais claros e ações mais evidentes.</p>
-      </div>
-      <div class="text-[12px] text-white/42">
-        {% if atividade.tipo_entrega == 'arquivo' %}
-          As entregas de arquivo podem ser baixadas em lote.
-        {% else %}
-          As entregas podem ser links ou textos.
-        {% endif %}
+        <h2 class="text-base font-semibold tracking-tight text-on-surface">Entregas dos alunos</h2>
+        <p class="mt-1 text-sm text-on-surface-variant/55">
+          {% if atividade.tipo_entrega == 'arquivo' %}
+            As entregas de arquivo podem ser baixadas em lote.
+          {% else %}
+            As entregas podem ser links ou textos.
+          {% endif %}
+        </p>
       </div>
     </div>
 

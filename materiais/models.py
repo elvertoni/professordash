@@ -2,6 +2,7 @@ from django.db import models
 from markdownx.models import MarkdownxField
 
 from core.models import BaseModel
+from core.templatetags.markdownx import markdownify
 
 
 class TipoMaterial(models.TextChoices):
@@ -51,3 +52,9 @@ class Material(BaseModel):
 
     def __str__(self) -> str:
         return self.titulo
+
+    def get_conteudo_html(self):
+        """Renderiza o conteúdo Markdown em HTML seguro para os templates."""
+        if self.tipo != TipoMaterial.MARKDOWN or not self.conteudo_md:
+            return ""
+        return markdownify(self.conteudo_md)

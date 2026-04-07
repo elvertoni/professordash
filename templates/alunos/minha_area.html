@@ -1,12 +1,12 @@
 {% extends "base_publico.html" %}
 
-{% block title %}Minha Area - {{ turma.nome }}{% endblock %}
+{% block title %}Minha Área - {{ turma.nome }}{% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
   <div class="mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
     <div>
-      <h1 class="text-3xl font-bold text-on-surface">Minha area</h1>
+      <h1 class="text-3xl font-bold text-on-surface">Minha Área</h1>
       <p class="mt-2 text-sm text-on-surface-variant/60">Acompanhe suas atividades na turma <strong class="text-on-surface">{{ turma.nome }}</strong></p>
     </div>
     <div class="hidden sm:block text-right">
@@ -62,7 +62,7 @@
                       <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-error/10 text-error border border-error/20">Entregue com atraso</span>
                     {% endif %}
                   {% else %}
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/[0.04] text-on-surface-variant/60 border border-outline-variant/10">Nao entregue</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/[0.04] text-on-surface-variant/60 border border-outline-variant/10">Não entregue</span>
                   {% endif %}
                 </h3>
                 <div class="mt-2 flex flex-wrap items-center gap-4 text-sm text-on-surface-variant/55">

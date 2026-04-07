@@ -27,7 +27,7 @@
         <form method="post"
               action="{% url 'turmas:tarefas_excluir' turma.pk tarefa.obj.pk %}"
               hx-post="{% url 'turmas:tarefas_excluir' turma.pk tarefa.obj.pk %}"
-              hx-confirm="Excluir a tarefa &quot;{{ tarefa.obj.nome }}&quot;? Essa acao nao pode ser desfeita."
+              hx-confirm="Excluir a tarefa &quot;{{ tarefa.obj.nome }}&quot;? Essa ação não pode ser desfeita."
               hx-swap="none">
           {% csrf_token %}
           <button type="submit"

@@ -34,7 +34,7 @@
   <nav class="flex-1 px-2 py-3 overflow-y-auto space-y-2">
     <div class="px-3 pb-1 pt-1 text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant/45"
          x-show="!$store.sidebar.collapsed" x-cloak>
-      Navegacao
+      Navegação
     </div>
 
     <a href="{% url 'core:dashboard' %}"
@@ -157,7 +157,7 @@
 
     <a href="{% url 'admin:index' %}"
        class="sidebar-link group flex items-center gap-3 px-2.5 py-2 text-[13px] font-medium border border-transparent text-on-surface-variant/65 hover:bg-white/[0.04] hover:text-on-surface"
-       title="Administracao Django">
+       title="Administração Django">
       <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.04] text-on-surface-variant/55 group-hover:text-on-surface shrink-0">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -165,7 +165,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
         </svg>
       </span>
-      <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">Configuracoes</span>
+      <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">Configurações</span>
     </a>
   </div>
 </aside>

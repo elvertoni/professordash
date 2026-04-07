@@ -10,57 +10,53 @@
 {% block content %}
 <div class="max-w-3xl mx-auto">
 
-  <!-- Breadcrumb -->
-  <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-emerald-400">Turmas</a>
-    <span aria-hidden="true">/</span>
-    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-emerald-400">{{ turma.nome }}</a>
-    <span aria-hidden="true">/</span>
-    <a href="{% url 'turmas:materiais_lista' pk=turma.pk %}" class="hover:text-emerald-400">Materiais</a>
-    <span aria-hidden="true">/</span>
-    <span class="text-zinc-100 font-medium">
-      {% if object.pk %}Editar{% else %}Novo{% endif %}
-    </span>
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/55 mb-6 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-on-surface shrink-0">Turmas</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="transition-colors hover:text-on-surface shrink-0">{{ turma.nome }}</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <a href="{% url 'turmas:materiais_lista' pk=turma.pk %}" class="transition-colors hover:text-on-surface shrink-0">Materiais</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <span class="font-medium text-on-surface">{% if object.pk %}Editar{% else %}Novo{% endif %}</span>
   </nav>
 
-  <div class="bg-zinc-800 rounded-xl border border-zinc-700 shadow-sm" x-data="{ tipo: '{{ form.tipo.value|default:form.tipo.initial|default:'pdf' }}' }">
-    <div class="px-6 py-5 border-b border-zinc-700">
-      <h1 class="text-xl font-bold text-zinc-100">
+  <div class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low overflow-hidden" x-data="{ tipo: '{{ form.tipo.value|default:form.tipo.initial|default:'pdf' }}' }">
+    <div class="px-6 py-5 border-b border-outline-variant/10 bg-surface-container-high/40">
+      <h1 class="text-xl font-semibold text-on-surface">
         {% if object.pk %}Editar material{% else %}Novo material{% endif %}
       </h1>
-      <p class="text-sm text-zinc-400 mt-0.5">{{ turma.nome }}</p>
+      <p class="text-sm text-on-surface-variant/60 mt-0.5">{{ turma.nome }}</p>
     </div>
 
-    <!-- Importante: enctype para upload de arquivos -->
     <form method="post" enctype="multipart/form-data" class="p-6 space-y-5">
       {% csrf_token %}
 
       <!-- Título -->
       <div>
-        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.titulo.id_for_label }}">
-          Título <span class="text-red-500">*</span>
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.titulo.id_for_label }}">
+          Título <span class="text-error">*</span>
         </label>
         {{ form.titulo }}
         {% if form.titulo.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ form.titulo.errors|join:", " }}</p>
+          <p class="text-error text-xs mt-1">{{ form.titulo.errors|join:", " }}</p>
         {% endif %}
       </div>
 
       <!-- Aula -->
       <div>
-        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.aula.id_for_label }}">
-          Aula Associada (opcional)
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.aula.id_for_label }}">
+          Aula associada <span class="text-on-surface-variant/40">(opcional)</span>
         </label>
         {{ form.aula }}
         {% if form.aula.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ form.aula.errors|join:", " }}</p>
+          <p class="text-error text-xs mt-1">{{ form.aula.errors|join:", " }}</p>
         {% endif %}
       </div>
 
-      <!-- Tipo (Alpine binding and visibility controller) -->
+      <!-- Tipo -->
       <div>
-        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.tipo.id_for_label }}">
-          Tipo de Material <span class="text-red-500">*</span>
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.tipo.id_for_label }}">
+          Tipo de material <span class="text-error">*</span>
         </label>
         <select name="{{ form.tipo.html_name }}"
                 id="{{ form.tipo.id_for_label }}"
@@ -71,59 +67,59 @@
           {% endfor %}
         </select>
         {% if form.tipo.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ form.tipo.errors|join:", " }}</p>
+          <p class="text-error text-xs mt-1">{{ form.tipo.errors|join:", " }}</p>
         {% endif %}
       </div>
 
-      <!-- Arquivo (conditional) -->
+      <!-- Arquivo (condicional) -->
       <div x-show="['pdf', 'zip', 'arquivo', 'html'].includes(tipo)" x-cloak>
-        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.arquivo.id_for_label }}">
-          Arquivo <span class="text-red-500">*</span>
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.arquivo.id_for_label }}">
+          Arquivo <span class="text-error">*</span>
         </label>
         {{ form.arquivo }}
         {% if form.arquivo.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ form.arquivo.errors|join:", " }}</p>
+          <p class="text-error text-xs mt-1">{{ form.arquivo.errors|join:", " }}</p>
         {% endif %}
-        <p class="text-zinc-500 text-xs mt-1">Formatos aceitos: PDF, ZIP, PowerPoint, TXT, código.</p>
+        <p class="text-on-surface-variant/45 text-xs mt-1">Formatos aceitos: PDF, ZIP, PowerPoint, TXT, código.</p>
       </div>
 
-      <!-- URL Externa (conditional) -->
+      <!-- URL externa (condicional) -->
       <div x-show="tipo === 'link'" x-cloak>
-        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.url_externa.id_for_label }}">
-          Link (URL) <span class="text-red-500">*</span>
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.url_externa.id_for_label }}">
+          Link (URL) <span class="text-error">*</span>
         </label>
         {{ form.url_externa }}
         {% if form.url_externa.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ form.url_externa.errors|join:", " }}</p>
+          <p class="text-error text-xs mt-1">{{ form.url_externa.errors|join:", " }}</p>
         {% endif %}
       </div>
 
-      <!-- Conteúdo MD (conditional) -->
+      <!-- Conteúdo Markdown (condicional) -->
       <div x-show="tipo === 'markdown'" x-cloak>
-        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.conteudo_md.id_for_label }}">
-          Conteúdo Markdown <span class="text-red-500">*</span>
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.conteudo_md.id_for_label }}">
+          Conteúdo Markdown <span class="text-error">*</span>
         </label>
         {{ form.conteudo_md }}
         {% if form.conteudo_md.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ form.conteudo_md.errors|join:", " }}</p>
+          <p class="text-error text-xs mt-1">{{ form.conteudo_md.errors|join:", " }}</p>
         {% endif %}
       </div>
 
-      <!-- Descrição (opcional) -->
+      <!-- Descrição -->
       <div>
-        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.descricao.id_for_label }}">
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.descricao.id_for_label }}">
           Descrição / Instruções
         </label>
         {{ form.descricao }}
         {% if form.descricao.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ form.descricao.errors|join:", " }}</p>
+          <p class="text-error text-xs mt-1">{{ form.descricao.errors|join:", " }}</p>
         {% endif %}
       </div>
 
-      <!-- Grids para Visibilidade e Ordem -->
+      <!-- Visibilidade e Ordem -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.visibilidade.id_for_label }}">
+          <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.visibilidade.id_for_label }}">
             Visibilidade
           </label>
           <select name="{{ form.visibilidade.html_name }}"
@@ -134,16 +130,16 @@
             {% endfor %}
           </select>
           {% if form.visibilidade.errors %}
-            <p class="text-red-500 text-xs mt-1">{{ form.visibilidade.errors|join:", " }}</p>
+            <p class="text-error text-xs mt-1">{{ form.visibilidade.errors|join:", " }}</p>
           {% endif %}
         </div>
         <div>
-          <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.ordem.id_for_label }}">
+          <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.ordem.id_for_label }}">
             Ordem de exibição
           </label>
           {{ form.ordem }}
           {% if form.ordem.errors %}
-            <p class="text-red-500 text-xs mt-1">{{ form.ordem.errors|join:", " }}</p>
+            <p class="text-error text-xs mt-1">{{ form.ordem.errors|join:", " }}</p>
           {% endif %}
         </div>
       </div>
@@ -152,19 +148,19 @@
 
       <!-- Erros gerais -->
       {% if form.non_field_errors %}
-        <div class="rounded-lg bg-red-900/30 border border-red-700 p-3">
-          <p class="text-red-400 text-sm">{{ form.non_field_errors|join:", " }}</p>
+        <div class="rounded-2xl border border-error/20 bg-error/10 p-4">
+          <p class="text-error text-sm">{{ form.non_field_errors|join:", " }}</p>
         </div>
       {% endif %}
 
       <!-- Ações -->
-      <div class="flex items-center gap-3 pt-2">
+      <div class="flex items-center gap-3 pt-2 border-t border-outline-variant/10">
         <button type="submit"
-                class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors">
+                class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
           {% if object.pk %}Salvar alterações{% else %}Criar material{% endif %}
         </button>
         <a href="{% url 'turmas:materiais_lista' pk=turma.pk %}"
-           class="text-sm text-zinc-400 hover:text-zinc-200 px-4 py-2.5 rounded-lg hover:bg-zinc-700 transition-colors">
+           class="inline-flex items-center px-4 py-2.5 rounded-full border border-outline-variant/15 bg-surface-container-high text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
           Cancelar
         </a>
       </div>

@@ -1,0 +1,11 @@
+{% if email %}
+  {% if existing_aluno %}
+    <div class="rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+      Este e-mail ja pertence a <strong>{{ existing_aluno.nome }}</strong>. O cadastro existente sera reutilizado.
+    </div>
+  {% else %}
+    <div class="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-200">
+      E-mail disponivel para criar um novo aluno.
+    </div>
+  {% endif %}
+{% endif %}

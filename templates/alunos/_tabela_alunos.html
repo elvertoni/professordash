@@ -1,49 +1,49 @@
 {# Fragment HTMX: tabela completa + paginação, para troca segura no container. #}
-<div x-data class="bg-zinc-900 rounded-xl border border-zinc-700 overflow-hidden shadow-sm">
+<div x-data class="overflow-hidden rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low">
   <div class="overflow-x-auto">
     <table class="w-full text-sm text-left">
-      <thead class="bg-zinc-950 text-zinc-400 text-xs uppercase tracking-wide border-b border-zinc-700">
+      <thead class="border-b border-outline-variant/10 bg-surface-container-high/40 text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">
         <tr>
-          <th class="px-6 py-4 font-medium">Aluno</th>
-          <th class="px-6 py-4 font-medium">E-mail</th>
-          <th class="px-6 py-4 font-medium hidden sm:table-cell">Matrícula</th>
-          <th class="px-6 py-4 font-medium text-center">Status</th>
-          <th class="px-6 py-4 font-medium text-right">Ações</th>
+          <th class="px-5 py-4 font-semibold">Aluno</th>
+          <th class="px-5 py-4 font-semibold">E-mail</th>
+          <th class="px-5 py-4 font-semibold hidden sm:table-cell">Matrícula</th>
+          <th class="px-5 py-4 font-semibold text-center">Status</th>
+          <th class="px-5 py-4 font-semibold text-right">Ações</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-zinc-800" id="tabela-alunos-body">
+      <tbody class="divide-y divide-outline-variant/10" id="tabela-alunos-body">
         {% if matriculas %}
           {% for matricula in matriculas %}
-            <tr class="hover:bg-zinc-800/70 transition-colors">
-              <td class="px-6 py-4">
+            <tr class="transition-colors hover:bg-surface-container-high/50">
+              <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   {% if matricula.aluno.avatar %}
                     <img src="{{ matricula.aluno.avatar.url }}" alt="{{ matricula.aluno.nome }}"
-                         class="w-9 h-9 rounded-full object-cover ring-1 ring-zinc-700">
+                         class="w-9 h-9 rounded-full object-cover border border-outline-variant/15">
                   {% else %}
-                    <div class="w-9 h-9 rounded-full bg-emerald-950 border border-emerald-900/80 flex items-center justify-center text-emerald-300 font-bold text-xs uppercase">
+                    <div class="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs uppercase">
                       {{ matricula.aluno.nome|slice:":2" }}
                     </div>
                   {% endif %}
                   <a href="{% url 'turmas:alunos_detalhe' pk=turma.pk aluno_pk=matricula.aluno.pk %}"
-                     class="font-medium text-zinc-100 hover:text-emerald-400 transition-colors">
+                     class="font-medium text-on-surface hover:text-primary transition-colors">
                     {{ matricula.aluno.nome }}
                   </a>
                 </div>
               </td>
-              <td class="px-6 py-4 text-zinc-400">{{ matricula.aluno.email }}</td>
-              <td class="px-6 py-4 text-zinc-400 hidden sm:table-cell">{{ matricula.aluno.matricula|default:"-" }}</td>
-              <td class="px-6 py-4 text-center">
+              <td class="px-5 py-4 text-on-surface-variant/60">{{ matricula.aluno.email }}</td>
+              <td class="px-5 py-4 text-on-surface-variant/60 hidden sm:table-cell">{{ matricula.aluno.matricula|default:"-" }}</td>
+              <td class="px-5 py-4 text-center">
                 {% if matricula.ativa and matricula.aluno.ativo %}
-                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Ativo</span>
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20">Ativo</span>
                 {% else %}
-                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-300 border border-rose-500/20">Inativo</span>
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-error/10 text-error border border-error/20">Inativo</span>
                 {% endif %}
               </td>
-              <td class="px-6 py-4 text-right">
+              <td class="px-5 py-4 text-right">
                 <div class="flex items-center justify-end gap-2">
                   <a href="{% url 'turmas:alunos_editar' pk=turma.pk aluno_pk=matricula.aluno.pk %}"
-                     class="inline-flex items-center justify-center p-2 text-zinc-400 hover:text-emerald-300 hover:bg-emerald-500/10 rounded-lg border border-transparent hover:border-emerald-500/20 transition-colors"
+                     class="inline-flex items-center justify-center p-2 rounded-full border border-outline-variant/10 bg-surface-container-high text-on-surface-variant/50 hover:border-outline-variant/20 hover:bg-surface-container-highest hover:text-on-surface transition-colors"
                      title="Editar aluno">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -63,7 +63,7 @@
                             confirmLabel: 'Remover',
                             formId: 'form-remover-matricula-{{ matricula.pk }}'
                           })"
-                          class="inline-flex items-center justify-center p-2 text-zinc-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg border border-transparent hover:border-rose-500/20 transition-colors"
+                          class="inline-flex items-center justify-center p-2 rounded-full border border-outline-variant/10 bg-surface-container-high text-on-surface-variant/50 hover:border-error/20 hover:bg-error/10 hover:text-error transition-colors"
                           title="Remover aluno da turma">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -77,9 +77,9 @@
         {% else %}
           <tr>
             <td colspan="5" class="px-6 py-12 text-center">
-              <p class="text-sm font-medium text-zinc-300">Nenhum aluno encontrado.</p>
+              <p class="text-sm font-medium text-on-surface">Nenhum aluno encontrado.</p>
               {% if q %}
-                <p class="text-xs text-zinc-500 mt-1">Sem resultados para "<strong class="text-zinc-300">{{ q }}</strong>".</p>
+                <p class="text-xs text-on-surface-variant/55 mt-1">Sem resultados para "<strong class="text-on-surface">{{ q }}</strong>".</p>
               {% endif %}
             </td>
           </tr>
@@ -89,8 +89,8 @@
   </div>
 
   {% if matriculas and matriculas.has_other_pages %}
-    <div class="px-6 py-4 border-t border-zinc-700 bg-zinc-950/60 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <p class="text-xs text-zinc-400">
+    <div class="px-5 py-4 border-t border-outline-variant/10 bg-surface-container-high/30 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-xs text-on-surface-variant/55">
         Mostrando {{ matriculas.start_index }}–{{ matriculas.end_index }} de {{ matriculas.paginator.count }} alunos
       </p>
       <div class="flex items-center gap-1.5">
@@ -99,11 +99,11 @@
              hx-get="{% url 'turmas:alunos_busca_htmx' pk=turma.pk %}?q={{ q }}&page={{ matriculas.previous_page_number }}"
              hx-target="#tabela-alunos-container"
              hx-swap="innerHTML"
-             class="px-3 py-1.5 text-xs font-medium text-zinc-300 border border-zinc-700 rounded-lg hover:bg-zinc-800 transition-colors">
+             class="px-3 py-1.5 text-xs font-medium text-on-surface-variant border border-outline-variant/15 rounded-full bg-surface-container-high hover:bg-surface-container-highest transition-colors">
             &larr; Anterior
           </a>
         {% endif %}
-        <span class="px-3 py-1.5 text-xs text-zinc-400">
+        <span class="px-3 py-1.5 text-xs text-on-surface-variant/55">
           Pág. {{ matriculas.number }}/{{ matriculas.paginator.num_pages }}
         </span>
         {% if matriculas.has_next %}
@@ -111,7 +111,7 @@
              hx-get="{% url 'turmas:alunos_busca_htmx' pk=turma.pk %}?q={{ q }}&page={{ matriculas.next_page_number }}"
              hx-target="#tabela-alunos-container"
              hx-swap="innerHTML"
-             class="px-3 py-1.5 text-xs font-medium text-zinc-300 border border-zinc-700 rounded-lg hover:bg-zinc-800 transition-colors">
+             class="px-3 py-1.5 text-xs font-medium text-on-surface-variant border border-outline-variant/15 rounded-full bg-surface-container-high hover:bg-surface-container-highest transition-colors">
             Próxima &rarr;
           </a>
         {% endif %}

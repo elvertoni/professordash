@@ -37,7 +37,7 @@
         {% if request.user.is_authenticated %}
           <a href="{% url 'turmas:portal_minha_area' token=turma.token_publico %}"
              class="rounded-full border px-3 py-2 text-sm font-medium transition-colors {% if current_url_name == 'portal_minha_area' %}border-primary bg-primary/10 text-primary{% else %}border-transparent text-on-surface-variant/60 hover:bg-surface-container-high hover:text-on-surface{% endif %}">
-            Minha Area
+            Minha Área
           </a>
           <a href="{% url 'turmas:portal_minhas_notas' token=turma.token_publico %}"
              class="rounded-full border px-3 py-2 text-sm font-medium transition-colors {% if current_url_name == 'portal_minhas_notas' %}border-primary bg-primary/10 text-primary{% else %}border-transparent text-on-surface-variant/60 hover:bg-surface-container-high hover:text-on-surface{% endif %}">
@@ -60,7 +60,7 @@
         {% else %}
           <div class="hidden lg:block text-right">
             <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/45">Acesso opcional</p>
-            <p class="mt-1 text-xs text-on-surface-variant/60">Use Google apenas para Minha Area, Notas e entregas.</p>
+            <p class="mt-1 text-xs text-on-surface-variant/60">Use Google apenas para Minha Área, Notas e entregas.</p>
           </div>
           <a href="{% url 'turmas:entrar' token=turma.token_publico %}?oauth=1{% if request.GET.next %}&next={{ request.GET.next|urlencode }}{% endif %}"
              class="btn btn-secondary px-4 py-2.5 text-[13px]">

@@ -50,7 +50,7 @@
   <section class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-4 sm:p-5" x-data="{ copiado: false }">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       <div class="min-w-0">
-        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Link publico da turma</p>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Link público da turma</p>
         <code id="link-publico" class="mt-2 block break-all rounded-2xl border border-outline-variant/15 bg-surface-container-high px-4 py-3 text-sm text-on-surface">{{ request.scheme }}://{{ request.get_host }}{{ turma.link_publico }}</code>
       </div>
       <button @click="navigator.clipboard.writeText(document.getElementById('link-publico').textContent); copiado = true; setTimeout(() => copiado = false, 2000)" class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
@@ -67,7 +67,7 @@
     </div>
     <div class="rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-low p-4">
       <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Alunos</p>
-      <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ matriculas.count }}</p>
+      <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ total_alunos_ativos }}</p>
     </div>
     <div class="rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-low p-4">
       <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Materiais</p>
@@ -86,7 +86,7 @@
   <section class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-4">
     <nav class="flex gap-2 overflow-x-auto whitespace-nowrap">
       <button @click="tab = 'aulas'; history.replaceState(null, '', '?tab=aulas')" :class="tab === 'aulas' ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-on-surface-variant/60 hover:bg-surface-container-high hover:text-on-surface'" class="rounded-full border px-4 py-2 text-sm font-medium transition-colors">Aulas</button>
-      <button @click="tab = 'alunos'; history.replaceState(null, '', '?tab=alunos')" :class="tab === 'alunos' ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-on-surface-variant/60 hover:bg-surface-container-high hover:text-on-surface'" class="rounded-full border px-4 py-2 text-sm font-medium transition-colors">Alunos ({{ matriculas.count }})</button>
+      <button @click="tab = 'alunos'; history.replaceState(null, '', '?tab=alunos')" :class="tab === 'alunos' ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-on-surface-variant/60 hover:bg-surface-container-high hover:text-on-surface'" class="rounded-full border px-4 py-2 text-sm font-medium transition-colors">Alunos ({{ total_alunos_ativos }})</button>
       <button @click="tab = 'materiais'; history.replaceState(null, '', '?tab=materiais')" :class="tab === 'materiais' ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-on-surface-variant/60 hover:bg-surface-container-high hover:text-on-surface'" class="rounded-full border px-4 py-2 text-sm font-medium transition-colors">Materiais</button>
       <button @click="tab = 'tarefas'; history.replaceState(null, '', '?tab=tarefas')" :class="tab === 'tarefas' ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-on-surface-variant/60 hover:bg-surface-container-high hover:text-on-surface'" class="rounded-full border px-4 py-2 text-sm font-medium transition-colors">Tarefas</button>
       <button @click="tab = 'atividades'; history.replaceState(null, '', '?tab=atividades')" :class="tab === 'atividades' ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-on-surface-variant/60 hover:bg-surface-container-high hover:text-on-surface'" class="rounded-full border px-4 py-2 text-sm font-medium transition-colors">Atividades</button>
@@ -97,7 +97,7 @@
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h2 class="text-base font-semibold text-on-surface">Aulas</h2>
-        <p class="mt-1 text-sm text-on-surface-variant/60">Sequencia da turma e atalho para apresentacao.</p>
+        <p class="mt-1 text-sm text-on-surface-variant/60">Sequência da turma e atalho para apresentação.</p>
       </div>
       <a href="{% url 'turmas:aulas_nova' pk=turma.pk %}" class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,7 +198,7 @@
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h2 class="text-base font-semibold text-on-surface">Materiais da turma</h2>
-        <p class="mt-1 text-sm text-on-surface-variant/60">Arquivos, links e conteudos compartilhados.</p>
+        <p class="mt-1 text-sm text-on-surface-variant/60">Arquivos, links e conteúdos compartilhados.</p>
       </div>
       <a href="{% url 'turmas:materiais_novo' pk=turma.pk %}" class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
         Novo material
@@ -226,7 +226,7 @@
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h2 class="text-base font-semibold text-on-surface">Checklist de tarefas</h2>
-        <p class="mt-1 text-sm text-on-surface-variant/60">Controle rapido por aluno, no formato de grade para marcar o que cada um ja concluiu.</p>
+        <p class="mt-1 text-sm text-on-surface-variant/60">Controle rápido por aluno, no formato de grade para marcar o que cada um já concluiu.</p>
       </div>
       <a href="{% url 'turmas:tarefas_grade' pk=turma.pk %}" class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
         Abrir grade
@@ -267,8 +267,8 @@
   <section x-show="tab === 'atividades'" x-cloak class="space-y-4">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 class="text-base font-semibold text-on-surface">Atividades e avaliacoes</h2>
-        <p class="mt-1 text-sm text-on-surface-variant/60">Fluxo de entrega, correcao e boletim.</p>
+        <h2 class="text-base font-semibold text-on-surface">Atividades e avaliações</h2>
+        <p class="mt-1 text-sm text-on-surface-variant/60">Fluxo de entrega, correção e boletim.</p>
       </div>
       <div class="flex flex-wrap items-center gap-2">
         <a href="{% url 'turmas:boletim_turma' pk=turma.pk %}" class="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container-high px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">

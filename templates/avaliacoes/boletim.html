@@ -3,32 +3,47 @@
 {% block title %}Boletim - {{ turma.nome }} | Prof Toni Coimbra{% endblock %}
 
 {% block content %}
-<div class="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-  <div>
-    <div class="flex items-center gap-2 mb-2">
-      <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-1 text-sm">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-        Voltar para Turma
-      </a>
-    </div>
-    <h1 class="text-xl sm:text-2xl font-bold text-zinc-100">Boletim: {{ turma.nome }}</h1>
-    <p class="text-zinc-400 mt-1 text-sm">Visão geral das notas de todas as atividades publicadas.</p>
-  </div>
-  <div class="flex gap-2 shrink-0">
-    <a href="{% url 'turmas:boletim_exportar_pdf' turma.pk %}" class="btn-secondary py-2 px-4 flex items-center gap-2 text-rose-300 border-rose-500/20 bg-rose-500/10 hover:bg-rose-500/20 hover:text-rose-200">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-      <span class="hidden sm:inline">Gerar PDF</span>
-      <span class="sm:hidden">PDF</span>
-    </a>
-    <a href="{% url 'turmas:boletim_exportar_csv' turma.pk %}" class="btn-secondary py-2 px-4 flex items-center gap-2">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-      <span class="hidden sm:inline">Exportar CSV</span>
-      <span class="sm:hidden">CSV</span>
-    </a>
-  </div>
-</div>
+<div class="max-w-7xl mx-auto space-y-6">
 
-<div class="bg-zinc-900 rounded-lg shadow-sm border border-zinc-700 overflow-hidden">
-  {% include "avaliacoes/_boletim_grid.html" %}
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/55 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-on-surface shrink-0">Turmas</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}?tab=atividades" class="transition-colors hover:text-on-surface shrink-0">{{ turma.nome }}</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <span class="font-medium text-on-surface">Boletim</span>
+  </nav>
+
+  <section class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-5 sm:p-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Avaliação e notas</p>
+        <h1 class="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-on-background">Boletim: {{ turma.nome }}</h1>
+        <p class="mt-2 text-sm text-on-surface-variant/60">Visão geral das notas de todas as atividades publicadas.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 shrink-0">
+        <a href="{% url 'turmas:boletim_exportar_pdf' turma.pk %}"
+           class="inline-flex items-center gap-2 rounded-full border border-error/20 bg-error/10 px-4 py-2.5 text-sm font-medium text-error transition-colors hover:bg-error/15">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span class="hidden sm:inline">Gerar PDF</span>
+          <span class="sm:hidden">PDF</span>
+        </a>
+        <a href="{% url 'turmas:boletim_exportar_csv' turma.pk %}"
+           class="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container-high px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          <span class="hidden sm:inline">Exportar CSV</span>
+          <span class="sm:hidden">CSV</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="overflow-hidden rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low">
+    {% include "avaliacoes/_boletim_grid.html" %}
+  </div>
+
 </div>
 {% endblock %}

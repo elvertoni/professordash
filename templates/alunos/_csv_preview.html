@@ -1,0 +1,68 @@
+{% if preview_error %}
+  <div class="rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">
+    {{ preview_error }}
+  </div>
+{% elif preview %}
+  <div class="space-y-4 rounded-2xl border border-zinc-700 bg-zinc-900/70 p-4">
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div class="rounded-xl border border-zinc-700 bg-zinc-950/60 px-3 py-2">
+        <p class="text-[11px] uppercase tracking-wide text-zinc-500">Linhas lidas</p>
+        <p class="mt-1 text-lg font-semibold text-zinc-100">{{ preview.total_linhas_lidas }}</p>
+      </div>
+      <div class="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2">
+        <p class="text-[11px] uppercase tracking-wide text-emerald-300/80">Novos</p>
+        <p class="mt-1 text-lg font-semibold text-emerald-100">{{ preview.criar }}</p>
+      </div>
+      <div class="rounded-xl border border-sky-500/20 bg-sky-500/10 px-3 py-2">
+        <p class="text-[11px] uppercase tracking-wide text-sky-300/80">Reutilizar</p>
+        <p class="mt-1 text-lg font-semibold text-sky-100">{{ preview.reutilizar }}</p>
+      </div>
+      <div class="rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2">
+        <p class="text-[11px] uppercase tracking-wide text-amber-300/80">Ja matriculados</p>
+        <p class="mt-1 text-lg font-semibold text-amber-100">{{ preview.ja_matriculado }}</p>
+      </div>
+    </div>
+
+    {% if preview.rows %}
+      <div class="overflow-hidden rounded-xl border border-zinc-700">
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-zinc-950 text-left text-[11px] uppercase tracking-wide text-zinc-500">
+              <tr>
+                <th class="px-3 py-2">Linha</th>
+                <th class="px-3 py-2">Nome</th>
+                <th class="px-3 py-2">E-mail</th>
+                <th class="px-3 py-2">Acao</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-800 bg-zinc-900/70 text-zinc-200">
+              {% for row in preview.rows %}
+                <tr>
+                  <td class="px-3 py-2 text-zinc-400">{{ row.linha }}</td>
+                  <td class="px-3 py-2 font-medium">{{ row.nome|default:"-" }}</td>
+                  <td class="px-3 py-2 text-zinc-400">{{ row.email|default:"-" }}</td>
+                  <td class="px-3 py-2">
+                    <span class="inline-flex rounded-full px-2.5 py-1 text-[11px] font-medium
+                                 {% if row.status == 'erro' %}border border-red-500/20 bg-red-500/10 text-red-200
+                                 {% elif row.status == 'novo' %}border border-emerald-500/20 bg-emerald-500/10 text-emerald-200
+                                 {% elif row.status == 'existente' %}border border-sky-500/20 bg-sky-500/10 text-sky-200
+                                 {% else %}border border-amber-500/20 bg-amber-500/10 text-amber-200{% endif %}">
+                      {{ row.acao }}
+                    </span>
+                    <p class="mt-1 text-xs text-zinc-500">{{ row.detalhe }}</p>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if preview.has_more_rows %}
+      <p class="text-xs text-zinc-500">
+        A pre-visualizacao mostra apenas as primeiras {{ preview.rows|length }} linhas.
+      </p>
+    {% endif %}
+  </div>
+{% endif %}

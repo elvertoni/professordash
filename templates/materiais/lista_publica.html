@@ -4,47 +4,35 @@
 
 {% block content %}
 <div class="space-y-6">
-  <nav class="flex items-center gap-2 text-sm text-white/35 overflow-x-auto whitespace-nowrap">
-    <a href="{% url 'turmas:portal' token=turma.token_publico %}" class="transition-colors hover:text-white/70">{{ turma.nome }}</a>
-    <span class="" aria-hidden="true">/</span>
-    <span class="font-medium text-white/72">Materiais</span>
-  </nav>
 
-  <section class="rounded-3xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
-    <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white/90">{{ turma.nome }}</h1>
-    <p class="mt-2 text-sm leading-6 text-white/50">Materiais e recursos da turma.</p>
-  </section>
-
-  <div class="flex gap-2 border-b border-white/10">
-    <a href="{% url 'turmas:portal' token=turma.token_publico %}"
-       class="border-b-2 border-transparent px-1 py-3 text-sm font-medium text-white/45 transition-colors hover:text-white/72">
-      Aulas
-    </a>
-    <a href="{% url 'turmas:portal_materiais_lista' token=turma.token_publico %}"
-       class="border-b-2 border-emerald-400 px-1 py-3 text-sm font-semibold text-emerald-300">
-      Materiais
-    </a>
+  <div>
+    <h2 class="text-lg font-bold text-on-surface">Materiais da turma</h2>
+    <p class="mt-1 text-sm text-on-surface-variant/60">Arquivos, links e recursos disponíveis para esta turma.</p>
   </div>
 
   {% if materiais %}
-    <div class="space-y-4">
+    <div class="space-y-3">
       {% for material in materiais %}
-        <article class="group flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition-all duration-200 hover:border-white/18 hover:bg-white/[0.065] lg:flex-row lg:items-start">
-          <div class="shrink-0 rounded-2xl border border-white/10 bg-black/20 p-3">
+        <article class="group flex flex-col gap-4 rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-4 transition-all duration-200 hover:border-outline-variant/20 hover:bg-surface-container-high/70 lg:flex-row lg:items-start">
+          <div class="shrink-0 rounded-2xl border border-outline-variant/10 bg-surface-container-high p-3">
             {% if material.tipo == 'pdf' %}
-              <svg class="h-6 w-6 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-6 w-6 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
               </svg>
             {% elif material.tipo == 'zip' or material.tipo == 'arquivo' %}
-              <svg class="h-6 w-6 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
               </svg>
             {% elif material.tipo == 'markdown' %}
-              <svg class="h-6 w-6 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-6 w-6 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
               </svg>
+            {% elif material.tipo == 'html' %}
+              <svg class="h-6 w-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+              </svg>
             {% else %}
-              <svg class="h-6 w-6 text-violet-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-6 w-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
               </svg>
             {% endif %}
@@ -52,38 +40,46 @@
 
           <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-center gap-2">
-              <h2 class="min-w-0 text-[15px] font-semibold tracking-tight text-white/90">{{ material.titulo }}</h2>
-              <span class="inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-white/48">
+              <h2 class="min-w-0 text-[15px] font-semibold tracking-tight text-on-surface">{{ material.titulo }}</h2>
+              <span class="inline-flex items-center rounded-full border border-outline-variant/10 bg-surface-container-high px-2.5 py-1 text-[11px] font-medium text-on-surface-variant/55">
                 {{ material.get_tipo_display }}
               </span>
               {% if material.aula %}
-                <span class="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
+                <span class="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary">
                   Aula {{ material.aula.numero }}
                 </span>
               {% endif %}
             </div>
 
             {% if material.descricao %}
-              <p class="mt-3 max-w-3xl text-sm leading-6 text-white/45">{{ material.descricao }}</p>
+              <p class="mt-3 max-w-3xl text-sm leading-6 text-on-surface-variant/55">{{ material.descricao }}</p>
             {% elif material.tipo == 'markdown' %}
-              <p class="mt-3 max-w-3xl text-sm leading-6 text-white/45">{{ material.get_conteudo_html|striptags|truncatechars:220 }}</p>
+              <p class="mt-3 max-w-3xl text-sm leading-6 text-on-surface-variant/55">{{ material.get_conteudo_html|striptags|truncatechars:220 }}</p>
             {% endif %}
 
             {% if material.tipo == 'markdown' %}
-              <details class="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4">
-                <summary class="cursor-pointer list-none text-[13px] font-medium text-white/70">
+              <details class="mt-4 rounded-2xl border border-outline-variant/10 bg-surface-container-high/50 p-4">
+                <summary class="cursor-pointer list-none text-[13px] font-medium text-on-surface-variant/70">
                   Ver conteúdo da aula
                 </summary>
-                <div class="mt-4 space-y-4 text-[14px] leading-7 text-white/72 [&_p]:mb-4 [&_ul]:ml-5 [&_ul]:list-disc [&_ol]:ml-5 [&_ol]:list-decimal [&_li]:mb-1 [&_blockquote]:border-l-2 [&_blockquote]:border-emerald-500/30 [&_blockquote]:pl-4 [&_blockquote]:italic [&_a]:text-emerald-300 [&_a]:underline [&_code]:rounded [&_code]:bg-white/5 [&_code]:px-1.5 [&_code]:py-0.5 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-white/10 [&_pre]:bg-black/40 [&_pre]:p-4">
+                <div class="mt-4 shell-prose max-w-none text-[14px]">
                   {{ material.get_conteudo_html|safe }}
                 </div>
               </details>
             {% endif %}
 
             <div class="mt-4 flex flex-wrap gap-2">
-              {% if material.arquivo %}
+              {% if material.tipo == 'html' and material.arquivo %}
+                <a href="{% url 'turmas:portal_materiais_html' token=turma.token_publico material_pk=material.pk %}" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-1.5 rounded-full border border-secondary/20 bg-secondary/10 px-3 py-2 text-[13px] font-medium text-secondary transition-colors hover:bg-secondary/15">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                  </svg>
+                  Abrir página HTML
+                </a>
+              {% elif material.arquivo %}
                 <a href="{% url 'turmas:portal_materiais_download' token=turma.token_publico material_pk=material.pk %}" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-[13px] font-medium text-emerald-300 transition-colors hover:bg-emerald-500/20 hover:text-emerald-200">
+                   class="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-2 text-[13px] font-medium text-primary transition-colors hover:bg-primary/15">
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                   </svg>
@@ -91,7 +87,7 @@
                 </a>
               {% elif material.url_externa %}
                 <a href="{{ material.url_externa }}" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-[13px] font-medium text-white/72 transition-colors hover:border-white/18 hover:bg-white/[0.07] hover:text-white">
+                   class="inline-flex items-center gap-1.5 rounded-full border border-outline-variant/15 bg-surface-container-high px-3 py-2 text-[13px] font-medium text-on-surface-variant transition-colors hover:border-outline-variant/25 hover:bg-surface-container-highest hover:text-on-surface">
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                   </svg>
@@ -104,14 +100,12 @@
       {% endfor %}
     </div>
   {% else %}
-    <div class="rounded-3xl border border-dashed border-white/12 bg-white/[0.03] p-8 text-center">
-      <div class="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/35">
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
-        </svg>
-      </div>
-      <p class="text-sm text-white/45">Nenhum material disponível para esta turma no momento.</p>
-    </div>
+    {% include "components/_empty_state.html" with title="Nenhum material disponível" subtitle="Nenhum material foi publicado para esta turma ainda." %}
   {% endif %}
+
+  <div class="pt-2">
+    <a href="{% url 'turmas:portal' token=turma.token_publico %}"
+       class="text-sm text-primary hover:underline">&larr; Voltar ao portal</a>
+  </div>
 </div>
 {% endblock %}

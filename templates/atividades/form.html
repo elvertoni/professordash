@@ -1,94 +1,105 @@
 {% extends "base_admin.html" %}
 
 {% block title %}
-  {% if form.instance.pk %}Editar Atividade: {{ form.instance.titulo }}{% else %}Nova Atividade{% endif %} | {{ block.super }}
+  {% if form.instance.pk %}Editar Atividade: {{ form.instance.titulo }}{% else %}Nova Atividade{% endif %} — Prof Toni Coimbra
 {% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto">
-  <div class="mb-6 flex items-center justify-between">
-    <a href="{% if form.instance.pk %}{% url 'turmas:atividade_detalhe' pk=turma.pk atividade_pk=form.instance.pk %}{% else %}{% url 'turmas:atividades_lista' pk=turma.pk %}{% endif %}" class="text-sm font-medium text-zinc-400 hover:text-zinc-100 flex items-center gap-1">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-      Voltar
-    </a>
-  </div>
 
-  <div class="bg-zinc-800 rounded-lg border border-zinc-700 overflow-hidden">
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/55 mb-6 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-on-surface shrink-0">Turmas</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <a href="{% url 'turmas:detalhe' pk=turma.pk %}?tab=atividades" class="transition-colors hover:text-on-surface shrink-0">{{ turma.nome }}</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <a href="{% url 'turmas:atividades_lista' pk=turma.pk %}" class="transition-colors hover:text-on-surface shrink-0">Atividades</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <span class="font-medium text-on-surface">{% if form.instance.pk %}Editar{% else %}Nova{% endif %}</span>
+  </nav>
+
+  <div class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low overflow-hidden">
+    <div class="px-6 py-5 border-b border-outline-variant/10 bg-surface-container-high/40">
+      <h1 class="text-xl font-semibold text-on-surface">
+        {% if form.instance.pk %}Editar Atividade{% else %}Nova Atividade{% endif %}
+      </h1>
+      <p class="text-sm text-on-surface-variant/60 mt-0.5">{{ turma.nome }}</p>
+    </div>
+
     <form method="post" enctype="multipart/form-data" class="p-6">
       {% csrf_token %}
-
-      <!-- Campos Iniciais Embutidos (Escondidos) -->
       {{ form.turma.as_hidden }}
 
-      <div class="space-y-6">
+      <div class="space-y-5">
         <div>
-          <h3 class="text-lg font-medium text-zinc-100 border-b border-zinc-700 pb-2">Informações da Atividade</h3>
+          <h3 class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 border-b border-outline-variant/10 pb-3 mb-4">Informações da Atividade</h3>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div class="md:col-span-2">
-            <label for="{{ form.titulo.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Título da Atividade *</label>
+            <label for="{{ form.titulo.id_for_label }}" class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5">Título da Atividade <span class="text-error">*</span></label>
             {{ form.titulo }}
-            {% if form.titulo.errors %}<p class="mt-1 text-sm text-red-400">{{ form.titulo.errors.0 }}</p>{% endif %}
+            {% if form.titulo.errors %}<p class="mt-1 text-sm text-error">{{ form.titulo.errors.0 }}</p>{% endif %}
           </div>
 
           <div>
-            <label for="{{ form.tipo_entrega.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Tipo de Entrega *</label>
+            <label for="{{ form.tipo_entrega.id_for_label }}" class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5">Tipo de Entrega <span class="text-error">*</span></label>
             {{ form.tipo_entrega }}
-            {% if form.tipo_entrega.errors %}<p class="mt-1 text-sm text-red-400">{{ form.tipo_entrega.errors.0 }}</p>{% endif %}
+            {% if form.tipo_entrega.errors %}<p class="mt-1 text-sm text-error">{{ form.tipo_entrega.errors.0 }}</p>{% endif %}
           </div>
 
           <div>
-            <label for="{{ form.prazo.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Prazo de Entrega *</label>
+            <label for="{{ form.prazo.id_for_label }}" class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5">Prazo de Entrega <span class="text-error">*</span></label>
             {{ form.prazo }}
-            {% if form.prazo.errors %}<p class="mt-1 text-sm text-red-400">{{ form.prazo.errors.0 }}</p>{% endif %}
-            <p class="mt-1 text-xs text-zinc-500">Data e hora limite para envio.</p>
+            {% if form.prazo.errors %}<p class="mt-1 text-sm text-error">{{ form.prazo.errors.0 }}</p>{% endif %}
+            <p class="mt-1 text-xs text-on-surface-variant/45">Data e hora limite para envio.</p>
           </div>
 
           <div>
-            <label for="{{ form.valor_pontos.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Valor em Pontos *</label>
+            <label for="{{ form.valor_pontos.id_for_label }}" class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5">Valor em Pontos <span class="text-error">*</span></label>
             {{ form.valor_pontos }}
-            {% if form.valor_pontos.errors %}<p class="mt-1 text-sm text-red-400">{{ form.valor_pontos.errors.0 }}</p>{% endif %}
+            {% if form.valor_pontos.errors %}<p class="mt-1 text-sm text-error">{{ form.valor_pontos.errors.0 }}</p>{% endif %}
           </div>
 
           <div>
-            <label for="{{ form.aula.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Vincular a uma Aula (Opcional)</label>
+            <label for="{{ form.aula.id_for_label }}" class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5">Vincular a uma Aula <span class="text-on-surface-variant/40">(opcional)</span></label>
             {{ form.aula }}
-            {% if form.aula.errors %}<p class="mt-1 text-sm text-red-400">{{ form.aula.errors.0 }}</p>{% endif %}
+            {% if form.aula.errors %}<p class="mt-1 text-sm text-error">{{ form.aula.errors.0 }}</p>{% endif %}
           </div>
         </div>
 
-        <div class="md:col-span-2">
-          <label for="{{ form.descricao.id_for_label }}" class="block text-sm font-medium text-zinc-400 mb-1">Descrição e Instruções *</label>
+        <div>
+          <label for="{{ form.descricao.id_for_label }}" class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5">Descrição e Instruções <span class="text-error">*</span></label>
           {{ form.descricao }}
           {{ form.descricao.media }}
-          {% if form.descricao.errors %}<p class="mt-1 text-sm text-red-400">{{ form.descricao.errors.0 }}</p>{% endif %}
-          <p class="mt-1 text-xs text-zinc-500">{{ form.descricao.help_text }}</p>
+          {% if form.descricao.errors %}<p class="mt-1 text-sm text-error">{{ form.descricao.errors.0 }}</p>{% endif %}
+          <p class="mt-1 text-xs text-on-surface-variant/45">{{ form.descricao.help_text }}</p>
         </div>
 
-        <div class="border-t border-zinc-700 pt-4 space-y-4">
-          <h3 class="text-md font-medium text-zinc-100 border-b border-zinc-700 pb-2">Configurações Base</h3>
+        <div class="border-t border-outline-variant/10 pt-5 space-y-4">
+          <h3 class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Configurações</h3>
 
-          <div class="flex items-center">
+          <div class="flex items-center gap-2">
             {{ form.permitir_reenvio }}
-            <label for="{{ form.permitir_reenvio.id_for_label }}" class="ml-2 block text-sm text-zinc-400">
+            <label for="{{ form.permitir_reenvio.id_for_label }}" class="text-sm text-on-surface-variant/70 cursor-pointer">
               Permitir reenvio de arquivos (até o limite de prazo)?
             </label>
           </div>
 
-          <div class="flex items-center">
+          <div class="flex items-center gap-2">
             {{ form.publicada }}
-            <label for="{{ form.publicada.id_for_label }}" class="ml-2 block text-sm text-zinc-400">
+            <label for="{{ form.publicada.id_for_label }}" class="text-sm text-on-surface-variant/70 cursor-pointer">
               Publicar atividade agora (ficará visível aos alunos)?
             </label>
           </div>
         </div>
 
-        <div class="pt-6 border-t border-zinc-700 flex items-center justify-end gap-3">
-          <a href="{% if form.instance.pk %}{% url 'turmas:atividade_detalhe' pk=turma.pk atividade_pk=form.instance.pk %}{% else %}{% url 'turmas:atividades_lista' pk=turma.pk %}{% endif %}" class="btn border-zinc-600 text-zinc-300 hover:bg-zinc-700">
+        <div class="pt-5 border-t border-outline-variant/10 flex items-center justify-end gap-3">
+          <a href="{% if form.instance.pk %}{% url 'turmas:atividade_detalhe' pk=turma.pk atividade_pk=form.instance.pk %}{% else %}{% url 'turmas:atividades_lista' pk=turma.pk %}{% endif %}"
+             class="inline-flex items-center px-4 py-2.5 rounded-full border border-outline-variant/15 bg-surface-container-high text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
             Cancelar
           </a>
-          <button type="submit" class="btn-primary">
+          <button type="submit"
+                  class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
             Salvar Atividade
           </button>
         </div>

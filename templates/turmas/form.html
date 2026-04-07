@@ -5,18 +5,17 @@
 {% block content %}
 <div class="max-w-2xl mx-auto">
 
-  <!-- Breadcrumb -->
-  <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6">
-    <a href="{% url 'turmas:lista' %}" class="hover:text-emerald-400">Turmas</a>
-    <span aria-hidden="true">/</span>
-    <span class="text-zinc-100 font-medium">
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/55 mb-6 overflow-x-auto whitespace-nowrap">
+    <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-on-surface shrink-0">Turmas</a>
+    <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
+    <span class="font-medium text-on-surface">
       {% if object.pk %}Editar {{ object.nome }}{% else %}Nova turma{% endif %}
     </span>
   </nav>
 
-  <div class="bg-zinc-900 rounded-xl border border-zinc-700 shadow-sm">
-    <div class="px-6 py-5 border-b border-zinc-800">
-      <h1 class="text-xl font-bold text-zinc-100">
+  <div class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low overflow-hidden">
+    <div class="px-6 py-5 border-b border-outline-variant/10 bg-surface-container-high/40">
+      <h1 class="text-xl font-semibold text-on-surface">
         {% if object.pk %}Editar turma{% else %}Nova turma{% endif %}
       </h1>
     </div>
@@ -26,74 +25,74 @@
 
       <!-- Nome -->
       <div>
-        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.nome.id_for_label }}">
-          Nome da turma <span class="text-red-500">*</span>
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.nome.id_for_label }}">
+          Nome da turma <span class="text-error">*</span>
         </label>
         {{ form.nome }}
         {% if form.nome.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ form.nome.errors|join:", " }}</p>
+          <p class="text-error text-xs mt-1">{{ form.nome.errors|join:", " }}</p>
         {% endif %}
       </div>
 
-      <!-- Código e Período (grid 2 cols) -->
+      <!-- Código e Período -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.codigo.id_for_label }}">
-            Código <span class="text-red-500">*</span>
+          <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.codigo.id_for_label }}">
+            Código <span class="text-error">*</span>
           </label>
           {{ form.codigo }}
           {% if form.codigo.errors %}
-            <p class="text-red-500 text-xs mt-1">{{ form.codigo.errors|join:", " }}</p>
+            <p class="text-error text-xs mt-1">{{ form.codigo.errors|join:", " }}</p>
           {% endif %}
         </div>
         <div>
-          <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.periodo.id_for_label }}">
-            Período <span class="text-red-500">*</span>
+          <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.periodo.id_for_label }}">
+            Período <span class="text-error">*</span>
           </label>
           {{ form.periodo }}
           {% if form.periodo.errors %}
-            <p class="text-red-500 text-xs mt-1">{{ form.periodo.errors|join:", " }}</p>
+            <p class="text-error text-xs mt-1">{{ form.periodo.errors|join:", " }}</p>
           {% endif %}
         </div>
       </div>
 
       <!-- Ano letivo -->
       <div class="max-w-xs">
-        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.ano_letivo.id_for_label }}">
-          Ano letivo <span class="text-red-500">*</span>
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.ano_letivo.id_for_label }}">
+          Ano letivo <span class="text-error">*</span>
         </label>
         {{ form.ano_letivo }}
         {% if form.ano_letivo.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ form.ano_letivo.errors|join:", " }}</p>
+          <p class="text-error text-xs mt-1">{{ form.ano_letivo.errors|join:", " }}</p>
         {% endif %}
       </div>
 
       <!-- Descrição -->
       <div>
-        <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.descricao.id_for_label }}">
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5" for="{{ form.descricao.id_for_label }}">
           Descrição
         </label>
         {{ form.descricao }}
         {% if form.descricao.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ form.descricao.errors|join:", " }}</p>
+          <p class="text-error text-xs mt-1">{{ form.descricao.errors|join:", " }}</p>
         {% endif %}
       </div>
 
-      <!-- Erros não-campo -->
+      <!-- Erros gerais -->
       {% if form.non_field_errors %}
-        <div class="rounded-lg bg-red-50 border border-red-200 p-3">
-          <p class="text-red-600 text-sm">{{ form.non_field_errors|join:", " }}</p>
+        <div class="rounded-2xl border border-error/20 bg-error/10 p-4">
+          <p class="text-error text-sm">{{ form.non_field_errors|join:", " }}</p>
         </div>
       {% endif %}
 
       <!-- Ações -->
-      <div class="flex items-center gap-3 pt-2">
+      <div class="flex items-center gap-3 pt-4 border-t border-outline-variant/10">
         <button type="submit"
-                class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors">
+                class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
           {% if object.pk %}Salvar alterações{% else %}Criar turma{% endif %}
         </button>
         <a href="{% if object.pk %}{% url 'turmas:detalhe' pk=object.pk %}{% else %}{% url 'turmas:lista' %}{% endif %}"
-           class="text-sm text-zinc-400 hover:text-zinc-300 px-4 py-2.5 rounded-lg hover:bg-zinc-800 transition-colors">
+           class="inline-flex items-center px-4 py-2.5 rounded-full border border-outline-variant/15 bg-surface-container-high text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
           Cancelar
         </a>
       </div>
@@ -101,5 +100,4 @@
   </div>
 
 </div>
-
 {% endblock %}
