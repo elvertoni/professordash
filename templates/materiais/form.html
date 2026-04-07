@@ -76,7 +76,7 @@
       </div>
 
       <!-- Arquivo (conditional) -->
-      <div x-show="['pdf', 'zip', 'arquivo'].includes(tipo)" x-cloak>
+      <div x-show="['pdf', 'zip', 'arquivo', 'html'].includes(tipo)" x-cloak>
         <label class="block text-sm font-medium text-zinc-400 mb-1" for="{{ form.arquivo.id_for_label }}">
           Arquivo <span class="text-red-500">*</span>
         </label>
