@@ -45,9 +45,10 @@ def get_subject_from_codigo(codigo: str) -> str | None:
     return CODIGO_TO_SUBJECT.get(prefix)
 
 
-def fetch_manifest() -> dict:
+def fetch_manifest(session: requests.Session | None = None) -> dict:
     """Baixa e retorna o manifest.json do repositório."""
-    resp = requests.get(MANIFEST_URL, timeout=15)
+    http = session or requests
+    resp = http.get(MANIFEST_URL, timeout=15)
     resp.raise_for_status()
     return resp.json()
 
@@ -74,6 +75,7 @@ def sync_turma(turma, lessons_index: dict) -> dict:
 
     lessons = lessons_index.get(subject, [])
     criadas = atualizadas = erros = 0
+    session = requests.Session()
 
     for lesson in lessons:
         path = lesson.get("path", "")
@@ -85,7 +87,7 @@ def sync_turma(turma, lessons_index: dict) -> dict:
 
         url = f"{GITHUB_RAW}/{path}"
         try:
-            resp = requests.get(url, timeout=15)
+            resp = session.get(url, timeout=15)
             resp.raise_for_status()
             conteudo = resp.text
         except requests.RequestException as exc:

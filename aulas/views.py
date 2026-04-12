@@ -258,12 +258,18 @@ class AulasSincronizarGithubView(ProfessorRequiredMixin, AulaMixin, View):
 
         try:
             manifest = fetch_manifest()
+            lessons_index = build_lessons_index(manifest)
+            resultado = sync_turma(self.turma, lessons_index)
         except Exception as exc:
-            messages.error(request, f"Erro ao acessar o GitHub: {exc}")
+            logger.exception(
+                "Falha ao sincronizar turma pk=%s codigo=%s subject=%s",
+                self.turma.pk, self.turma.codigo, subject,
+            )
+            messages.error(
+                request,
+                f"Erro durante a sincronização ({type(exc).__name__}): {exc}",
+            )
             return redirect("turmas:aulas_lista", pk=self.turma.pk)
-
-        lessons_index = build_lessons_index(manifest)
-        resultado = sync_turma(self.turma, lessons_index)
 
         total = resultado["criadas"] + resultado["atualizadas"]
         msg = (
