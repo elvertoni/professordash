@@ -56,6 +56,53 @@ class AtividadeListView(AtividadeMixin, ListView):
         )
 
 
+class AtividadesSincronizarGithubView(ProfessorRequiredMixin, View):
+    """Sincroniza as atividades HTML de uma turma com o repositório GitHub ProfToniCoimbra."""
+
+    def post(self, request, pk):
+        from aulas.github_sync import get_subject_from_codigo
+        from .github_sync import build_activities_index, fetch_tree, sync_turma
+
+        turma = get_object_or_404(Turma, pk=pk)
+
+        subject = get_subject_from_codigo(turma.codigo)
+        if not subject:
+            messages.error(
+                request,
+                f"A turma {turma.codigo} não tem mapeamento no GitHub. "
+                "Verifique o código da turma.",
+            )
+            return redirect("turmas:atividades_lista", pk=turma.pk)
+
+        try:
+            tree = fetch_tree()
+            activities_index = build_activities_index(tree)
+            resultado = sync_turma(turma, activities_index)
+        except Exception as exc:
+            logging.getLogger(__name__).exception(
+                "Falha ao sincronizar atividades turma pk=%s codigo=%s subject=%s",
+                turma.pk, turma.codigo, subject,
+            )
+            messages.error(
+                request,
+                f"Erro durante a sincronização ({type(exc).__name__}): {exc}",
+            )
+            return redirect("turmas:atividades_lista", pk=turma.pk)
+
+        total = resultado["criadas"] + resultado["atualizadas"]
+        msg = (
+            f"Sincronização concluída: {resultado['criadas']} atividades novas, "
+            f"{resultado['atualizadas']} atualizadas."
+        )
+        if resultado["erros"]:
+            msg += f" ({resultado['erros']} erros — veja os logs.)"
+        if total == 0 and resultado["erros"] == 0:
+            msg = "Nenhum HTML encontrado no GitHub para esta matéria."
+
+        messages.success(request, msg)
+        return redirect("turmas:atividades_lista", pk=turma.pk)
+
+
 class AtividadeCreateView(AtividadeMixin, CreateView):
     form_class = AtividadeForm
     template_name = "atividades/form.html"

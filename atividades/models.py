@@ -48,11 +48,28 @@ class Atividade(BaseModel):
     )
     permitir_reenvio = models.BooleanField(default=True)
     publicada = models.BooleanField(default=True)
+    conteudo_html = models.TextField(
+        blank=True,
+        help_text="HTML estático renderizado em lugar da descrição Markdown. Preenchido pela sync do GitHub.",
+    )
+    origem_github = models.CharField(
+        max_length=500,
+        blank=True,
+        db_index=True,
+        help_text="Path do arquivo no repositório GitHub (chave idempotente da sync).",
+    )
 
     class Meta:
         ordering = ["-prazo", "-criado_em"]
         verbose_name = "Atividade"
         verbose_name_plural = "Atividades"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["turma", "origem_github"],
+                condition=models.Q(origem_github__gt=""),
+                name="atividade_unique_por_origem_github",
+            ),
+        ]
 
     def __str__(self) -> str:
         return f"{self.titulo} - {self.turma}"

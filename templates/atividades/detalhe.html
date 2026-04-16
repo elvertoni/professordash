@@ -68,7 +68,19 @@
       </div>
     </div>
 
-    {% if atividade.descricao %}
+    {% if atividade.conteudo_html %}
+      <div class="mt-5 rounded-2xl border border-outline-variant/10 bg-surface-container-high/40 p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-on-surface-variant/50">Conteúdo HTML (sincronizado do GitHub)</div>
+          {% if atividade.origem_github %}
+            <code class="text-[10px] text-on-surface-variant/40">{{ atividade.origem_github }}</code>
+          {% endif %}
+        </div>
+        <div class="shell-prose max-w-none">
+          {{ atividade.conteudo_html|safe }}
+        </div>
+      </div>
+    {% elif atividade.descricao %}
       <div class="mt-5 rounded-2xl border border-outline-variant/10 bg-surface-container-high/40 p-4 sm:p-5">
         <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-on-surface-variant/50 mb-4">Descrição</div>
         <div class="shell-prose max-w-none">

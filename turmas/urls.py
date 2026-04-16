@@ -165,6 +165,11 @@ urlpatterns = [
         name="atividades_nova",
     ),
     path(
+        "painel/turmas/<int:pk>/atividades/sincronizar-github/",
+        atividades_views.AtividadesSincronizarGithubView.as_view(),
+        name="atividades_sincronizar_github",
+    ),
+    path(
         "painel/turmas/<int:pk>/atividades/<int:atividade_pk>/",
         atividades_views.AtividadeDetailView.as_view(),
         name="atividade_detalhe",

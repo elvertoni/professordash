@@ -34,7 +34,11 @@
       </div>
 
       <div class="shell-prose max-w-none">
-        {{ atividade.descricao|markdownify }}
+        {% if atividade.conteudo_html %}
+          {{ atividade.conteudo_html|safe }}
+        {% else %}
+          {{ atividade.descricao|markdownify }}
+        {% endif %}
       </div>
     </div>
 
