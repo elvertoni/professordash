@@ -322,11 +322,6 @@ urlpatterns = [
         name="portal_tarefas_grade",
     ),
     path(
-        "turma/<uuid:token>/tarefas/",
-        turmas_views.TarefasGradePublicaView.as_view(),
-        name="portal_tarefas",
-    ),
-    path(
         "turma/<uuid:token>/atividades/",
         atividades_views.AtividadeListaPublicaView.as_view(),
         name="portal_atividades_lista",

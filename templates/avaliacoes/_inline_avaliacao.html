@@ -1,7 +1,9 @@
 {% if edit_mode %}
-  <form hx-post="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}"
+  <form method="post"
+        hx-post="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}"
         hx-target="#avaliacao-{{ entrega.pk }}"
         hx-swap="outerHTML"
+        hx-disabled-elt="[type='submit']"
         class="flex flex-col gap-2 min-w-[200px]"
         id="avaliacao-{{ entrega.pk }}">
     {% csrf_token %}
@@ -45,14 +47,14 @@
           {{ entrega.feedback }}
         </div>
       {% endif %}
-      <button hx-get="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk|default:turma.pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}"
+      <button hx-get="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}"
               hx-target="#avaliacao-{{ entrega.pk }}"
               hx-swap="outerHTML"
               class="text-xs text-emerald-400 hover:text-emerald-200 font-medium mt-1">
         Editar
       </button>
     {% else %}
-      <button hx-get="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk|default:turma.pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}"
+      <button hx-get="{% url 'turmas:atividades_avaliar_entrega' pk=turma_pk atividade_pk=entrega.atividade.pk entrega_pk=entrega.pk %}"
               hx-target="#avaliacao-{{ entrega.pk }}"
               hx-swap="outerHTML"
               class="btn-secondary py-1 px-3 text-xs flex items-center gap-1">

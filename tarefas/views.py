@@ -96,7 +96,7 @@ def _build_grade_context(turma, *, criar_faltantes=False):
                     realizacoes_map[chave] = realizacao
 
             if realizacoes_faltantes:
-                RealizacaoTarefa.objects.bulk_create(realizacoes_faltantes)
+                RealizacaoTarefa.objects.bulk_create(realizacoes_faltantes, ignore_conflicts=True)
 
     realizacoes = {tarefa.pk: set() for tarefa in tarefas_base}
     for realizacao in realizacoes_map.values():
@@ -168,14 +168,6 @@ class TarefasGradeView(ProfessorRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         turma = get_object_or_404(Turma, pk=kwargs["pk"])
         context = _build_grade_context(turma, criar_faltantes=True)
-        return render(request, self.template_name, context)
-
-
-class TarefasGradePublicaView(TurmaPublicaMixin, View):
-    template_name = "tarefas/grade_publica.html"
-
-    def get(self, request, *args, **kwargs):
-        context = _build_grade_context(self.turma, criar_faltantes=False)
         return render(request, self.template_name, context)
 
 

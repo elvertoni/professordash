@@ -48,7 +48,7 @@ Django 5.1 + HTMX 2.x + Alpine.js 3.x + Tailwind CSS 3.x (todos via CDN). Postgr
 | `turmas` | Turma + Matricula. Todo acesso público usa `token_publico` (UUID) |
 | `aulas` | Plano de ensino com conteúdo MarkdownxField, ordenação por drag-and-drop |
 | `materiais` | Upload (PDF/ZIP/código) + links externos + conteúdo inline Markdown |
-| `atividades` | Atividade + Entrega. Status automático: `entregue` vs `atrasada` |
+| `atividades` | Atividade + Entrega. Status automático: `entregue` vs `atrasada`. Sincroniza conteúdo HTML do GitHub (igual às aulas) via botão no painel e management command `importar_atividades_github` |
 | `avaliacoes` | Apenas templates (boletim, minhas_notas) — sem models/views próprias. Views estão em `turmas/views.py` |
 | `alunos` | Aluno + importação CSV. Vinculação ao `User` via Google OAuth |
 | `tarefas` | Tarefa + RealizacaoTarefa. Grade de tarefas por turma (checkbox por aluno via HTMX) |

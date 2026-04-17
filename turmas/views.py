@@ -47,12 +47,9 @@ class TurmaListView(ProfessorRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx["turmas_ativas"] = Turma.objects.filter(ativa=True).prefetch_related(
-            "matriculas", "aulas"
-        )
-        ctx["turmas_arquivadas"] = Turma.objects.filter(ativa=False).prefetch_related(
-            "matriculas", "aulas"
-        )
+        qs = list(self.get_queryset())
+        ctx["turmas_ativas"] = [t for t in qs if t.ativa]
+        ctx["turmas_arquivadas"] = [t for t in qs if not t.ativa]
         return ctx
 
 
@@ -382,11 +379,12 @@ class ExportarBoletimCSVView(ProfessorRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
         turma = get_object_or_404(Turma, pk=pk)
 
-        response = HttpResponse(content_type="text/csv")
+        response = HttpResponse(content_type="text/csv; charset=utf-8-sig")
         safe_codigo = slugify(turma.codigo)
         response["Content-Disposition"] = (
             f'attachment; filename="boletim_{safe_codigo}.csv"'
         )
+        response.write('\ufeff')
 
         writer = csv.writer(response)
 

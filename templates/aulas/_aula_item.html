@@ -40,6 +40,7 @@
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
             hx-target="closest article"
             hx-swap="outerHTML"
+            hx-disabled-elt="this"
             class="inline-flex items-center rounded-full border px-3.5 py-2 text-[12px] font-medium transition-colors
                    {% if aula.realizada %}border-primary/20 bg-primary/10 text-primary hover:bg-primary/15{% else %}border-outline-variant/10 bg-surface-container-high text-on-surface-variant/60 hover:border-outline-variant/20 hover:bg-surface-container-highest hover:text-on-surface{% endif %}">
       {% if aula.realizada %}Marcar pendente{% else %}Marcar realizada{% endif %}

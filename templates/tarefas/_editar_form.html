@@ -4,6 +4,7 @@
         hx-post="{% url 'turmas:tarefas_editar' turma.pk tarefa.pk %}"
         hx-target="closest th"
         hx-swap="innerHTML"
+        hx-disabled-elt="[type='submit']"
         class="space-y-3">
     {% csrf_token %}
     <div>

@@ -46,6 +46,9 @@
      @modal-confirm.window="open($event)"
      x-show="show"
      x-cloak
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modal-confirm-title"
      class="fixed inset-0 z-50 flex items-center justify-center p-4">
 
   {# Overlay #}
@@ -71,7 +74,7 @@
       </div>
       <div class="min-w-0">
         <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-rose-200/75">Confirmação</p>
-        <h3 class="text-lg font-semibold tracking-tight text-white" x-text="title"></h3>
+        <h3 id="modal-confirm-title" class="text-lg font-semibold tracking-tight text-white" x-text="title"></h3>
         <p class="mt-2 text-sm leading-6 text-white/65" x-text="message"></p>
       </div>
     </div>

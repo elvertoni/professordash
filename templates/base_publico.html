@@ -23,7 +23,7 @@
           Aulas
         </a>
         <a href="{% url 'turmas:portal_tarefas_grade' token=turma.token_publico %}"
-           class="rounded-full border px-3 py-2 text-sm font-medium transition-colors {% if current_url_name == 'portal_tarefas_grade' or current_url_name == 'portal_tarefas' %}border-primary bg-primary/10 text-primary{% else %}border-transparent text-on-surface-variant/60 hover:bg-surface-container-high hover:text-on-surface{% endif %}">
+           class="rounded-full border px-3 py-2 text-sm font-medium transition-colors {% if current_url_name == 'portal_tarefas_grade' %}border-primary bg-primary/10 text-primary{% else %}border-transparent text-on-surface-variant/60 hover:bg-surface-container-high hover:text-on-surface{% endif %}">
           Tarefas
         </a>
         <a href="{% url 'turmas:portal_materiais_lista' token=turma.token_publico %}"

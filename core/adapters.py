@@ -28,5 +28,5 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             aluno = Aluno.objects.get(email__iexact=user.email, user__isnull=True)
             aluno.user = user
             aluno.save(update_fields=["user"])
-        except Aluno.DoesNotExist:
+        except (Aluno.DoesNotExist, Aluno.MultipleObjectsReturned):
             pass

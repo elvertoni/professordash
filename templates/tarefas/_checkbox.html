@@ -24,6 +24,7 @@
           hx-swap="outerHTML">
       {% csrf_token %}
       <button type="submit"
+              hx-disabled-elt="this"
               aria-label="Alternar tarefa {{ tarefa.nome }} para {{ aluno.nome }}"
               title="{% if realizacao.realizada %}Marcar como pendente{% else %}Marcar como concluida{% endif %}"
               class="group mx-auto inline-flex h-11 w-11 items-center justify-center rounded-2xl border transition-colors

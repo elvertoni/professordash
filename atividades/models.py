@@ -105,7 +105,7 @@ class Entrega(BaseModel):
     )
     texto = models.TextField(blank=True)
     url = models.URLField(blank=True)
-    data_envio = models.DateTimeField(auto_now_add=True)
+    data_envio = models.DateTimeField(default=timezone.now)
     prazo_extendido = models.DateTimeField(
         null=True,
         blank=True,

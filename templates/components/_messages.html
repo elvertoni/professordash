@@ -9,25 +9,25 @@
        x-transition:leave-start="opacity-100 translate-y-0"
        x-transition:leave-end="opacity-0 -translate-y-1"
        class="panel-soft flex items-start justify-between gap-3 rounded-2xl px-4 py-3.5 text-[13px] border shadow-[0_12px_28px_rgba(0,0,0,0.18)]
-              {% if message.tags == 'error' %}bg-error/10 text-error border-error/20
-              {% elif message.tags == 'success' %}bg-primary/10 text-primary border-primary/20
-              {% elif message.tags == 'warning' %}bg-amber-500/10 text-amber-200 border-amber-500/20
+              {% if 'error' in message.tags %}bg-error/10 text-error border-error/20
+              {% elif 'success' in message.tags %}bg-primary/10 text-primary border-primary/20
+              {% elif 'warning' in message.tags %}bg-amber-500/10 text-amber-200 border-amber-500/20
               {% else %}bg-tertiary/10 text-tertiary border-tertiary/20{% endif %}">
     <div class="flex min-w-0 items-start gap-3">
       <span class="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border
-             {% if message.tags == 'error' %}border-error/20 bg-error/12 text-error
-             {% elif message.tags == 'success' %}border-primary/20 bg-primary/12 text-primary
-             {% elif message.tags == 'warning' %}border-amber-500/20 bg-amber-500/12 text-amber-200
+             {% if 'error' in message.tags %}border-error/20 bg-error/12 text-error
+             {% elif 'success' in message.tags %}border-primary/20 bg-primary/12 text-primary
+             {% elif 'warning' in message.tags %}border-amber-500/20 bg-amber-500/12 text-amber-200
              {% else %}border-tertiary/20 bg-tertiary/12 text-tertiary{% endif %}">
-        {% if message.tags == 'error' %}
+        {% if 'error' in message.tags %}
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
           </svg>
-        {% elif message.tags == 'success' %}
+        {% elif 'success' in message.tags %}
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
           </svg>
-        {% elif message.tags == 'warning' %}
+        {% elif 'warning' in message.tags %}
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
           </svg>
