@@ -2,7 +2,7 @@
 Sincroniza materiais HTML estáticos do repositório GitHub ProfToniCoimbra.
 
 Heurística: todo arquivo .html encontrado dentro de
-publicadas/apostilas/<series>/<subject>/ é considerado um material da
+publicadas/materias/<series>/<subject>/ é considerado um material da
 matéria correspondente. Quando o arquivo começa com o prefixo aula-NN-,
 o material é vinculado à Aula de mesmo número na turma.
 """
@@ -21,7 +21,7 @@ from materiais.models import Material, TipoMaterial
 logger = logging.getLogger(__name__)
 
 GITHUB_TREE_URL = "https://api.github.com/repos/elvertoni/ProfToniCoimbra/git/trees/main?recursive=1"
-APOSTILAS_PREFIX = "publicadas/apostilas/"
+APOSTILAS_PREFIX = "publicadas/materias/"
 HTML_SUFFIX = ".html"
 AULA_PREFIX_RE = re.compile(r"^aula-(\d+)-", re.IGNORECASE)
 TITLE_TAG_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
@@ -55,6 +55,8 @@ def build_materials_index(tree: list[dict]) -> dict[str, list[dict]]:
             continue
         _series, subject, *resto = partes
         filename = resto[-1]
+        if AULA_PREFIX_RE.match(filename):
+            continue
 
         index.setdefault(subject.lower(), []).append({"path": path, "filename": filename})
     return index
