@@ -55,9 +55,6 @@ def build_materials_index(tree: list[dict]) -> dict[str, list[dict]]:
             continue
         _series, subject, *resto = partes
         filename = resto[-1]
-        if AULA_PREFIX_RE.match(filename):
-            continue
-
         index.setdefault(subject.lower(), []).append({"path": path, "filename": filename})
     return index
 
