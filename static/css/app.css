@@ -517,3 +517,27 @@ textarea {
 .shell-prose tr:last-child td {
   border-bottom: 0;
 }
+
+/* Grade scroll indicator */
+.grade-scroll-wrapper {
+  position: relative;
+}
+.grade-scroll-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(to right, transparent, #111111);
+  pointer-events: none;
+}
+
+/* CSS token alignment with Tailwind design system */
+:root {
+  --text:    #e5e2e1;
+  --text2:   #c0c0c8;
+  --text3:   #8e8e98;
+  --surface:  #000000;
+  --surface2: #1a1a1a;
+}
