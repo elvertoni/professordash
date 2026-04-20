@@ -8,14 +8,9 @@ Variaveis esperadas: turma (objeto Turma)
     <div class="flex items-start justify-between gap-3 mb-3">
       <div class="flex-1 min-w-0">
         <h3 class="font-semibold text-on-surface truncate text-[15px] sm:text-base">{{ turma.nome }}</h3>
-        <p class="text-[12px] text-on-surface-variant/60 mt-1">{{ turma.codigo }} - {{ turma.periodo }} - {{ turma.ano_letivo }}</p>
+        <p class="text-[12px] text-on-surface-variant/60 mt-1">{{ turma.codigo|upper }} - {{ turma.periodo }} - {{ turma.ano_letivo }}</p>
       </div>
-      {% if turma.ativa %}
-        <span class="chip chip-primary shrink-0">
-          <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-          Ativa
-        </span>
-      {% else %}
+      {% if not turma.ativa %}
         <span class="chip chip-muted shrink-0">Arquivada</span>
       {% endif %}
     </div>
