@@ -21,13 +21,25 @@
           Organize arquivos, links e conteúdos Markdown em uma lista mais limpa e fácil de escanear.
         </p>
       </div>
-      <a href="{% url 'turmas:materiais_novo' pk=turma.pk %}"
-         class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-        </svg>
-        Novo material
-      </a>
+      <div class="flex flex-wrap items-center gap-2">
+        <form method="post" action="{% url 'turmas:materiais_sincronizar_github' pk=turma.pk %}">
+          {% csrf_token %}
+          <button type="submit"
+                  class="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2.5 text-[13px] font-medium text-emerald-300 transition-all hover:bg-emerald-500/15 hover:text-emerald-200">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            Sincronizar GitHub
+          </button>
+        </form>
+        <a href="{% url 'turmas:materiais_novo' pk=turma.pk %}"
+           class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Novo material
+        </a>
+      </div>
     </div>
   </section>
 

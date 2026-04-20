@@ -235,11 +235,56 @@ class MaterialHTMLAdminView(ProfessorRequiredMixin, MaterialMixin, View):
             pk=self.kwargs["material_pk"],
             turma=self.turma,
         )
-        if not material.arquivo:
+        if material.arquivo:
+            conteudo = material.arquivo.read().decode("utf-8", errors="replace")
+        elif material.conteudo_html:
+            conteudo = material.conteudo_html
+        else:
             raise Http404("Material sem arquivo.")
-
-        conteudo = material.arquivo.read().decode("utf-8", errors="replace")
         return HttpResponse(conteudo, content_type="text/html; charset=utf-8")
+
+
+class MateriaisSincronizarGithubView(ProfessorRequiredMixin, MaterialMixin, View):
+    """Sincroniza os materiais HTML de uma turma com o repositÃ³rio GitHub ProfToniCoimbra."""
+
+    def post(self, request, pk):
+        from aulas.github_sync import get_subject_from_codigo
+        from .github_sync import build_materials_index, fetch_tree, sync_turma
+
+        subject = get_subject_from_codigo(self.turma.codigo)
+        if not subject:
+            messages.error(
+                request,
+                f"A turma {self.turma.codigo} nÃ£o tem mapeamento no GitHub. "
+                "Verifique o cÃ³digo da turma.",
+            )
+            return redirect("turmas:materiais_lista", pk=self.turma.pk)
+
+        try:
+            tree = fetch_tree()
+            materials_index = build_materials_index(tree)
+            resultado = sync_turma(self.turma, materials_index)
+        except Exception as exc:
+            logger.exception(
+                "Falha ao sincronizar materiais turma pk=%s codigo=%s subject=%s",
+                self.turma.pk,
+                self.turma.codigo,
+                subject,
+            )
+            messages.error(
+                request,
+                f"Erro durante a sincronizaÃ§Ã£o ({type(exc).__name__}): {exc}",
+            )
+            return redirect("turmas:materiais_lista", pk=self.turma.pk)
+
+        messages.success(
+            request,
+            "SincronizaÃ§Ã£o concluÃ­da: "
+            f"{resultado['criadas']} materiais novos, "
+            f"{resultado['atualizadas']} atualizados, "
+            f"{resultado['erros']} erros.",
+        )
+        return redirect("turmas:materiais_lista", pk=self.turma.pk)
 
 
 class MaterialHTMLPublicaView(TurmaPublicaMixin, View):
@@ -251,7 +296,11 @@ class MaterialHTMLPublicaView(TurmaPublicaMixin, View):
             pk=self.kwargs["material_pk"],
             turma=self.turma,
         )
-        if not material.arquivo:
+        if material.arquivo:
+            conteudo = material.arquivo.read().decode("utf-8", errors="replace")
+        elif material.conteudo_html:
+            conteudo = material.conteudo_html
+        else:
             raise Http404("Material sem arquivo.")
 
         if not _usuario_pode_acessar_material(request, self.turma, material):
@@ -262,5 +311,4 @@ class MaterialHTMLPublicaView(TurmaPublicaMixin, View):
                 return redirect("turmas:entrar", token=self.turma.token_publico)
             raise PermissionDenied
 
-        conteudo = material.arquivo.read().decode("utf-8", errors="replace")
         return HttpResponse(conteudo, content_type="text/html; charset=utf-8")

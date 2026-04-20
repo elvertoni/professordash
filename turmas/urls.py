@@ -124,6 +124,11 @@ urlpatterns = [
         name="materiais_html_admin",
     ),
     path(
+        "painel/turmas/<int:pk>/materiais/sincronizar-github/",
+        materiais_views.MateriaisSincronizarGithubView.as_view(),
+        name="materiais_sincronizar_github",
+    ),
+    path(
         "painel/turmas/<int:pk>/tarefas/",
         tarefas_views.TarefasGradeView.as_view(),
         name="tarefas_grade",
