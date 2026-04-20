@@ -16,6 +16,7 @@ e o "subject" correspondente no manifest.json do repositório GitHub.
 """
 
 import logging
+import time
 
 import requests
 
@@ -46,11 +47,19 @@ def get_subject_from_codigo(codigo: str) -> str | None:
 
 
 def fetch_manifest(session: requests.Session | None = None) -> dict:
-    """Baixa e retorna o manifest.json do repositório."""
+    """Baixa e retorna o manifest.json do repositório (3 tentativas com backoff)."""
     http = session or requests
-    resp = http.get(MANIFEST_URL, timeout=15)
-    resp.raise_for_status()
-    return resp.json()
+    last_exc: Exception | None = None
+    for attempt in range(3):
+        try:
+            resp = http.get(MANIFEST_URL, timeout=15)
+            resp.raise_for_status()
+            return resp.json()
+        except (requests.HTTPError, requests.ConnectionError, requests.Timeout) as exc:
+            last_exc = exc
+            if attempt < 2:
+                time.sleep(2 ** attempt)
+    raise last_exc  # type: ignore[misc]
 
 
 def build_lessons_index(manifest: dict) -> dict[str, list]:
