@@ -40,7 +40,7 @@ def fetch_tree(session: requests.Session | None = None) -> list[dict]:
     return data.get("tree", [])
 
 
-def build_materials_index(tree: list[dict]) -> dict[str, list[str]]:
+def build_materials_index(tree: list[dict]) -> dict[str, list[dict]]:
     """Indexa arquivos .html por subject extraído do path."""
     index: dict[str, list[str]] = {}
     for item in tree:
@@ -51,11 +51,12 @@ def build_materials_index(tree: list[dict]) -> dict[str, list[str]]:
             continue
 
         partes = path[len(APOSTILAS_PREFIX) :].split("/")
-        if len(partes) != 3:
+        if len(partes) < 3:
             continue
-        _series, subject, _filename = partes
+        _series, subject, *resto = partes
+        filename = resto[-1]
 
-        index.setdefault(subject.lower(), []).append(path)
+        index.setdefault(subject.lower(), []).append({"path": path, "filename": filename})
     return index
 
 
@@ -103,8 +104,9 @@ def sync_turma(turma, materials_index: dict[str, list[str]]) -> dict:
     criadas = atualizadas = erros = 0
     session = requests.Session()
 
-    for path in materiais_do_subject:
-        filename = path.rsplit("/", 1)[-1]
+    for item in materiais_do_subject:
+        path = item["path"]
+        filename = item["filename"]
         url = f"{GITHUB_RAW}/{path}"
 
         try:

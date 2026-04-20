@@ -245,7 +245,7 @@ class MaterialHTMLAdminView(ProfessorRequiredMixin, MaterialMixin, View):
 
 
 class MateriaisSincronizarGithubView(ProfessorRequiredMixin, MaterialMixin, View):
-    """Sincroniza os materiais HTML de uma turma com o repositÃ³rio GitHub ProfToniCoimbra."""
+    """Sincroniza os materiais HTML de uma turma com o repositório GitHub ProfToniCoimbra."""
 
     def post(self, request, pk):
         from aulas.github_sync import get_subject_from_codigo
@@ -255,8 +255,8 @@ class MateriaisSincronizarGithubView(ProfessorRequiredMixin, MaterialMixin, View
         if not subject:
             messages.error(
                 request,
-                f"A turma {self.turma.codigo} nÃ£o tem mapeamento no GitHub. "
-                "Verifique o cÃ³digo da turma.",
+                f"A turma {self.turma.codigo} não tem mapeamento no GitHub. "
+                "Verifique o código da turma.",
             )
             return redirect("turmas:materiais_lista", pk=self.turma.pk)
 
@@ -273,13 +273,13 @@ class MateriaisSincronizarGithubView(ProfessorRequiredMixin, MaterialMixin, View
             )
             messages.error(
                 request,
-                f"Erro durante a sincronizaÃ§Ã£o ({type(exc).__name__}): {exc}",
+                f"Erro durante a sincronização ({type(exc).__name__}): {exc}",
             )
             return redirect("turmas:materiais_lista", pk=self.turma.pk)
 
         messages.success(
             request,
-            "SincronizaÃ§Ã£o concluÃ­da: "
+            "Sincronização concluída: "
             f"{resultado['criadas']} materiais novos, "
             f"{resultado['atualizadas']} atualizados, "
             f"{resultado['erros']} erros.",
