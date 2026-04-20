@@ -26,7 +26,7 @@
   <div class="min-w-0 flex-1">
     <div class="flex flex-wrap items-center gap-2">
       <h3 class="min-w-0 text-[15px] font-semibold tracking-tight text-on-surface">
-        {% if material.tipo == 'html' and (material.arquivo or material.conteudo_html) %}
+        {% if material.tipo == 'html' and material.conteudo_html or material.tipo == 'html' and material.arquivo %}
           <a href="{% if request.user.is_staff %}{% url 'turmas:materiais_html_admin' pk=turma.pk material_pk=material.pk %}{% else %}{% url 'turmas:portal_materiais_html' token=turma.token_publico material_pk=material.pk %}{% endif %}"
              target="_blank"
              rel="noopener noreferrer"
