@@ -6,7 +6,7 @@
 <div class="max-w-xl mx-auto">
 
   <!-- Breadcrumb -->
-  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/50 mb-6 overflow-x-auto whitespace-nowrap">
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/65 mb-6 overflow-x-auto whitespace-nowrap">
     <a href="{% url 'turmas:lista' %}" class="hover:text-primary shrink-0">Turmas</a>
     <span aria-hidden="true">/</span>
     <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-primary shrink-0">{{ turma.nome }}</a>
@@ -17,7 +17,7 @@
   </nav>
 
   <h1 class="text-xl font-bold text-on-surface mb-2">Importar arquivo Markdown</h1>
-  <p class="text-sm text-on-surface-variant/50 mb-6">
+  <p class="text-sm text-on-surface-variant/65 mb-6">
     Selecione um arquivo <code class="text-primary bg-surface-container-high px-1 rounded">.md</code>.
     O título da aula será extraído do primeiro cabeçalho <code class="text-primary bg-surface-container-high px-1 rounded"># H1</code>
     ou, se não houver, do nome do arquivo.

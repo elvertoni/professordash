@@ -5,7 +5,7 @@
 {% block content %}
 <div class="space-y-6 max-w-5xl mx-auto">
 
-  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/50 overflow-x-auto whitespace-nowrap">
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/65 overflow-x-auto whitespace-nowrap">
     <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-on-surface shrink-0">Turmas</a>
     <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
     <a href="{% url 'turmas:detalhe' pk=turma.pk %}?tab=atividades" class="transition-colors hover:text-on-surface shrink-0">{{ turma.nome }}</a>

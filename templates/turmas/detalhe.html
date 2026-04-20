@@ -62,23 +62,23 @@
 
   <section class="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-5">
     <div class="rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-low p-4">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Aulas</p>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Aulas</p>
       <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ aulas|length }}</p>
     </div>
     <div class="rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-low p-4">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Alunos</p>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Alunos</p>
       <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ total_alunos_ativos }}</p>
     </div>
     <div class="rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-low p-4">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Materiais</p>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Materiais</p>
       <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ materiais.count }}</p>
     </div>
     <div class="rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-low p-4">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Tarefas</p>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Tarefas</p>
       <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ tarefas|length }}</p>
     </div>
     <div class="rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-low p-4">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Atividades</p>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Atividades</p>
       <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ atividades.count }}</p>
     </div>
   </section>
@@ -119,7 +119,7 @@
                   {{ aula.titulo }}
                 </a>
                 {% if aula.data %}
-                  <p class="mt-0.5 text-xs text-on-surface-variant/50">{{ aula.data|date:"d/m/Y" }}</p>
+                  <p class="mt-0.5 text-xs text-on-surface-variant/65">{{ aula.data|date:"d/m/Y" }}</p>
                 {% endif %}
               </div>
               {% if aula.realizada %}

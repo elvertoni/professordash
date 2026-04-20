@@ -13,7 +13,7 @@
               <p class="truncate text-sm font-medium text-on-surface">{{ entrega.aluno.nome }}</p>
               <p class="mt-0.5 truncate text-xs text-on-surface-variant/55">{{ entrega.atividade.titulo }}</p>
             </div>
-            <span class="shrink-0 text-xs text-on-surface-variant/45">{{ entrega.data_envio|naturaltime }}</span>
+            <span class="shrink-0 text-xs text-on-surface-variant/60">{{ entrega.data_envio|naturaltime }}</span>
           </div>
           <div class="mt-2 flex flex-wrap items-center gap-2">
             {% if entrega.status == "entregue" %}
@@ -32,7 +32,7 @@
 </ul>
 {% else %}
 <div class="p-10 text-center">
-  <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-outline-variant/15 bg-surface-container-high text-on-surface-variant/45">
+  <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-outline-variant/15 bg-surface-container-high text-on-surface-variant/60">
     <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
     </svg>

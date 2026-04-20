@@ -59,7 +59,7 @@
           </form>
         {% else %}
           <div class="hidden lg:block text-right">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/45">Acesso opcional</p>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Acesso opcional</p>
             <p class="mt-1 text-xs text-on-surface-variant/60">Use Google apenas para Minha Área, Notas e entregas.</p>
           </div>
           <a href="{% url 'turmas:entrar' token=turma.token_publico %}?oauth=1{% if request.GET.next %}&next={{ request.GET.next|urlencode }}{% endif %}"
@@ -78,7 +78,7 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="px-4 sm:px-6 pb-5 text-center text-xs text-on-surface-variant/45">
+  <footer class="px-4 sm:px-6 pb-5 text-center text-xs text-on-surface-variant/60">
     Prof Toni Coimbra - {{ turma.nome }}
   </footer>
 </div>

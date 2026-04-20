@@ -5,7 +5,7 @@
 {% block content %}
 <div class="max-w-5xl mx-auto">
 
-  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/50 mb-6 overflow-x-auto whitespace-nowrap">
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant/65 mb-6 overflow-x-auto whitespace-nowrap">
     <a href="{% url 'turmas:lista' %}" class="hover:text-on-surface transition-colors shrink-0">Turmas</a>
     <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
     <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="hover:text-on-surface transition-colors shrink-0">{{ turma.nome }}</a>
@@ -97,7 +97,7 @@
                     {% if entrega.nota is not None %}
                       {{ entrega.nota }} / {{ entrega.atividade.valor_pontos }}
                     {% else %}
-                      <span class="text-on-surface-variant/45 font-normal">Não avaliado</span>
+                      <span class="text-on-surface-variant/60 font-normal">Não avaliado</span>
                     {% endif %}
                   </td>
                 </tr>

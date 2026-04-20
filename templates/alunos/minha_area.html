@@ -11,7 +11,7 @@
     </div>
     <div class="hidden sm:block text-right">
       <p class="text-sm font-medium text-on-surface">{{ aluno.nome }}</p>
-      <p class="text-xs text-on-surface-variant/45">{{ aluno.email }}</p>
+      <p class="text-xs text-on-surface-variant/60">{{ aluno.email }}</p>
     </div>
   </div>
 
@@ -79,7 +79,7 @@
               <div class="shrink-0 flex items-center">
                 {% if item.entrega and item.entrega.status == 'avaliada' %}
                   <div class="text-right mr-4">
-                    <p class="text-xs text-on-surface-variant/45">Nota</p>
+                    <p class="text-xs text-on-surface-variant/60">Nota</p>
                     <p class="text-lg font-bold text-primary">{{ item.entrega.nota }} / {{ item.atividade.valor_pontos }}</p>
                   </div>
                 {% endif %}

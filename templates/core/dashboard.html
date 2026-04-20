@@ -38,11 +38,11 @@
 
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:min-w-[26rem]">
           <div class="rounded-2xl border border-outline-variant/10 bg-surface-container-high/80 p-4">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Turmas</p>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Turmas</p>
             <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ kpi_turmas }}</p>
           </div>
           <div class="rounded-2xl border border-outline-variant/10 bg-surface-container-high/80 p-4">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/50">Alunos</p>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Alunos</p>
             <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ kpi_alunos }}</p>
           </div>
           <div class="rounded-2xl border border-error/20 bg-error/10 p-4">
@@ -78,7 +78,7 @@
                   <div class="p-5">
                     <div class="flex items-start justify-between gap-3">
                       <div class="min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/45">{{ turma.codigo|default:turma.periodo }}</p>
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">{{ turma.codigo|default:turma.periodo }}</p>
                         <h3 class="mt-1 truncate text-[1.02rem] font-semibold tracking-tight text-on-surface transition-colors group-hover:text-on-background">{{ turma.nome }}</h3>
                       </div>
                       <span class="shrink-0 rounded-full border border-primary/20 bg-primary/12 px-2.5 py-1 text-[11px] font-semibold text-primary">Ativa</span>
@@ -108,7 +108,7 @@
 
       <section id="stats-turmas" class="rounded-[1.35rem]" hx-get="{% url 'core:htmx_stats_turmas' %}" hx-trigger="load" hx-swap="innerHTML">
         <div class="rounded-[1.35rem] border border-outline-variant/10 bg-surface-container-low p-8">
-          <div class="flex items-center gap-3 text-on-surface-variant/50">
+          <div class="flex items-center gap-3 text-on-surface-variant/65">
             <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -167,7 +167,7 @@
               <li class="flex items-center justify-between gap-3 px-5 py-4 transition-colors hover:bg-surface-container-high/50">
                 <div class="min-w-0">
                   <p class="truncate text-sm font-medium text-on-surface">{{ ativ.titulo }}</p>
-                  <p class="mt-0.5 truncate text-xs text-on-surface-variant/50">{{ ativ.turma.nome }}</p>
+                  <p class="mt-0.5 truncate text-xs text-on-surface-variant/65">{{ ativ.turma.nome }}</p>
                 </div>
                 <span class="shrink-0 rounded-lg border border-error/20 bg-error/10 px-2.5 py-1 text-[11px] font-semibold text-error">{{ ativ.prazo|date:"d/m H:i" }}</span>
               </li>
@@ -198,7 +198,7 @@
                   </div>
                   <div class="min-w-0">
                     <p class="truncate text-sm font-medium text-on-surface">{{ entrega.aluno.nome }}</p>
-                    <p class="truncate text-xs text-on-surface-variant/50">{{ entrega.atividade.titulo }}</p>
+                    <p class="truncate text-xs text-on-surface-variant/65">{{ entrega.atividade.titulo }}</p>
                   </div>
                 </div>
                 <a href="{% url 'turmas:atividade_detalhe' pk=entrega.atividade.turma.pk atividade_pk=entrega.atividade.pk %}" class="shrink-0 rounded-lg border border-outline-variant/15 bg-surface-container-high px-3 py-2 text-xs font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest hover:text-on-surface">
@@ -218,7 +218,7 @@
             </svg>
           </div>
           <p class="mt-4 text-sm font-semibold text-on-surface">Tudo em dia</p>
-          <p class="mt-1 text-sm text-on-surface-variant/55">Nenhum alerta critico no momento.</p>
+          <p class="mt-1 text-sm text-on-surface-variant/55">Nenhum alerta cr?tico no momento.</p>
         </section>
       {% endif %}
 
@@ -226,7 +226,7 @@
         <div class="flex items-center justify-between gap-3 border-b border-outline-variant/10 px-5 py-4">
           <div>
             <h3 class="text-sm font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Feed de entregas</h3>
-            <p class="mt-1 text-xs text-on-surface-variant/55">Atualizacao automatica a cada 30s.</p>
+            <p class="mt-1 text-xs text-on-surface-variant/55">Atualiza??o autom?tica a cada 30s.</p>
           </div>
           <span class="inline-flex items-center gap-1.5 rounded-full border border-secondary/20 bg-secondary/10 px-2.5 py-1 text-[11px] font-semibold text-secondary">
             <span class="h-1.5 w-1.5 rounded-full bg-secondary animate-pulse"></span>
@@ -235,7 +235,7 @@
         </div>
         <div id="feed-entregas" class="min-h-[160px]" hx-get="{% url 'core:htmx_feed_entregas' %}" hx-trigger="load, every 30s" hx-swap="innerHTML">
           <div class="flex items-center justify-center p-8">
-            <div class="flex items-center gap-2 text-sm text-on-surface-variant/50">
+            <div class="flex items-center gap-2 text-sm text-on-surface-variant/65">
               <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>

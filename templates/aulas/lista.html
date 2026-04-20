@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="max-w-5xl mx-auto" x-data>
-  <nav class="flex items-center gap-2 text-[12px] text-on-surface-variant/50 mb-6 overflow-x-auto whitespace-nowrap">
+  <nav class="flex items-center gap-2 text-[12px] text-on-surface-variant/65 mb-6 overflow-x-auto whitespace-nowrap">
     <a href="{% url 'turmas:lista' %}" class="shrink-0 transition-colors hover:text-on-surface">Turmas</a>
     <span class="text-on-surface-variant/25" aria-hidden="true">/</span>
     <a href="{% url 'turmas:detalhe' pk=turma.pk %}" class="shrink-0 transition-colors hover:text-on-surface">{{ turma.nome }}</a>
@@ -51,7 +51,7 @@
   </section>
 
   {% if aulas %}
-    <div class="mb-4 rounded-2xl border border-outline-variant/10 bg-surface-container-low/60 px-4 py-3 text-[13px] text-on-surface-variant/50">
+    <div class="mb-4 rounded-2xl border border-outline-variant/10 bg-surface-container-low/60 px-4 py-3 text-[13px] text-on-surface-variant/65">
       Arraste as linhas para reordenar. Use o botão de apresentação para abrir a aula em tela cheia.
     </div>
 

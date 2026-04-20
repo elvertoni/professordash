@@ -51,7 +51,7 @@
             <label for="{{ form.prazo.id_for_label }}" class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-1.5">Prazo de Entrega <span class="text-error">*</span></label>
             {{ form.prazo }}
             {% if form.prazo.errors %}<p class="mt-1 text-sm text-error">{{ form.prazo.errors.0 }}</p>{% endif %}
-            <p class="mt-1 text-xs text-on-surface-variant/45">Data e hora limite para envio.</p>
+            <p class="mt-1 text-xs text-on-surface-variant/60">Data e hora limite para envio.</p>
           </div>
 
           <div>
@@ -72,7 +72,7 @@
           {{ form.descricao }}
           {{ form.descricao.media }}
           {% if form.descricao.errors %}<p class="mt-1 text-sm text-error">{{ form.descricao.errors.0 }}</p>{% endif %}
-          <p class="mt-1 text-xs text-on-surface-variant/45">{{ form.descricao.help_text }}</p>
+          <p class="mt-1 text-xs text-on-surface-variant/60">{{ form.descricao.help_text }}</p>
         </div>
 
         <div class="border-t border-outline-variant/10 pt-5 space-y-4">
