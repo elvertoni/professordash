@@ -1,0 +1,175 @@
+<section class="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+  <div class="space-y-4">
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div class="rounded-[1.25rem] border border-outline-variant/10 bg-surface-container-low p-4">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Tarefas</p>
+        <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ tarefas|length }}</p>
+        <p class="mt-2 text-xs text-on-surface-variant/60">{{ tarefas_concluidas }} fechadas, {{ tarefas_sem_data }} sem data.</p>
+      </div>
+      <div class="rounded-[1.25rem] border border-outline-variant/10 bg-surface-container-low p-4">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Alunos ativos</p>
+        <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ total_alunos }}</p>
+        <p class="mt-2 text-xs text-on-surface-variant/60">{{ alunos_zerados }} ainda sem checks.</p>
+      </div>
+      <div class="rounded-[1.25rem] border border-outline-variant/10 bg-surface-container-low p-4">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Checks feitos</p>
+        <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ checks_realizados }}</p>
+        <p class="mt-2 text-xs text-on-surface-variant/60">{{ checks_pendentes }} pendentes no total.</p>
+      </div>
+      <div class="rounded-[1.25rem] border border-outline-variant/10 bg-surface-container-low p-4">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Conclusao geral</p>
+        <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ percentual_geral }}%</p>
+        <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-background/80">
+          <div class="h-full rounded-full bg-emerald-400 transition-all duration-300" style="width: {{ percentual_geral }}%"></div>
+        </div>
+      </div>
+      <div class="rounded-[1.25rem] border border-outline-variant/10 bg-surface-container-low p-4">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Media/aluno</p>
+        <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ media_checks_por_aluno }}</p>
+        <p class="mt-2 text-xs text-on-surface-variant/60">Checks realizados por aluno.</p>
+      </div>
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-3">
+      <article class="rounded-[1.3rem] border border-outline-variant/10 bg-surface-container-low p-4">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <p class="text-sm font-semibold text-on-surface">Proximas tarefas</p>
+            <p class="mt-1 text-xs text-on-surface-variant/55">O que vence primeiro.</p>
+          </div>
+          <span class="rounded-full border border-outline-variant/15 bg-background/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-on-surface-variant/60">
+            agenda
+          </span>
+        </div>
+        <div class="mt-4 space-y-3">
+          {% for tarefa in proximas_tarefas %}
+            <div class="rounded-2xl border border-outline-variant/10 bg-background/70 p-3">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-semibold text-on-surface">{{ tarefa.obj.nome }}</p>
+                  <p class="mt-1 text-xs text-on-surface-variant/60">{{ tarefa.obj.data|date:"d/m/Y" }}</p>
+                </div>
+                <span class="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                  {{ tarefa.percentual }}%
+                </span>
+              </div>
+            </div>
+          {% empty %}
+            <p class="text-sm text-on-surface-variant/60">Nenhuma tarefa com data definida.</p>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="rounded-[1.3rem] border border-outline-variant/10 bg-surface-container-low p-4">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <p class="text-sm font-semibold text-on-surface">Melhor adesao</p>
+            <p class="mt-1 text-xs text-on-surface-variant/55">Tarefas mais encaminhadas.</p>
+          </div>
+          <span class="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-200">
+            tracao
+          </span>
+        </div>
+        <div class="mt-4 space-y-3">
+          {% for tarefa in tarefas_maior_adesao %}
+            <div class="rounded-2xl border border-outline-variant/10 bg-background/70 p-3">
+              <div class="flex items-start justify-between gap-3">
+                <p class="min-w-0 text-sm font-semibold text-on-surface">{{ tarefa.obj.nome }}</p>
+                <span class="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-200">
+                  {{ tarefa.total_realizadas }}/{{ total_alunos }}
+                </span>
+              </div>
+            </div>
+          {% empty %}
+            <p class="text-sm text-on-surface-variant/60">Ainda sem dados de adesao.</p>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="rounded-[1.3rem] border border-outline-variant/10 bg-surface-container-low p-4">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <p class="text-sm font-semibold text-on-surface">Alunos pedindo atencao</p>
+            <p class="mt-1 text-xs text-on-surface-variant/55">Menor progresso geral.</p>
+          </div>
+          <span class="rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-100">
+            foco
+          </span>
+        </div>
+        <div class="mt-4 space-y-3">
+          {% for linha in alunos_alerta %}
+            <div class="rounded-2xl border border-outline-variant/10 bg-background/70 p-3">
+              <div class="flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-semibold text-on-surface">{{ linha.aluno.nome }}</p>
+                  <p class="mt-1 text-xs text-on-surface-variant/60">{{ linha.total_pendentes }} pendente{{ linha.total_pendentes|pluralize }}</p>
+                </div>
+                <span class="rounded-full border border-outline-variant/15 bg-surface-container-high px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant/70">
+                  {{ linha.percentual }}%
+                </span>
+              </div>
+            </div>
+          {% empty %}
+            <p class="text-sm text-on-surface-variant/60">Nenhum aluno ativo na grade.</p>
+          {% endfor %}
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <aside class="rounded-[1.3rem] border border-outline-variant/10 bg-surface-container-low p-4">
+    <div class="flex items-center justify-between gap-3">
+      <div>
+        <p class="text-sm font-semibold text-on-surface">Radar da turma</p>
+        <p class="mt-1 text-xs text-on-surface-variant/55">Resumo rapido para agir agora.</p>
+      </div>
+      <span class="rounded-full border border-outline-variant/15 bg-background/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-on-surface-variant/60">
+        live
+      </span>
+    </div>
+
+    <div class="mt-4 space-y-5">
+      <div>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Tarefas com menor adesao</p>
+        <div class="mt-3 space-y-3">
+          {% for tarefa in tarefas_menor_adesao %}
+            <div class="rounded-2xl border border-outline-variant/10 bg-background/70 p-3">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="text-sm font-semibold text-on-surface">{{ tarefa.obj.nome }}</p>
+                  <p class="mt-1 text-xs text-on-surface-variant/60">{{ tarefa.total_pendentes }} pendente{{ tarefa.total_pendentes|pluralize }}</p>
+                </div>
+                <span class="rounded-full border border-amber-400/20 bg-amber-500/10 px-2.5 py-1 text-[11px] font-semibold text-amber-100">
+                  {{ tarefa.percentual }}%
+                </span>
+              </div>
+            </div>
+          {% empty %}
+            <p class="text-sm text-on-surface-variant/60">Sem tarefas cadastradas.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Alunos destaque</p>
+        <div class="mt-3 space-y-3">
+          {% for linha in alunos_destaque %}
+            <div class="rounded-2xl border border-outline-variant/10 bg-background/70 p-3">
+              <div class="flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-semibold text-on-surface">{{ linha.aluno.nome }}</p>
+                  <p class="mt-1 text-xs text-on-surface-variant/60">{{ linha.total_realizadas }} check{{ linha.total_realizadas|pluralize }}</p>
+                </div>
+                <span class="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-200">
+                  {{ linha.percentual }}%
+                </span>
+              </div>
+            </div>
+          {% empty %}
+            <p class="text-sm text-on-surface-variant/60">Sem alunos ativos para ranquear.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </aside>
+</section>

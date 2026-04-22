@@ -1,0 +1,21 @@
+<td id="linha-resumo-{{ linha.aluno.pk }}" {% if oob %}hx-swap-oob="outerHTML"{% endif %} class="sticky right-0 z-30 w-[12.5rem] min-w-[12.5rem] border-b border-l border-outline-variant/10 bg-surface-container-low px-4 py-4 align-middle transition-colors group-hover:bg-surface-container">
+  <div class="space-y-3">
+    <div class="flex items-center justify-between gap-3 text-sm font-semibold text-on-surface">
+      <span>{{ linha.total_realizadas }}/{{ tarefas|length }}</span>
+      <span>{{ linha.percentual }}%</span>
+    </div>
+    <div class="h-1.5 overflow-hidden rounded-full bg-background/80">
+      <div class="h-full rounded-full bg-emerald-400 transition-all duration-300" style="width: {{ linha.percentual }}%"></div>
+    </div>
+    <div class="flex items-center justify-between gap-3 text-[11px] font-medium uppercase tracking-[0.16em] text-on-surface-variant/55">
+      <span>{{ linha.total_pendentes }} pend.</span>
+      {% if linha.percentual == 100 %}
+        <span class="text-emerald-200">ok</span>
+      {% elif linha.percentual <= 35 %}
+        <span class="text-amber-100">foco</span>
+      {% else %}
+        <span class="text-on-surface-variant/60">ritmo</span>
+      {% endif %}
+    </div>
+  </div>
+</td>

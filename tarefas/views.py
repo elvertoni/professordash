@@ -28,9 +28,73 @@ def _percentual(parte, total):
     return round((parte / total) * 100)
 
 
+def _build_grade_highlights(tarefas, alunos, total_alunos):
+    tarefas_com_data = [tarefa for tarefa in tarefas if tarefa["obj"].data]
+    tarefas_ordenadas = sorted(
+        tarefas_com_data,
+        key=lambda tarefa: (tarefa["obj"].data, tarefa["obj"].ordem, tarefa["obj"].pk),
+    )
+    tarefas_maior_adesao = sorted(
+        tarefas,
+        key=lambda tarefa: (
+            -tarefa["percentual"],
+            tarefa["obj"].ordem,
+            tarefa["obj"].nome.lower(),
+        ),
+    )
+    tarefas_menor_adesao = sorted(
+        tarefas,
+        key=lambda tarefa: (
+            tarefa["percentual"],
+            tarefa["obj"].ordem,
+            tarefa["obj"].nome.lower(),
+        ),
+    )
+    alunos_ranking = sorted(
+        alunos,
+        key=lambda linha: (
+            -linha["percentual"],
+            -linha["total_realizadas"],
+            linha["aluno"].nome.lower(),
+        ),
+    )
+    alunos_alerta = sorted(
+        alunos,
+        key=lambda linha: (
+            linha["percentual"],
+            linha["total_realizadas"],
+            linha["aluno"].nome.lower(),
+        ),
+    )
+
+    tarefas_concluidas = sum(1 for tarefa in tarefas if tarefa["percentual"] == 100)
+    tarefas_sem_data = sum(1 for tarefa in tarefas if not tarefa["obj"].data)
+    alunos_zerados = sum(1 for linha in alunos if linha["total_realizadas"] == 0)
+
+    return {
+        "proximas_tarefas": tarefas_ordenadas[:4],
+        "tarefas_maior_adesao": tarefas_maior_adesao[:3],
+        "tarefas_menor_adesao": tarefas_menor_adesao[:3],
+        "alunos_destaque": alunos_ranking[:4],
+        "alunos_alerta": alunos_alerta[:4],
+        "tarefas_concluidas": tarefas_concluidas,
+        "tarefas_sem_data": tarefas_sem_data,
+        "alunos_zerados": alunos_zerados,
+        "media_checks_por_aluno": round(
+            sum(linha["total_realizadas"] for linha in alunos) / total_alunos, 1
+        )
+        if total_alunos
+        else 0,
+    }
+
+
 def _get_tarefa_resumo(tarefa, total_alunos=None):
     if total_alunos is None:
-        total_alunos = Matricula.objects.filter(turma=tarefa.turma, ativa=True).count()
+        total_alunos = Matricula.objects.filter(
+            turma=tarefa.turma,
+            ativa=True,
+            aluno__ativo=True,
+        ).count()
 
     total_realizadas = (
         RealizacaoTarefa.objects.filter(
@@ -38,6 +102,7 @@ def _get_tarefa_resumo(tarefa, total_alunos=None):
             realizada=True,
             aluno__matriculas__turma=tarefa.turma,
             aluno__matriculas__ativa=True,
+            aluno__ativo=True,
         )
         .distinct()
         .count()
@@ -46,12 +111,20 @@ def _get_tarefa_resumo(tarefa, total_alunos=None):
     return {
         "obj": tarefa,
         "total_realizadas": total_realizadas,
+        "total_pendentes": max(total_alunos - total_realizadas, 0),
         "percentual": _percentual(total_realizadas, total_alunos),
+        "esta_concluida": total_alunos > 0 and total_realizadas == total_alunos,
+        "esta_critica": total_alunos > 0 and _percentual(total_realizadas, total_alunos) <= 35,
+        "sem_data": tarefa.data is None,
     }
 
 
 def _render_tarefa_header(request, turma, tarefa):
-    total_alunos = Matricula.objects.filter(turma=turma, ativa=True).count()
+    total_alunos = Matricula.objects.filter(
+        turma=turma,
+        ativa=True,
+        aluno__ativo=True,
+    ).count()
     return render(
         request,
         "tarefas/_tarefa_header.html",
@@ -66,7 +139,7 @@ def _render_tarefa_header(request, turma, tarefa):
 def _build_grade_context(turma, *, criar_faltantes=False):
     tarefas_base = list(Tarefa.objects.filter(turma=turma).select_related("turma"))
     matriculas = list(
-        Matricula.objects.filter(turma=turma, ativa=True)
+        Matricula.objects.filter(turma=turma, ativa=True, aluno__ativo=True)
         .select_related("aluno", "turma")
         .order_by("aluno__nome")
     )
@@ -111,8 +184,12 @@ def _build_grade_context(turma, *, criar_faltantes=False):
             {
                 "obj": tarefa,
                 "total_realizadas": total_realizadas,
+                "total_pendentes": max(total_alunos - total_realizadas, 0),
                 "percentual": _percentual(total_realizadas, total_alunos),
                 "realizados_alunos": realizacoes[tarefa.pk],
+                "esta_concluida": total_alunos > 0 and total_realizadas == total_alunos,
+                "esta_critica": total_alunos > 0 and _percentual(total_realizadas, total_alunos) <= 35,
+                "sem_data": tarefa.data is None,
             }
         )
 
@@ -142,12 +219,17 @@ def _build_grade_context(turma, *, criar_faltantes=False):
                 "aluno": aluno,
                 "celulas": celulas,
                 "total_realizadas": total_realizadas_aluno,
+                "total_pendentes": max(len(tarefas_base) - total_realizadas_aluno, 0),
                 "percentual": _percentual(total_realizadas_aluno, len(tarefas_base)),
+                "tarefas_pendentes": [
+                    tarefa["obj"] for tarefa in tarefas if aluno.pk not in tarefa["realizados_alunos"]
+                ],
             }
         )
 
     checks_realizados = sum(tarefa["total_realizadas"] for tarefa in tarefas)
     total_checks = len(tarefas_base) * total_alunos
+    highlights = _build_grade_highlights(tarefas, alunos, total_alunos)
 
     return {
         "turma": turma,
@@ -159,6 +241,15 @@ def _build_grade_context(turma, *, criar_faltantes=False):
         "checks_realizados": checks_realizados,
         "checks_pendentes": max(total_checks - checks_realizados, 0),
         "percentual_geral": _percentual(checks_realizados, total_checks),
+        "proximas_tarefas": highlights["proximas_tarefas"],
+        "tarefas_maior_adesao": highlights["tarefas_maior_adesao"],
+        "tarefas_menor_adesao": highlights["tarefas_menor_adesao"],
+        "alunos_destaque": highlights["alunos_destaque"],
+        "alunos_alerta": highlights["alunos_alerta"],
+        "tarefas_concluidas": highlights["tarefas_concluidas"],
+        "tarefas_sem_data": highlights["tarefas_sem_data"],
+        "alunos_zerados": highlights["alunos_zerados"],
+        "media_checks_por_aluno": highlights["media_checks_por_aluno"],
     }
 
 
@@ -167,7 +258,7 @@ class TarefasGradeView(ProfessorRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         turma = get_object_or_404(Turma, pk=kwargs["pk"])
-        context = _build_grade_context(turma, criar_faltantes=True)
+        context = _build_grade_context(turma, criar_faltantes=False)
         return render(request, self.template_name, context)
 
 
@@ -180,6 +271,7 @@ class TarefaToggleView(ProfessorRequiredMixin, View):
             turma=turma,
             aluno_id=kwargs["aluno_pk"],
             ativa=True,
+            aluno__ativo=True,
         )
         aluno = matricula.aluno
 
@@ -190,14 +282,38 @@ class TarefaToggleView(ProfessorRequiredMixin, View):
         realizacao.realizada = not realizacao.realizada
         realizacao.save(update_fields=["realizada", "atualizado_em"])
 
+        grade_context = _build_grade_context(turma, criar_faltantes=False)
+        tarefa_resumo = next(
+            item for item in grade_context["tarefas"] if item["obj"].pk == tarefa.pk
+        )
+        linha_resumo = next(
+            item for item in grade_context["linhas"] if item["aluno"].pk == aluno.pk
+        )
+
         return render(
             request,
-            "tarefas/_checkbox.html",
+            "tarefas/_toggle_response.html",
             {
                 "turma": turma,
                 "tarefa": tarefa,
                 "aluno": aluno,
                 "realizacao": realizacao,
+                "tarefa_resumo": tarefa_resumo,
+                "linha_resumo": linha_resumo,
+                "tarefas": grade_context["tarefas"],
+                "total_alunos": grade_context["total_alunos"],
+                "checks_realizados": grade_context["checks_realizados"],
+                "checks_pendentes": grade_context["checks_pendentes"],
+                "percentual_geral": grade_context["percentual_geral"],
+                "proximas_tarefas": grade_context["proximas_tarefas"],
+                "tarefas_maior_adesao": grade_context["tarefas_maior_adesao"],
+                "tarefas_menor_adesao": grade_context["tarefas_menor_adesao"],
+                "alunos_destaque": grade_context["alunos_destaque"],
+                "alunos_alerta": grade_context["alunos_alerta"],
+                "tarefas_concluidas": grade_context["tarefas_concluidas"],
+                "tarefas_sem_data": grade_context["tarefas_sem_data"],
+                "alunos_zerados": grade_context["alunos_zerados"],
+                "media_checks_por_aluno": grade_context["media_checks_por_aluno"],
             },
         )
 
@@ -239,9 +355,11 @@ class TarefaCriarView(ProfessorRequiredMixin, View):
             ordem=ordem,
         )
 
-        matriculas = Matricula.objects.filter(turma=turma, ativa=True).select_related(
-            "aluno"
-        )
+        matriculas = Matricula.objects.filter(
+            turma=turma,
+            ativa=True,
+            aluno__ativo=True,
+        ).select_related("aluno")
         RealizacaoTarefa.objects.bulk_create(
             [
                 RealizacaoTarefa(tarefa=tarefa, aluno=matricula.aluno)

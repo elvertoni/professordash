@@ -2,12 +2,12 @@
 
 ## Visao Geral
 
-O sistema separa autenticao por perfil:
+O sistema separa autenticacao por perfil:
 
 - Professor entra com login local do Django.
 - Aluno entra com Google OAuth via `django-allauth`.
 - Parte do portal da turma e publica por `token`.
-- Acesso a "minha area" e notas exige login e matricula ativa.
+- Acesso a "minha area" e notas exige login, aluno ativo e matricula ativa.
 
 ## Matriz De Acesso
 
@@ -17,9 +17,9 @@ O sistema separa autenticao por perfil:
 | `/entrar/password_reset/` | Professor | recuperacao de senha do Django |
 | `/painel/*` | Professor | `is_staff=True` |
 | `/turma/<token>/` | Publico | token valido da turma ativa |
-| `/turma/<token>/entrar/` | Aluno | redireciona para Google OAuth |
-| `/turma/<token>/minha-area/` | Aluno autenticado | login + matricula ativa |
-| `/turma/<token>/minhas-notas/` | Aluno autenticado | login + matricula ativa |
+| `/turma/<token>/entrar/` | Aluno | inicia OAuth so com `?oauth=1`; sem isso volta ao portal |
+| `/turma/<token>/minha-area/` | Aluno autenticado | login + aluno ativo + matricula ativa |
+| `/turma/<token>/minhas-notas/` | Aluno autenticado | login + aluno ativo + matricula ativa |
 
 ## Professor
 
@@ -30,7 +30,7 @@ Regras principais:
 - O login principal e `LOGIN_URL = "/entrar/login/"`.
 - O painel administrativo e protegido por `ProfessorRequiredMixin`.
 - Esse mixin exige `request.user.is_authenticated` e `request.user.is_staff`.
-- A tela de login do professor nao exibe o botao Google para evitar ambiguidade com o acesso do aluno.
+- A tela de login do professor nao exibe botao Google para evitar ambiguidade com o acesso do aluno.
 - Em producao, a sessao usa cache/Redis e os cookies sao marcados como seguros.
 
 Fluxo de recuperacao de senha:
@@ -45,20 +45,21 @@ Fluxo de recuperacao de senha:
 Fluxo real:
 
 ```text
-/turma/<token>/entrar/
+/turma/<token>/entrar/?oauth=1
     -> valida se o Google OAuth esta configurado
     -> salva `turma_token` na sessao
     -> redireciona para `google_oauth_start`
     -> allauth executa o login Google
-    -> `user_logged_in` vincula ou cria `Aluno`
+    -> `user_logged_in` vincula ou cria `Aluno` por e-mail
     -> redireciona para `/turma/<token>/minha-area/`
 ```
 
 Pontos importantes:
 
 - O OAuth e iniciado por `GoogleOAuthStartView`.
-- A configuracao e considerada disponivel quando existem `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` reais, ou um `SocialApp` Google valido no banco.
+- A configuracao e considerada disponivel quando `settings.GOOGLE_CLIENT_ID` e `settings.GOOGLE_CLIENT_SECRET` sao reais, ou existe um `SocialApp` Google valido no banco.
 - Se o OAuth nao estiver disponivel, o sistema volta para o portal da turma e exibe mensagem de erro.
+- As telas publicas mostram o login como indisponivel quando o OAuth nao esta configurado.
 
 ## Vinculo Do Aluno
 
@@ -66,12 +67,10 @@ O vinculo acontece no signal `user_logged_in` em [alunos/signals.py](/C:/CODE_TO
 
 Comportamento:
 
-- Se o usuario logado tem e-mail e nao e staff, o sistema procura um `Aluno` pelo mesmo e-mail.
-- Se encontrar um aluno sem `user`, o vinculo e criado.
+- Se o usuario logado tem e-mail e nao e staff, o sistema procura um `Aluno` pelo mesmo e-mail, sem diferenciar maiusculas e minusculas.
+- Se encontrar um aluno sem `user`, o vinculo e criado e o e-mail do cadastro e normalizado para lowercase.
 - Se nao encontrar, um novo `Aluno` e criado automaticamente com o usuario autenticado.
-
-Observacao:
-
+- O login nao reativa matriculas inativas automaticamente.
 - O signal e disparado para qualquer login do usuario, nao apenas para Google OAuth.
 
 ## Acesso Do Aluno
@@ -80,9 +79,10 @@ Para acessar as areas do aluno, o `AlunoAutenticadoMixin` exige:
 
 1. Usuario autenticado.
 2. `Aluno` vinculado ao `User`.
-3. `Matricula` ativa para a turma do token da URL.
+3. `Aluno.ativo=True`.
+4. `Matricula` ativa para a turma do token da URL.
 
-Se a matricula nao existir ou estiver inativa, o sistema retorna `403`.
+Se o vinculo nao satisfizer essas regras, o sistema redireciona para o portal da turma e exibe mensagem de erro.
 
 ## Portal Publico
 
@@ -135,4 +135,4 @@ Credenciais do Google OAuth ficam em:
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
 
-Se esses valores estiverem ausentes ou ainda com placeholders, a interface esconde o botao de Google e o acesso ao fluxo de aluno e bloqueado.
+Se esses valores estiverem ausentes ou ainda com placeholders, o CTA de Google fica indisponivel nas telas publicas e o acesso ao fluxo de aluno e bloqueado.

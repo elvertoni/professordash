@@ -22,10 +22,17 @@
 
       <div class="rounded-[1.25rem] border border-outline-variant/10 bg-surface-container-high/70 p-5 sm:max-w-sm">
         <h2 class="text-base font-semibold text-on-surface">Acesso completo</h2>
-        <p class="mt-2 text-sm leading-6 text-on-surface-variant/65">Entre com sua conta Google para acompanhar aulas, materiais, atividades e resultados.</p>
-        <a href="{% url 'turmas:entrar' token=turma.token_publico %}" class="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
-          Entrar com Google
-        </a>
+        {% if google_oauth_configured %}
+          <p class="mt-2 text-sm leading-6 text-on-surface-variant/65">Entre com sua conta Google para acompanhar aulas, materiais, atividades e resultados.</p>
+          <a href="{% url 'turmas:entrar' token=turma.token_publico %}?oauth=1" class="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary/90">
+            Entrar com Google
+          </a>
+        {% else %}
+          <p class="mt-2 text-sm leading-6 text-on-surface-variant/65">O login com Google esta indisponivel no momento. Voce ainda pode acompanhar o conteudo publico da turma.</p>
+          <span class="mt-4 inline-flex cursor-not-allowed items-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container px-4 py-2.5 text-sm font-semibold text-on-surface-variant/45">
+            Login Google indisponivel
+          </span>
+        {% endif %}
       </div>
     </div>
   </section>
@@ -47,7 +54,7 @@
   <section class="space-y-4">
     <div>
       <h2 class="text-base font-semibold text-on-surface">Aulas</h2>
-      <p class="mt-1 text-sm text-on-surface-variant/60">Sequência de estudos disponível para esta turma.</p>
+      <p class="mt-1 text-sm text-on-surface-variant/60">Sequencia de estudos disponivel para esta turma.</p>
     </div>
     {% if aulas %}
       <div class="space-y-3">
@@ -84,7 +91,7 @@
         {% endfor %}
       </div>
     {% else %}
-      {% include "components/_empty_state.html" with title="Nenhuma aula disponível ainda" subtitle="Quando a turma publicar novas aulas, elas aparecerão aqui." %}
+      {% include "components/_empty_state.html" with title="Nenhuma aula disponivel ainda" subtitle="Quando a turma publicar novas aulas, elas aparecerao aqui." %}
     {% endif %}
   </section>
 

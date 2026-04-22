@@ -6,7 +6,7 @@ from django.urls import reverse
 
 
 class ProfessorRequiredMixin(LoginRequiredMixin):
-    """Restringe acesso às views /painel/ ao professor (is_staff=True)."""
+    """Restringe acesso as views /painel/ ao professor (is_staff=True)."""
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -17,18 +17,17 @@ class ProfessorRequiredMixin(LoginRequiredMixin):
 
 
 class TurmaPublicaMixin:
-    """Resolve self.turma a partir do token_publico na URL. Usado em views públicas."""
+    """Resolve self.turma a partir do token_publico na URL. Usado em views publicas."""
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        # Import local para evitar dependência circular
         from turmas.models import Turma
 
         self.turma = get_object_or_404(Turma, token_publico=kwargs["token"], ativa=True)
 
 
 class AlunoAutenticadoMixin(TurmaPublicaMixin, LoginRequiredMixin):
-    """Garante que o usuário autenticado possui matrícula ativa na turma."""
+    """Garante que o usuario autenticado possui matricula ativa na turma."""
 
     def get_login_url(self):
         return reverse("turmas:entrar", kwargs={"token": self.turma.token_publico})
@@ -41,14 +40,15 @@ class AlunoAutenticadoMixin(TurmaPublicaMixin, LoginRequiredMixin):
         try:
             self.matricula = Matricula.objects.select_related("aluno").get(
                 aluno__user=request.user,
+                aluno__ativo=True,
                 turma=self.turma,
                 ativa=True,
             )
         except Matricula.DoesNotExist:
             messages.error(
                 request,
-                "Você não está matriculado nesta turma. "
-                "Entre em contato com o professor para ser adicionado.",
+                "Seu acesso a esta turma nao esta liberado. "
+                "Confira seu cadastro e sua matricula com o professor.",
             )
             return redirect("turmas:portal", token=self.turma.token_publico)
         return super().dispatch(request, *args, **kwargs)

@@ -1,5 +1,4 @@
-import os
-
+from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
 
 
@@ -18,8 +17,10 @@ def _is_valid_google_oauth_value(value: str) -> bool:
 
 def has_valid_google_oauth_env() -> bool:
     return _is_valid_google_oauth_value(
-        os.environ.get("GOOGLE_CLIENT_ID", "")
-    ) and _is_valid_google_oauth_value(os.environ.get("GOOGLE_CLIENT_SECRET", ""))
+        getattr(settings, "GOOGLE_CLIENT_ID", "")
+    ) and _is_valid_google_oauth_value(
+        getattr(settings, "GOOGLE_CLIENT_SECRET", "")
+    )
 
 
 def is_google_oauth_configured() -> bool:

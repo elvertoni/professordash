@@ -1,8 +1,9 @@
+from django.conf import settings
 from django.contrib import messages
 from django.db.models import Avg, Count, Q
 from django.shortcuts import redirect
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.generic import TemplateView, View
 
 from core.auth import is_google_oauth_configured
@@ -16,14 +17,14 @@ class DashboardView(ProfessorRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        from turmas.models import Turma
         from atividades.models import Atividade, Entrega
+        from turmas.models import Turma
 
         agora = timezone.now()
         turmas_ativas = Turma.objects.filter(ativa=True)
         ctx["turmas_ativas"] = turmas_ativas
 
-        # ── KPIs ──────────────────────────────────────────────────────────────
+        # KPIs
         ctx["kpi_turmas"] = turmas_ativas.count()
         ctx["kpi_alunos"] = (
             turmas_ativas.annotate(n=Count("alunos", distinct=True)).aggregate(
@@ -41,7 +42,7 @@ class DashboardView(ProfessorRequiredMixin, TemplateView):
             nota__isnull=True,
         ).count()
 
-        # ── Alertas (task 4.4) ────────────────────────────────────────────────
+        # Alertas
         limite_prazo = agora + timezone.timedelta(hours=48)
         ctx["alertas_prazo"] = (
             Atividade.objects.filter(
@@ -64,7 +65,7 @@ class DashboardView(ProfessorRequiredMixin, TemplateView):
             .order_by("-data_envio")[:8]
         )
 
-        # ── Alunos recentes (para avatar section no dashboard) ─────────────────
+        # Alunos recentes (para avatar section no dashboard)
         from alunos.models import Aluno
 
         ctx["alunos_recentes"] = (
@@ -79,20 +80,21 @@ class DashboardView(ProfessorRequiredMixin, TemplateView):
 
 
 class GoogleOAuthStartView(View):
-    """Inicia o OAuth Google apenas quando a configuração está disponível."""
+    """Inicia o OAuth Google apenas quando a configuracao esta disponivel."""
 
     def get(self, request, *args, **kwargs):
         if not is_google_oauth_configured():
             messages.error(
                 request,
-                "O login com Google está indisponível no momento.",
+                "Nao foi possivel entrar com Google agora. "
+                "Tente novamente mais tarde ou avise o professor.",
             )
             return redirect("login")
 
         next_url = request.GET.get("next", "")
         if next_url and not url_has_allowed_host_and_scheme(
             next_url,
-            allowed_hosts={request.get_host()},
+            allowed_hosts=set(settings.ALLOWED_HOSTS) | {request.get_host()},
             require_https=request.is_secure(),
         ):
             next_url = ""
@@ -107,7 +109,7 @@ class GoogleOAuthStartView(View):
 
 
 class FeedEntregasView(ProfessorRequiredMixin, TemplateView):
-    """Fragment HTMX: últimas entregas nas últimas 24h."""
+    """Fragment HTMX: ultimas entregas nas ultimas 24h."""
 
     template_name = "core/_feed_entregas.html"
 
@@ -128,14 +130,14 @@ class FeedEntregasView(ProfessorRequiredMixin, TemplateView):
 
 
 class StatsTurmasView(ProfessorRequiredMixin, TemplateView):
-    """Fragment HTMX: estatísticas por turma (taxa de entrega e média)."""
+    """Fragment HTMX: estatisticas por turma (taxa de entrega e media)."""
 
     template_name = "core/_stats_turmas.html"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        from turmas.models import Turma
         from atividades.models import Entrega
+        from turmas.models import Turma
 
         turmas = (
             Turma.objects.filter(ativa=True)
@@ -170,7 +172,7 @@ class StatsTurmasView(ProfessorRequiredMixin, TemplateView):
             total_entregas = entrega_stats.get("total_entregas", 0)
             media = entrega_stats.get("media")
 
-            # Taxa = entregas feitas / (alunos × atividades publicadas)
+            # Taxa = entregas feitas / (alunos x atividades publicadas)
             total_esperado = total_alunos * total_atividades
             taxa = (
                 round((total_entregas / total_esperado) * 100)

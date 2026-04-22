@@ -1,0 +1,6 @@
+{% include "tarefas/_checkbox.html" with turma=turma tarefa=tarefa aluno=aluno realizacao=realizacao realizada=realizacao.realizada %}
+<div id="tarefas-overview" hx-swap-oob="outerHTML">
+  {% include "tarefas/_overview.html" %}
+</div>
+{% include "tarefas/_tarefa_header_cell.html" with turma=turma tarefa=tarefa_resumo total_alunos=total_alunos oob=True %}
+{% include "tarefas/_row_summary.html" with linha=linha_resumo tarefas=tarefas oob=True %}

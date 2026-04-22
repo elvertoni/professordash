@@ -6,7 +6,16 @@
         <span class="rounded-full border border-outline-variant/15 bg-background/70 px-2.5 py-1">
           {% if tarefa.obj.data %}{{ tarefa.obj.data|date:"d/m/Y" }}{% else %}Sem data{% endif %}
         </span>
-        <span class="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-2.5 py-1 text-emerald-200">
+        {% if tarefa.esta_concluida %}
+          <span class="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-2.5 py-1 text-emerald-200">
+            Fechada
+          </span>
+        {% elif tarefa.esta_critica %}
+          <span class="rounded-full border border-amber-400/20 bg-amber-500/10 px-2.5 py-1 text-amber-100">
+            Atencao
+          </span>
+        {% endif %}
+        <span class="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-primary">
           {{ tarefa.percentual }}%
         </span>
       </div>
@@ -27,7 +36,7 @@
         <form method="post"
               action="{% url 'turmas:tarefas_excluir' turma.pk tarefa.obj.pk %}"
               hx-post="{% url 'turmas:tarefas_excluir' turma.pk tarefa.obj.pk %}"
-              hx-confirm="Excluir a tarefa &quot;{{ tarefa.obj.nome }}&quot;? Essa ação não pode ser desfeita."
+              hx-confirm="Excluir a tarefa &quot;{{ tarefa.obj.nome }}&quot;? Essa acao nao pode ser desfeita."
               hx-swap="none">
           {% csrf_token %}
           <button type="submit"
@@ -42,10 +51,10 @@
     {% endif %}
   </div>
 
-  <div class="space-y-2">
+  <div class="grid gap-2 rounded-[1.1rem] border border-outline-variant/10 bg-background/70 p-3">
     <div class="flex items-center justify-between gap-3 text-[11px] font-medium text-on-surface-variant/60">
-      <span>{{ tarefa.total_realizadas }} de {{ total_alunos }}</span>
-      <span class="text-on-surface">{{ tarefa.percentual }}%</span>
+      <span>{{ tarefa.total_realizadas }} feitas</span>
+      <span>{{ tarefa.total_pendentes }} pendentes</span>
     </div>
     <div class="h-1.5 overflow-hidden rounded-full bg-background/80">
       <div class="h-full rounded-full bg-emerald-400 transition-all duration-300" style="width: {{ tarefa.percentual }}%"></div>

@@ -1,0 +1,3 @@
+<th scope="col" {% if oob %}hx-swap-oob="outerHTML"{% endif %} class="sticky top-0 z-40 w-[15rem] min-w-[15rem] border-b border-r border-outline-variant/10 bg-surface-container-high/95 px-4 py-4 text-left backdrop-blur" id="tarefa-header-{{ tarefa.obj.pk }}">
+  {% include "tarefas/_tarefa_header.html" with turma=turma tarefa=tarefa total_alunos=total_alunos %}
+</th>

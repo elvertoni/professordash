@@ -3,7 +3,7 @@
 {% block title %}Controle de tarefas - {{ turma.nome }}{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-7xl space-y-6">
+<div class="mx-auto max-w-[96rem] space-y-6">
   <nav class="flex items-center gap-2 overflow-x-auto whitespace-nowrap text-sm text-on-surface-variant/55">
     <a href="{% url 'turmas:lista' %}" class="transition-colors hover:text-on-surface">Turmas</a>
     <span aria-hidden="true">/</span>
@@ -12,21 +12,29 @@
     <span class="font-medium text-on-surface">Tarefas</span>
   </nav>
 
-  <section class="rounded-[1.4rem] border border-outline-variant/10 bg-surface-container-low p-6 sm:p-8">
-    <div class="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+  <section class="relative overflow-hidden rounded-[1.7rem] border border-outline-variant/10 bg-surface-container-low">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.16),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.14),transparent_32%)]"></div>
+    <div class="relative flex flex-col gap-6 p-6 sm:p-8 xl:flex-row xl:items-end xl:justify-between">
       <div class="max-w-3xl space-y-3">
-        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Controle em grade</p>
+        <div class="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em]">
+          <span class="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-primary">Painel de tarefas</span>
+          <span class="rounded-full border border-outline-variant/15 bg-white/[0.04] px-3 py-1 text-on-surface-variant/70">
+            Professor
+          </span>
+        </div>
         <div>
-          <h1 class="text-3xl font-semibold tracking-tight text-on-background">Checklist de tarefas da turma</h1>
-          <p class="mt-2 max-w-2xl text-sm leading-6 text-on-surface-variant/70">
-            Visualize a turma em uma grade estilo Notion, com cabeçalho fixo, nomes sempre visíveis e progresso consolidado por tarefa e por aluno.
+          <h1 class="text-3xl font-semibold tracking-tight text-on-background sm:text-4xl">
+            Dashboard operacional da turma.
+          </h1>
+          <p class="mt-3 max-w-2xl text-sm leading-6 text-on-surface-variant/72 sm:text-[15px]">
+            Crie tarefas, veja gargalos rapido e marque a execucao em uma grade viva. Os resumos mostram quem avancou, o que travou e onde agir primeiro.
           </p>
         </div>
       </div>
 
       <form method="post"
             action="{% url 'turmas:tarefas_criar' turma.pk %}"
-            class="grid gap-3 rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-high p-4 sm:grid-cols-[minmax(0,1fr)_11rem_auto] xl:min-w-[36rem]">
+            class="grid w-full gap-3 rounded-[1.3rem] border border-outline-variant/10 bg-surface-container-high/90 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.16)] sm:grid-cols-[minmax(0,1fr)_11rem_auto] xl:w-[40rem]">
         {% csrf_token %}
         <div>
           <label for="id_nome" class="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Nome da tarefa</label>
@@ -55,45 +63,25 @@
     </div>
   </section>
 
-  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-    <div class="rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-low p-4">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Tarefas</p>
-      <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ tarefas|length }}</p>
-    </div>
-    <div class="rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-low p-4">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Alunos ativos</p>
-      <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ total_alunos }}</p>
-    </div>
-    <div class="rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-low p-4">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Checks feitos</p>
-      <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ checks_realizados }}</p>
-    </div>
-    <div class="rounded-[1.2rem] border border-outline-variant/10 bg-surface-container-low p-4">
-      <div class="flex items-center justify-between gap-3">
-        <div>
-          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/70">Conclusão geral</p>
-          <p class="mt-2 text-3xl font-semibold tracking-tight text-on-background">{{ percentual_geral }}%</p>
-        </div>
-        <span class="inline-flex rounded-full border border-outline-variant/15 bg-surface-container-high px-3 py-1 text-xs font-semibold text-on-surface-variant/70">
-          {{ checks_pendentes }} pendentes
-        </span>
-      </div>
-    </div>
-  </section>
+  <div id="tarefas-overview">
+    {% include "tarefas/_overview.html" %}
+  </div>
 
   {% if tarefas %}
-    <section class="overflow-hidden rounded-[1.4rem] border border-outline-variant/10 bg-surface-container-low">
+    <section class="overflow-hidden rounded-[1.5rem] border border-outline-variant/10 bg-surface-container-low">
       {% if not total_alunos %}
         <div class="border-b border-outline-variant/10 bg-amber-500/10 px-5 py-4 text-sm text-amber-100">
-          Há tarefas cadastradas, mas ainda não existem alunos ativos nesta turma para marcar o checklist.
+          Ha tarefas cadastradas, mas ainda nao existem alunos ativos nesta turma para marcar o checklist.
         </div>
       {% endif %}
 
-      <div class="border-b border-outline-variant/10 bg-surface-container-high/40 px-5 py-3">
-        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div class="border-b border-outline-variant/10 bg-surface-container-high/45 px-5 py-4">
+        <div class="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between">
           <div>
-            <p class="text-sm font-semibold text-on-surface">Grade interativa</p>
-            <p class="text-xs text-on-surface-variant/55">Role horizontalmente para ver todas as tarefas. O cabeçalho e os nomes continuam fixos.</p>
+            <p class="text-sm font-semibold text-on-surface">Grade acionavel</p>
+            <p class="text-xs text-on-surface-variant/55">
+              Toque nos checks para atualizar a execucao. Cabecalhos, radar e progresso por aluno sao recalculados na hora.
+            </p>
           </div>
           <div class="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 bg-background/60 px-3 py-1.5 text-xs font-medium text-on-surface-variant/65">
             <span>{{ tarefas|length }} tarefa{{ tarefas|length|pluralize }}</span>
@@ -103,82 +91,98 @@
         </div>
       </div>
 
-      <div class="grade-scroll-wrapper">
+      <div class="relative">
+        <div class="pointer-events-none absolute inset-y-0 left-0 z-40 w-8 bg-gradient-to-r from-surface-container-low to-transparent"></div>
+        <div class="pointer-events-none absolute inset-y-0 right-0 z-40 w-8 bg-gradient-to-l from-surface-container-low to-transparent"></div>
+
         <div class="max-h-[72vh] overflow-auto">
           <table class="w-max min-w-full border-separate border-spacing-0 text-sm">
-          <thead>
-            <tr class="align-top">
-              <th scope="col" class="sticky left-0 top-0 z-50 w-[20rem] min-w-[20rem] border-b border-r border-outline-variant/10 bg-surface-container-high px-4 py-4 text-left">
-                <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Aluno</p>
-                <p class="mt-1 text-sm font-medium text-on-surface-variant/70">Nome completo, matrícula e contato</p>
-              </th>
-              {% for tarefa in tarefas %}
-                <th scope="col" class="sticky top-0 z-40 w-[15rem] min-w-[15rem] border-b border-r border-outline-variant/10 bg-surface-container-high px-4 py-4 text-left" id="tarefa-header-{{ tarefa.obj.pk }}">
-                  {% include "tarefas/_tarefa_header.html" with turma=turma tarefa=tarefa total_alunos=total_alunos %}
+            <thead>
+              <tr class="align-top">
+                <th scope="col" class="sticky left-0 top-0 z-50 w-[19rem] min-w-[19rem] border-b border-r border-outline-variant/10 bg-surface-container-high/95 px-4 py-4 text-left backdrop-blur">
+                  <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Aluno</p>
+                  <p class="mt-1 text-sm font-medium text-on-surface-variant/70">Nome, contato e pendencias</p>
                 </th>
-              {% endfor %}
-              <th scope="col" class="sticky right-0 top-0 z-50 w-[12rem] min-w-[12rem] border-b border-l border-outline-variant/10 bg-surface-container-high px-4 py-4 text-left">
-                <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Conclusão</p>
-                <div class="mt-2 space-y-2">
-                  <div class="flex items-center justify-between gap-3 text-sm font-semibold text-on-surface">
-                    <span>{{ checks_realizados }} checks</span>
-                    <span>{{ percentual_geral }}%</span>
-                  </div>
-                  <div class="h-1.5 overflow-hidden rounded-full bg-background/80">
-                    <div class="h-full rounded-full bg-emerald-400 transition-all duration-300" style="width: {{ percentual_geral }}%"></div>
-                  </div>
-                </div>
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {% for linha in linhas %}
-              <tr class="group">
-                <th scope="row" class="sticky left-0 z-30 w-[20rem] min-w-[20rem] border-b border-r border-outline-variant/10 bg-surface-container-low px-4 py-4 text-left align-top transition-colors group-hover:bg-surface-container">
-                  <div class="space-y-2">
-                    <p class="text-sm font-semibold text-on-surface">{{ linha.aluno.nome }}</p>
-                    <div class="flex flex-wrap items-center gap-2 text-xs text-on-surface-variant/55">
-                      {% if linha.aluno.matricula %}
-                        <span class="rounded-full border border-outline-variant/15 bg-background/70 px-2.5 py-1 font-medium text-on-surface-variant/70">
-                          Matrícula {{ linha.aluno.matricula }}
-                        </span>
-                      {% endif %}
-                      <span class="truncate">{{ linha.aluno.email }}</span>
-                    </div>
-                  </div>
-                </th>
-
-                {% for celula in linha.celulas %}
-                  {% include "tarefas/_checkbox.html" with turma=turma tarefa=celula.tarefa aluno=linha.aluno realizacao=celula.realizacao %}
+                {% for tarefa in tarefas %}
+                  {% include "tarefas/_tarefa_header_cell.html" with turma=turma tarefa=tarefa total_alunos=total_alunos %}
                 {% endfor %}
-
-                <td class="sticky right-0 z-30 w-[12rem] min-w-[12rem] border-b border-l border-outline-variant/10 bg-surface-container-low px-4 py-4 align-middle transition-colors group-hover:bg-surface-container">
-                  <div class="space-y-2">
+                <th scope="col" class="sticky right-0 top-0 z-50 w-[12.5rem] min-w-[12.5rem] border-b border-l border-outline-variant/10 bg-surface-container-high/95 px-4 py-4 text-left backdrop-blur">
+                  <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55">Conclusao</p>
+                  <div class="mt-2 space-y-2">
                     <div class="flex items-center justify-between gap-3 text-sm font-semibold text-on-surface">
-                      <span>{{ linha.total_realizadas }}/{{ tarefas|length }}</span>
-                      <span>{{ linha.percentual }}%</span>
+                      <span>{{ checks_realizados }} checks</span>
+                      <span>{{ percentual_geral }}%</span>
                     </div>
                     <div class="h-1.5 overflow-hidden rounded-full bg-background/80">
-                      <div class="h-full rounded-full bg-emerald-400 transition-all duration-300" style="width: {{ linha.percentual }}%"></div>
+                      <div class="h-full rounded-full bg-emerald-400 transition-all duration-300" style="width: {{ percentual_geral }}%"></div>
                     </div>
                   </div>
-                </td>
+                </th>
               </tr>
-            {% empty %}
-              <tr>
-                <td colspan="{{ tarefas|length|add:'2' }}" class="px-6 py-12 text-center text-sm text-on-surface-variant/60">
-                  Nenhum aluno ativo encontrado para esta turma.
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
+            </thead>
+
+            <tbody>
+              {% for linha in linhas %}
+                <tr class="group">
+                  <th scope="row" class="sticky left-0 z-30 w-[19rem] min-w-[19rem] border-b border-r border-outline-variant/10 bg-surface-container-low px-4 py-4 text-left align-top transition-colors group-hover:bg-surface-container">
+                    <div class="space-y-3">
+                      <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                          <p class="truncate text-sm font-semibold text-on-surface">{{ linha.aluno.nome }}</p>
+                          <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-on-surface-variant/55">
+                            {% if linha.aluno.matricula %}
+                              <span class="rounded-full border border-outline-variant/15 bg-background/70 px-2.5 py-1 font-medium text-on-surface-variant/70">
+                                Matricula {{ linha.aluno.matricula }}
+                              </span>
+                            {% endif %}
+                            <span class="truncate">{{ linha.aluno.email }}</span>
+                          </div>
+                        </div>
+                        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-primary/15 bg-primary/10 text-sm font-semibold text-primary">
+                          {{ forloop.counter }}
+                        </span>
+                      </div>
+
+                      {% if linha.tarefas_pendentes %}
+                        <div class="space-y-2">
+                          <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-on-surface-variant/55">Pendencias</p>
+                          <div class="flex flex-wrap gap-2">
+                            {% for pendente in linha.tarefas_pendentes|slice:":3" %}
+                              <span class="rounded-full border border-amber-400/20 bg-amber-500/10 px-2.5 py-1 text-[11px] font-medium text-amber-100">
+                                {{ pendente.nome }}
+                              </span>
+                            {% endfor %}
+                            {% if linha.tarefas_pendentes|length > 3 %}
+                              <span class="rounded-full border border-outline-variant/15 bg-background/70 px-2.5 py-1 text-[11px] font-medium text-on-surface-variant/65">
+                                +{{ linha.tarefas_pendentes|length|add:"-3" }}
+                              </span>
+                            {% endif %}
+                          </div>
+                        </div>
+                      {% endif %}
+                    </div>
+                  </th>
+
+                  {% for celula in linha.celulas %}
+                    {% include "tarefas/_checkbox.html" with turma=turma tarefa=celula.tarefa aluno=linha.aluno realizacao=celula.realizacao realizada=celula.realizada %}
+                  {% endfor %}
+
+                  {% include "tarefas/_row_summary.html" with linha=linha tarefas=tarefas %}
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="{{ tarefas|length|add:'2' }}" class="px-6 py-12 text-center text-sm text-on-surface-variant/60">
+                    Nenhum aluno ativo encontrado para esta turma.
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
           </table>
         </div>
       </div>
     </section>
   {% else %}
-    {% include "components/_empty_state.html" with title="Nenhuma tarefa cadastrada" subtitle="Crie a primeira tarefa para acompanhar a evolução dos alunos em formato de checklist." %}
+    {% include "components/_empty_state.html" with title="Nenhuma tarefa cadastrada" subtitle="Crie a primeira tarefa para acompanhar a evolucao dos alunos em formato de checklist." %}
   {% endif %}
 </div>
 {% endblock %}
