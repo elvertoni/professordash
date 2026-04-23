@@ -69,7 +69,8 @@
             {% endif %}
 
             <div class="mt-4 flex flex-wrap gap-2">
-              {% if material.tipo == 'html' and material.arquivo %}
+              {% if material.tipo == 'html' %}
+                {% if material.arquivo or material.conteudo_html %}
                 <a href="{% url 'turmas:portal_materiais_html' token=turma.token_publico material_pk=material.pk %}" target="_blank" rel="noopener noreferrer"
                    class="inline-flex items-center gap-1.5 rounded-full border border-secondary/20 bg-secondary/10 px-3 py-2 text-[13px] font-medium text-secondary transition-colors hover:bg-secondary/15">
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,6 +78,7 @@
                   </svg>
                   Abrir página HTML
                 </a>
+                {% endif %}
               {% elif material.arquivo %}
                 <a href="{% url 'turmas:portal_materiais_download' token=turma.token_publico material_pk=material.pk %}" target="_blank" rel="noopener noreferrer"
                    class="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-2 text-[13px] font-medium text-primary transition-colors hover:bg-primary/15">

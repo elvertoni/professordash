@@ -9,26 +9,16 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView, View
 
 from core.mixins import ProfessorRequiredMixin, TurmaPublicaMixin
-from turmas.models import Matricula, Turma
+from turmas.models import Turma
 
 from .forms import MaterialForm
-from .models import Material, VisibilidadeMaterial
+from .models import Material
 
 logger = logging.getLogger(__name__)
 
 
-def _usuario_pode_acessar_material(request, turma, material):
-    user = request.user
-    if user.is_authenticated and user.is_staff:
-        return True
-    if material.visibilidade == VisibilidadeMaterial.PUBLICO:
-        return True
-    if (
-        user.is_authenticated
-        and Matricula.objects.filter(aluno__user=user, turma=turma, ativa=True).exists()
-    ):
-        return True
-    return False
+def _token_publico_pode_acessar_material(turma, material):
+    return material.turma_id == turma.pk
 
 
 class MaterialMixin:
@@ -36,6 +26,17 @@ class MaterialMixin:
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
+        self.material = None
+        material_pk = kwargs.get("material_pk")
+
+        if material_pk is not None:
+            self.material = get_object_or_404(
+                Material.objects.select_related("turma", "aula"),
+                pk=material_pk,
+            )
+            self.turma = self.material.turma
+            return
+
         self.turma = get_object_or_404(Turma, pk=kwargs["pk"])
 
 
@@ -94,9 +95,7 @@ class MaterialUpdateView(ProfessorRequiredMixin, MaterialMixin, UpdateView):
     pk_url_kwarg = "material_pk"
 
     def get_object(self):
-        return get_object_or_404(
-            Material, pk=self.kwargs["material_pk"], turma=self.turma
-        )
+        return self.material
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -125,9 +124,7 @@ class MaterialDeleteView(ProfessorRequiredMixin, MaterialMixin, DeleteView):
     pk_url_kwarg = "material_pk"
 
     def get_object(self):
-        return get_object_or_404(
-            Material, pk=self.kwargs["material_pk"], turma=self.turma
-        )
+        return self.material
 
     def form_valid(self, form):
         logger.info(f"Excluindo material pk={self.kwargs['material_pk']}")
@@ -153,26 +150,11 @@ class MaterialListaPublicaView(TurmaPublicaMixin, ListView):
     context_object_name = "materiais"
 
     def get_queryset(self):
-        qs = (
+        return (
             Material.objects.filter(turma=self.turma)
             .select_related("aula")
             .order_by("ordem", "criado_em")
         )
-
-        user = self.request.user
-
-        if user.is_authenticated and user.is_staff:
-            return qs
-
-        if (
-            user.is_authenticated
-            and Matricula.objects.filter(
-                aluno__user=user, turma=self.turma, ativa=True
-            ).exists()
-        ):
-            return qs
-
-        return qs.filter(visibilidade=VisibilidadeMaterial.PUBLICO)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -184,11 +166,7 @@ class MaterialDownloadAdminView(ProfessorRequiredMixin, MaterialMixin, View):
     """Download autenticado de material pelo professor."""
 
     def get(self, request, *args, **kwargs):
-        material = get_object_or_404(
-            Material.objects.select_related("turma", "aula"),
-            pk=self.kwargs["material_pk"],
-            turma=self.turma,
-        )
+        material = self.material
         if not material.arquivo:
             raise Http404("Material sem arquivo.")
 
@@ -211,12 +189,7 @@ class MaterialDownloadPublicoView(TurmaPublicaMixin, View):
         if not material.arquivo:
             raise Http404("Material sem arquivo.")
 
-        if not _usuario_pode_acessar_material(request, self.turma, material):
-            if (
-                material.visibilidade == VisibilidadeMaterial.RESTRITO
-                and not request.user.is_authenticated
-            ):
-                return redirect("turmas:entrar", token=self.turma.token_publico)
+        if not _token_publico_pode_acessar_material(self.turma, material):
             raise PermissionDenied
 
         return FileResponse(
@@ -303,12 +276,7 @@ class MaterialHTMLPublicaView(TurmaPublicaMixin, View):
         else:
             raise Http404("Material sem arquivo.")
 
-        if not _usuario_pode_acessar_material(request, self.turma, material):
-            if (
-                material.visibilidade == VisibilidadeMaterial.RESTRITO
-                and not request.user.is_authenticated
-            ):
-                return redirect("turmas:entrar", token=self.turma.token_publico)
+        if not _token_publico_pode_acessar_material(self.turma, material):
             raise PermissionDenied
 
         return HttpResponse(conteudo, content_type="text/html; charset=utf-8")
