@@ -104,6 +104,10 @@ Blocos `:::tipo` são convertidos em componentes HTML ricos pelo `ProfessorDashP
 
 O templatetag `|markdownify` (em `core/templatetags/markdownx.py`) strip frontmatter YAML antes de renderizar. Carregado com `{% load markdownx %}`.
 
+### Formato de aulas (fonte de verdade)
+
+Antes de gerar ou editar qualquer aula, ler **`FORMATO_AULAS.md`** na raiz do repositório. É a fonte de verdade dos três modos de aula (conceitual, prático, apostila) e do contrato do renderer. A sintaxe canônica é `:::tipo` (extensão `core/markdown_extensions.py`); HTML bruto é fallback documentado e desencorajado.
+
 ### Third-party libs relevantes
 
 - **django-allauth** — Google OAuth para alunos

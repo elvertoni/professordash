@@ -1,20 +1,111 @@
 import json
 import logging
 import re
+from html import unescape
 
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.utils.html import strip_tags
+from django.utils.text import slugify
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, View
 
 from core.mixins import ProfessorRequiredMixin, TurmaPublicaMixin
+from core.templatetags.markdownx import markdownify
 from turmas.models import Turma
 
 from .forms import AulaForm
 from .models import Aula
 
 logger = logging.getLogger(__name__)
+
+HEADING_RE = re.compile(r"<h([23])([^>]*)>(.*?)</h\1>", re.IGNORECASE | re.DOTALL)
+FIRST_H1_RE = re.compile(r"^\s*<h1[^>]*>.*?</h1>\s*", re.IGNORECASE | re.DOTALL)
+FIRST_PARAGRAPH_RE = re.compile(r"^\s*<p[^>]*>(.*?)</p>\s*", re.IGNORECASE | re.DOTALL)
+LEADING_HR_RE = re.compile(r"^\s*<hr\s*/?>\s*", re.IGNORECASE)
+
+
+def _heading_text(inner_html):
+    return unescape(strip_tags(inner_html)).strip()
+
+
+def _unique_slug(text, used):
+    base = slugify(text) or "secao"
+    candidate = base
+    suffix = 2
+    while candidate in used:
+        candidate = f"{base}-{suffix}"
+        suffix += 1
+    used.add(candidate)
+    return candidate
+
+
+def _prepare_apostila_html(rendered_html):
+    """Remove capa duplicada, adiciona anchors e embrulha seções H2."""
+    body = FIRST_H1_RE.sub("", rendered_html, count=1)
+
+    resumo = ""
+    intro_match = FIRST_PARAGRAPH_RE.match(body)
+    if intro_match:
+        resumo = _heading_text(intro_match.group(1))
+        body = body[intro_match.end() :]
+
+    body = LEADING_HR_RE.sub("", body, count=1)
+    toc = []
+    used_ids = set()
+
+    def add_heading_id(match):
+        level = int(match.group(1))
+        attrs = re.sub(
+            r'\s+id=(?:"[^"]*"|\'[^\']*\')',
+            "",
+            match.group(2) or "",
+            flags=re.IGNORECASE,
+        )
+        inner = match.group(3)
+        text = _heading_text(inner)
+        heading_id = _unique_slug(text, used_ids)
+        toc.append({"id": heading_id, "titulo": text, "nivel": level})
+        return f'<h{level}{attrs} id="{heading_id}">{inner}</h{level}>'
+
+    body = HEADING_RE.sub(add_heading_id, body)
+    body = _wrap_h2_sections(body)
+    return body, resumo, toc
+
+
+def _wrap_h2_sections(html):
+    parts = re.split(r"(<h2\b[^>]*>.*?</h2>)", html, flags=re.IGNORECASE | re.DOTALL)
+    if len(parts) < 3:
+        return html
+
+    wrapped = [parts[0]]
+    for index in range(1, len(parts), 2):
+        heading = parts[index]
+        section_body = parts[index + 1] if index + 1 < len(parts) else ""
+        wrapped.append(f'<section class="section">{heading}{section_body}</section>')
+    return "".join(wrapped)
+
+
+def _build_apostila_context(aula):
+    rendered_html = str(markdownify(aula.conteudo))
+    conteudo_html, resumo, toc = _prepare_apostila_html(rendered_html)
+    aula.conteudo_html = conteudo_html
+    aula.toc = toc
+    aula.resumo = resumo
+    aula.eyebrow = f"Aula {aula.numero:02d} · {aula.turma.codigo}"
+    aula.disciplina = aula.turma.nome
+    aula.serie = str(aula.turma.ano_letivo)
+    aula.duracao = "50 min"
+    aula.entrega = "Atividade da aula"
+    return {"aula": aula}
+
+
+def _set_apostila_download_header(response, aula):
+    slug = slugify(aula.titulo) or str(aula.pk)
+    filename = f"aula-{aula.numero:02d}-{slug}.html"
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
 
 
 class AulaMixin:
@@ -116,10 +207,41 @@ class AulaDetailView(ProfessorRequiredMixin, AulaMixin, AulaNavMixin, DetailView
             "turmas:aulas_editar",
             kwargs={"pk": self.turma.pk, "aula_pk": self.object.pk},
         )
+        if self.object.gera_apostila:
+            apostila_url = reverse(
+                "turmas:aulas_apostila",
+                kwargs={"pk": self.turma.pk, "aula_pk": self.object.pk},
+            )
+            ctx["apostila_url"] = apostila_url
+            ctx["apostila_download_url"] = f"{apostila_url}?download=1"
         ctx["atividades_url"] = f"{reverse('turmas:detalhe', kwargs={'pk': self.turma.pk})}?tab=atividades"
         ctx["sidebar_aulas"] = self.get_sidebar_aulas()
         ctx.update(self.get_nav_context(self.object))
         return ctx
+
+
+class AulaApostilaView(ProfessorRequiredMixin, AulaMixin, DetailView):
+    """Exporta uma aula como apostila HTML standalone para o professor."""
+
+    template_name = "aulas/apostila.html"
+    context_object_name = "aula"
+
+    def get_object(self):
+        return get_object_or_404(
+            Aula.objects.select_related("turma"),
+            pk=self.kwargs["aula_pk"],
+            turma=self.turma,
+            gera_apostila=True,
+        )
+
+    def get_context_data(self, **kwargs):
+        return _build_apostila_context(self.object)
+
+    def render_to_response(self, context, **response_kwargs):
+        response = super().render_to_response(context, **response_kwargs)
+        if self.request.GET.get("download") == "1":
+            return _set_apostila_download_header(response, self.object)
+        return response
 
 
 class AulaCreateView(ProfessorRequiredMixin, AulaMixin, CreateView):
@@ -385,3 +507,28 @@ class AulaDetalhePublicoView(TurmaPublicaMixin, AulaNavMixin, DetailView):
         ctx["sidebar_aulas"] = self.get_sidebar_aulas()
         ctx.update(self.get_nav_context(self.object))
         return ctx
+
+
+class AulaApostilaPublicaView(TurmaPublicaMixin, DetailView):
+    """Exporta apostila pública apenas para aulas já publicadas."""
+
+    template_name = "aulas/apostila.html"
+    context_object_name = "aula"
+
+    def get_object(self):
+        return get_object_or_404(
+            Aula.objects.select_related("turma"),
+            pk=self.kwargs["aula_pk"],
+            turma=self.turma,
+            realizada=True,
+            gera_apostila=True,
+        )
+
+    def get_context_data(self, **kwargs):
+        return _build_apostila_context(self.object)
+
+    def render_to_response(self, context, **response_kwargs):
+        response = super().render_to_response(context, **response_kwargs)
+        if self.request.GET.get("download") == "1":
+            return _set_apostila_download_header(response, self.object)
+        return response

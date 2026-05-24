@@ -21,6 +21,11 @@ class Aula(BaseModel):
         blank=True,
         verbose_name="Imagem de capa",
     )
+    gera_apostila = models.BooleanField(
+        default=True,
+        verbose_name="Gerar apostila",
+        help_text="Permite exportar esta aula como HTML standalone.",
+    )
     realizada = models.BooleanField(default=False)
     ordem = models.PositiveIntegerField(default=0)
 

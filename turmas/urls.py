@@ -78,6 +78,11 @@ urlpatterns = [
         name="aulas_detalhe",
     ),
     path(
+        "painel/turmas/<int:pk>/aulas/<int:aula_pk>/apostila/",
+        aulas_views.AulaApostilaView.as_view(),
+        name="aulas_apostila",
+    ),
+    path(
         "painel/turmas/<int:pk>/aulas/<int:aula_pk>/editar/",
         aulas_views.AulaUpdateView.as_view(),
         name="aulas_editar",
@@ -305,6 +310,11 @@ urlpatterns = [
         "turma/<uuid:token>/aulas/<int:aula_pk>/",
         aulas_views.AulaDetalhePublicoView.as_view(),
         name="portal_aulas_detalhe",
+    ),
+    path(
+        "turma/<uuid:token>/aulas/<int:aula_pk>/apostila/",
+        aulas_views.AulaApostilaPublicaView.as_view(),
+        name="portal_aulas_apostila",
     ),
     path(
         "turma/<uuid:token>/materiais/",

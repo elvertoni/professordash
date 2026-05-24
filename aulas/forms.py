@@ -11,7 +11,15 @@ class AulaForm(forms.ModelForm):
 
     class Meta:
         model = Aula
-        fields = ["titulo", "numero", "data", "imagem_capa", "conteudo", "ordem"]
+        fields = [
+            "titulo",
+            "numero",
+            "data",
+            "imagem_capa",
+            "gera_apostila",
+            "conteudo",
+            "ordem",
+        ]
         widgets = {
             "titulo": forms.TextInput(attrs={"class": "input-field"}),
             "numero": forms.NumberInput(attrs={"class": "input-field"}),
@@ -20,4 +28,12 @@ class AulaForm(forms.ModelForm):
                 format="%Y-%m-%d",
             ),
             "ordem": forms.NumberInput(attrs={"class": "input-field"}),
+            "gera_apostila": forms.CheckboxInput(
+                attrs={
+                    "class": (
+                        "h-4 w-4 rounded border-outline-variant/20 "
+                        "bg-surface-container text-primary focus:ring-primary/30"
+                    )
+                }
+            ),
         }

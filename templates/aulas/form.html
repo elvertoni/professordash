@@ -183,6 +183,22 @@
         <p class="text-xs text-zinc-500 mt-1">Exibida no topo da aula. Proporcao 16:9 recomendada.</p>
       </div>
 
+      <!-- Apostila standalone -->
+      <div class="rounded-2xl border border-outline-variant/10 bg-surface-container-high/35 p-4">
+        <label class="flex items-start gap-3 text-sm text-on-surface" for="{{ form.gera_apostila.id_for_label }}">
+          {{ form.gera_apostila }}
+          <span>
+            <span class="block font-semibold">Gerar apostila standalone</span>
+            <span class="mt-1 block text-xs leading-5 text-on-surface-variant/55">
+              Habilita a exportação desta aula como HTML com sumário, tema e modo de impressão.
+            </span>
+          </span>
+        </label>
+        {% if form.gera_apostila.errors %}
+          <p class="text-error text-xs mt-2">{{ form.gera_apostila.errors|join:", " }}</p>
+        {% endif %}
+      </div>
+
       <!-- ── Conteúdo Markdown: Abas ───────────────────────── -->
       <div>
         <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant/55 mb-2">

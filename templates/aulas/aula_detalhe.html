@@ -1959,6 +1959,28 @@ h1.titulo {
   background: linear-gradient(90deg, var(--primary), var(--secondary));
 }
 
+.md-content.numbered {
+  counter-reset: lesson-section;
+}
+
+.md-content.numbered > h2 {
+  counter-increment: lesson-section;
+}
+
+.md-content.numbered > h2::before {
+  content: counter(lesson-section, decimal-leading-zero);
+  width: 38px;
+  height: 38px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(206, 189, 255, 0.12);
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
 .md-content h3 {
   margin: 2.15rem 0 0.85rem;
   font-size: 1.14rem;
@@ -2104,6 +2126,15 @@ h1.titulo {
   background: rgba(255, 255, 255, 0.04);
   box-shadow: var(--shadow-card);
   overflow: hidden;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.callout:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 46px rgba(0, 0, 0, 0.30);
 }
 
 .callout-icon {
@@ -2148,6 +2179,13 @@ h1.titulo {
   color: var(--secondary);
 }
 
+.c-blue:hover,
+.c-blue.is-highlighted,
+.c-blue[data-highlight="true"] {
+  border-color: rgba(93, 230, 255, 0.34);
+  box-shadow: 0 18px 40px rgba(93, 230, 255, 0.10);
+}
+
 .c-green {
   background: linear-gradient(135deg, rgba(52, 211, 153, 0.18), rgba(52, 211, 153, 0.06));
   border-color: rgba(52, 211, 153, 0.18);
@@ -2157,6 +2195,13 @@ h1.titulo {
 .c-green .callout-title,
 .c-green .callout-icon {
   color: var(--success);
+}
+
+.c-green:hover,
+.c-green.is-highlighted,
+.c-green[data-highlight="true"] {
+  border-color: rgba(52, 211, 153, 0.34);
+  box-shadow: 0 18px 40px rgba(52, 211, 153, 0.10);
 }
 
 .c-amber {
@@ -2170,6 +2215,13 @@ h1.titulo {
   color: var(--warning);
 }
 
+.c-amber:hover,
+.c-amber.is-highlighted,
+.c-amber[data-highlight="true"] {
+  border-color: rgba(249, 197, 109, 0.34);
+  box-shadow: 0 18px 40px rgba(249, 197, 109, 0.10);
+}
+
 .c-violet {
   background: linear-gradient(135deg, rgba(206, 189, 255, 0.2), rgba(167, 139, 250, 0.08));
   border-color: rgba(206, 189, 255, 0.2);
@@ -2181,6 +2233,13 @@ h1.titulo {
   color: var(--primary);
 }
 
+.c-violet:hover,
+.c-violet.is-highlighted,
+.c-violet[data-highlight="true"] {
+  border-color: rgba(206, 189, 255, 0.38);
+  box-shadow: 0 18px 40px rgba(167, 139, 250, 0.12);
+}
+
 .c-coral {
   background: linear-gradient(135deg, rgba(251, 113, 133, 0.18), rgba(251, 113, 133, 0.06));
   border-color: rgba(251, 113, 133, 0.18);
@@ -2190,6 +2249,13 @@ h1.titulo {
 .c-coral .callout-title,
 .c-coral .callout-icon {
   color: var(--danger);
+}
+
+.c-coral:hover,
+.c-coral.is-highlighted,
+.c-coral[data-highlight="true"] {
+  border-color: rgba(251, 113, 133, 0.36);
+  box-shadow: 0 18px 40px rgba(251, 113, 133, 0.12);
 }
 
 .roteiro {
@@ -2674,6 +2740,56 @@ h1.titulo {
   padding: 20px 22px;
 }
 
+.pres-slide .c-blue {
+  background: rgba(93, 230, 255, 0.10);
+  border: 1px solid rgba(93, 230, 255, 0.24);
+}
+
+.pres-slide .c-blue .callout-title,
+.pres-slide .c-blue .callout-icon {
+  color: var(--secondary);
+}
+
+.pres-slide .c-green {
+  background: rgba(52, 211, 153, 0.10);
+  border: 1px solid rgba(52, 211, 153, 0.24);
+}
+
+.pres-slide .c-green .callout-title,
+.pres-slide .c-green .callout-icon {
+  color: var(--success);
+}
+
+.pres-slide .c-amber {
+  background: rgba(249, 197, 109, 0.10);
+  border: 1px solid rgba(249, 197, 109, 0.24);
+}
+
+.pres-slide .c-amber .callout-title,
+.pres-slide .c-amber .callout-icon {
+  color: var(--warning);
+}
+
+.pres-slide .c-violet {
+  background: rgba(206, 189, 255, 0.12);
+  border: 1px solid rgba(206, 189, 255, 0.26);
+}
+
+.pres-slide .c-violet .callout-title,
+.pres-slide .c-violet .callout-icon {
+  color: var(--primary);
+}
+
+.pres-slide .c-coral {
+  background: rgba(251, 113, 133, 0.11);
+  border: 1px solid rgba(251, 113, 133, 0.26);
+}
+
+.pres-slide .c-coral .callout-title,
+.pres-slide .c-coral .callout-icon {
+  color: var(--danger);
+}
+
 .pres-slide .callout-title {
   font-size: 0.92rem;
 }
@@ -2881,6 +2997,137 @@ h1.titulo {
   }
 }
 
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  body {
+    font-size: 10.5pt;
+    line-height: 1.6;
+  }
+
+  #progress,
+  .top-nav,
+  .modules-sidebar,
+  .toc-sidebar,
+  .lesson-stage,
+  .nav-footer,
+  .pres-overlay {
+    display: none !important;
+  }
+
+  .layout-wrapper {
+    display: block !important;
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .page {
+    padding: 0 !important;
+  }
+
+  h1.titulo,
+  .md-content h1,
+  .md-content h2,
+  .md-content h3 {
+    color: #111827 !important;
+  }
+
+  .aula-meta,
+  .intro-text,
+  .md-content p,
+  .md-content li,
+  .md-content td {
+    color: #374151 !important;
+  }
+
+  .lesson-article-shell,
+  .callout,
+  .questao,
+  .roteiro {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  .lesson-article-shell {
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+
+  .callout {
+    transform: none !important;
+    border: 1px solid #e5e7eb !important;
+    border-inline-start-width: 4px !important;
+    background: #f9fafb !important;
+  }
+
+  .c-blue {
+    border-inline-start-color: #0891b2 !important;
+  }
+
+  .c-blue .callout-title,
+  .c-blue .callout-icon {
+    color: #0e7490 !important;
+  }
+
+  .c-green {
+    border-inline-start-color: #059669 !important;
+  }
+
+  .c-green .callout-title,
+  .c-green .callout-icon {
+    color: #047857 !important;
+  }
+
+  .c-amber {
+    border-inline-start-color: #d97706 !important;
+  }
+
+  .c-amber .callout-title,
+  .c-amber .callout-icon {
+    color: #b45309 !important;
+  }
+
+  .c-violet {
+    border-inline-start-color: #7c3aed !important;
+  }
+
+  .c-violet .callout-title,
+  .c-violet .callout-icon {
+    color: #6d28d9 !important;
+  }
+
+  .c-coral {
+    border-inline-start-color: #e11d48 !important;
+  }
+
+  .c-coral .callout-title,
+  .c-coral .callout-icon {
+    color: #be123c !important;
+  }
+
+  .md-content pre {
+    background: #111827 !important;
+    color: #f9fafb !important;
+    box-shadow: none !important;
+  }
+
+  .md-content pre code {
+    color: #f9fafb !important;
+  }
+}
+
 @media (min-width: 1600px) {
   :root,
   [data-theme="dark"] {
@@ -2943,6 +3190,12 @@ h1.titulo {
       {% if is_admin_view and edit_url %}
       <a href="{{ edit_url }}" class="tb-btn" title="Editar aula">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      </a>
+      {% endif %}
+      {% if is_admin_view and apostila_download_url %}
+      <a href="{{ apostila_download_url }}" class="tb-btn tb-btn-label" title="Exportar apostila HTML">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 21h14"/></svg>
+        Apostila
       </a>
       {% endif %}
       <button
@@ -3050,7 +3303,7 @@ h1.titulo {
 
     <!-- Conteúdo Markdown -->
     <section class="lesson-article-shell">
-      <div class="md-content" id="md-content">
+      <div class="md-content{% if aula.numbered_sections %} numbered{% endif %}" id="md-content">
         {{ aula.conteudo|markdownify }}
       </div>
     </section>
@@ -3214,6 +3467,17 @@ function normalizeLessonContent() {
   while (content.firstElementChild && content.firstElementChild.tagName === 'HR') {
     content.firstElementChild.remove();
   }
+
+  content.querySelectorAll('pre').forEach(function(pre) {
+    var code = pre.querySelector('code');
+    var text = code ? code.textContent : pre.textContent;
+    var lineCount = text ? text.replace(/\n$/, '').split('\n').length : 0;
+    pre.classList.add('code-shell');
+    pre.dataset.lineCount = String(lineCount);
+    if (lineCount > 30) {
+      pre.dataset.longCode = 'true';
+    }
+  });
 
   content.querySelectorAll('.questao').forEach(function(question, index) {
     if (!question.dataset.idx) {

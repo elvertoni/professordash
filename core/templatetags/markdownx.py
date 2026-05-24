@@ -4,6 +4,14 @@ Templatetag library 'markdownx' — compatível com {% load markdownx %}.
 Fornece o filtro |markdownify para renderizar Markdown como HTML seguro.
 Delega para markdownx.utils.markdownify() que respeita MARKDOWNX_MARKDOWN_EXTENSIONS
 do settings — incluindo md_in_html e extra necessários para HTML inline no Markdown.
+
+Responsabilidades deste filtro:
+- remover frontmatter YAML do topo antes do parser Markdown;
+- ativar as extensões configuradas, incluindo os blocos ::: do ProfessorDash.
+
+Blocos de código continuam saindo como <pre><code> pelo Python-Markdown. A
+decoração visual, medição de blocos longos e botões de UI pertencem aos
+templates de aula/apostila, porque dependem do DOM final renderizado.
 """
 import re
 from django import template
