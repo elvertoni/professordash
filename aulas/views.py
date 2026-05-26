@@ -317,8 +317,34 @@ class AulaDeleteView(ProfessorRequiredMixin, AulaMixin, DeleteView):
         return ctx
 
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
+@method_decorator(csrf_exempt, name="dispatch")
 class AulaImportarMdView(ProfessorRequiredMixin, AulaMixin, View):
     """Importa um arquivo .md como uma nova Aula. O título vem do primeiro H1."""
+
+    def dispatch(self, request, *args, **kwargs):
+        # 1. Check for token authentication header
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Token "):
+            token_key = auth_header.split(" ")[1].strip()
+            from core.models import ApiToken
+            from django.utils import timezone
+            try:
+                api_token = ApiToken.objects.select_related("user").get(key=token_key)
+                request.user = api_token.user
+                # Update last used timestamp
+                api_token.last_used_at = timezone.now()
+                api_token.save(update_fields=["last_used_at"])
+                
+                # Exclude from CSRF checking as it's token based
+                request._dont_enforce_csrf_checks = True
+            except ApiToken.DoesNotExist:
+                return JsonResponse({"error": "Token de API inválido."}, status=401)
+        
+        # 2. Proceed to run normal mixin checks
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, pk):
         return render(request, "aulas/importar_md.html", {"turma": self.turma})
@@ -326,19 +352,41 @@ class AulaImportarMdView(ProfessorRequiredMixin, AulaMixin, View):
     def post(self, request, pk):
         arquivo = request.FILES.get("arquivo")
         if not arquivo:
+            if request.headers.get("Authorization") or request.headers.get("Accept") == "application/json":
+                return JsonResponse({"error": "Nenhum arquivo enviado."}, status=400)
             messages.error(request, "Nenhum arquivo enviado.")
             return render(request, "aulas/importar_md.html", {"turma": self.turma})
 
         if not arquivo.name.endswith(".md"):
+            if request.headers.get("Authorization") or request.headers.get("Accept") == "application/json":
+                return JsonResponse({"error": "Apenas arquivos .md são aceitos."}, status=400)
             messages.error(request, "Apenas arquivos .md são aceitos.")
             return render(request, "aulas/importar_md.html", {"turma": self.turma})
 
         _max_md = 5 * 1024 * 1024  # 5 MB
         if arquivo.size > _max_md:
+            if request.headers.get("Authorization") or request.headers.get("Accept") == "application/json":
+                return JsonResponse({"error": "Arquivo muito grande. Máximo permitido: 5 MB."}, status=400)
             messages.error(request, "Arquivo muito grande. Máximo permitido: 5 MB.")
             return render(request, "aulas/importar_md.html", {"turma": self.turma})
 
         conteudo = arquivo.read().decode("utf-8", errors="replace")
+
+        # Validação do markdown
+        from core.validadores import validar_markdown_aula
+        erros = validar_markdown_aula(conteudo)
+        erros_graves = []
+        for erro in erros:
+            if any(k in erro.lower() for k in ["vazio", "h1", "questão", "html bruto", "inválido", "roteiro", "início da linha"]):
+                erros_graves.append(erro)
+
+        if erros_graves:
+            if request.headers.get("Authorization") or request.headers.get("Accept") == "application/json":
+                return JsonResponse({"error": "Erro de validação de Markdown.", "details": erros_graves}, status=400)
+            
+            for erro in erros_graves:
+                messages.error(request, erro)
+            return render(request, "aulas/importar_md.html", {"turma": self.turma})
 
         # Extrair título do primeiro H1
         match = re.search(r"^#\s+(.+)$", conteudo, re.MULTILINE)
@@ -359,6 +407,16 @@ class AulaImportarMdView(ProfessorRequiredMixin, AulaMixin, View):
             ordem=proximo_numero,
         )
         logger.info(f"Aula importada de .md: '{titulo}' na turma pk={self.turma.pk}")
+
+        # Resposta JSON para clientes de API
+        if request.headers.get("Authorization") or request.headers.get("Accept") == "application/json":
+            return JsonResponse({
+                "success": True,
+                "aula_id": aula.pk,
+                "titulo": aula.titulo,
+                "url": request.build_absolute_uri(reverse("turmas:aulas_detalhe", kwargs={"pk": self.turma.pk, "aula_pk": aula.pk}))
+            }, status=201)
+
         messages.success(request, f'Aula "{titulo}" importada com sucesso.')
         return redirect("turmas:aulas_editar", pk=self.turma.pk, aula_pk=aula.pk)
 

@@ -35,5 +35,23 @@ class Aula(BaseModel):
         verbose_name = "Aula"
         verbose_name_plural = "Aulas"
 
+    def clean(self) -> None:
+        super().clean()
+        from django.core.exceptions import ValidationError
+        from core.validadores import validar_markdown_aula
+        
+        if self.conteudo:
+            erros = validar_markdown_aula(self.conteudo)
+            erros_graves = []
+            for erro in erros:
+                # Severe errors that block saving
+                if any(k in erro.lower() for k in ["vazio", "h1", "questão", "html bruto", "inválido", "roteiro", "início da linha"]):
+                    erros_graves.append(erro)
+            
+            if erros_graves:
+                raise ValidationError({
+                    "conteudo": erros_graves
+                })
+
     def __str__(self) -> str:
         return f"Aula {self.numero} — {self.titulo}"

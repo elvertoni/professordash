@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: validar-aulas-markdown
+        name: Validar Aulas Markdown
+        entry: .venv/Scripts/python scripts/validador_pre_commit.py
+        language: system
+        files: \.md$
+        pass_filenames: true
