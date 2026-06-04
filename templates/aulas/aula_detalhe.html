@@ -3456,10 +3456,12 @@ h2:hover .heading-anchor, h3:hover .heading-anchor {
           <span class="tag tag-primary">{{ aula.turma.nome }}</span>
           <span class="tag tag-neutral">Aula {{ aula.numero }}</span>
           {% if is_admin_view %}
-            {% if aula.realizada %}
+            {% if aula.status == 'publicada' %}
             <span class="tag tag-success">Publicada</span>
-            {% else %}
+            {% elif aula.status == 'rascunho' %}
             <span class="tag tag-draft">Rascunho</span>
+            {% else %}
+            <span class="tag tag-neutral">{{ aula.get_status_display }}</span>
             {% endif %}
           {% endif %}
           {% if aula.data %}
@@ -3516,7 +3518,7 @@ h2:hover .heading-anchor, h3:hover .heading-anchor {
     <!-- Conteúdo Markdown -->
     <section class="lesson-article-shell">
       <div class="md-content{% if aula.numbered_sections %} numbered{% endif %}" id="md-content">
-        {{ aula.conteudo|markdownify }}
+        {% if user.is_staff %}{{ aula.conteudo|markdownify }}{% else %}{{ aula.conteudo|markdownify|remove_roteiro }}{% endif %}
       </div>
     </section>
 

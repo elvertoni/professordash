@@ -47,6 +47,7 @@ Sintaxe suportada:
 import re
 import xml.etree.ElementTree as etree
 
+import markdown as md_module
 from markdown import Extension
 from markdown.preprocessors import Preprocessor
 
@@ -102,6 +103,13 @@ BLOCK_RE = re.compile(
     re.MULTILINE | re.DOTALL,
 )
 
+# Extensoes usadas pelo sub-parser de Markdown rico dentro dos blocos :::
+_INNER_MD_EXTENSIONS = [
+    "markdown.extensions.extra",
+    "markdown.extensions.codehilite",
+    "markdown.extensions.sane_lists",
+]
+
 LETTERS = "abcdefghijklmnopqrstuvwxyz"
 
 
@@ -110,11 +118,33 @@ class ProfessorDashPreprocessor(Preprocessor):
 
     _question_counter = 0
 
-    def run(self, lines):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.is_staff = False
+        # Instancia interna do parser Markdown para renderizar o interior dos blocos :::
+        self._inner_md = md_module.Markdown(extensions=_INNER_MD_EXTENSIONS)
+
+    def run(self, lines, is_staff=None):
+        if is_staff is not None:
+            self.is_staff = is_staff
         text = "\n".join(lines)
         ProfessorDashPreprocessor._question_counter = 0
         text = BLOCK_RE.sub(self._replace_block, text)
         return text.split("\n")
+
+    def _render_inner_markdown(self, body):
+        """Renderiza o corpo de um bloco ::: como Markdown rico.
+
+        Remove marcadores de heading (###) para preservar a hierarquia
+        de blocos, depois aplica o sub-parser Markdown.
+        """
+        # Remove headings ATX (#, ##, ###, etc.) para preservar hierarquia
+        body = re.sub(r"^#{1,6}\s+", "", body, flags=re.MULTILINE)
+        # Remove setext-style headings (linhas com === ou --- sublinhando texto)
+        body = re.sub(r"^[-=]+\s*$", "", body, flags=re.MULTILINE)
+        # Reset inner parser state (acumula resultados de conversoes anteriores)
+        self._inner_md.reset()
+        return self._inner_md.convert(body).strip()
 
     def _stash(self, html):
         """Protege o HTML gerado de ser re-processado pelo parser Markdown."""
@@ -128,7 +158,10 @@ class ProfessorDashPreprocessor(Preprocessor):
         if block_type == "questao":
             return self._stash(self._build_questao(inline_arg, body))
         if block_type == "roteiro":
-            return self._stash(self._build_roteiro(body))
+            html = self._build_roteiro(body)
+            if html:
+                return self._stash(html)
+            return ""  # Remove bloco completamente se nao for staff
         if block_type == "resumo":
             return self._stash(self._build_resumo(body))
         if block_type in CALLOUT_MAP:
@@ -145,20 +178,23 @@ class ProfessorDashPreprocessor(Preprocessor):
         icon = cfg["icon"]
         css = cfg["css"]
 
-        body_html = _escape(body).replace("\n", "<br>")
+        body_html = self._render_inner_markdown(body)
 
         return (
             f'<div class="callout {css}">'
             f'<div class="callout-icon">{icon}</div>'
             f'<div class="callout-body">'
             f'<div class="callout-title">{_escape(title)}</div>'
-            f'<p class="callout-text">{body_html}</p>'
+            f'<div class="callout-text">{body_html}</div>'
             f"</div>"
             f"</div>"
         )
 
     def _build_roteiro(self, body):
-        body_html = _escape(body).replace("\n", "<br>")
+        if not self.is_staff:
+            return ""
+
+        body_html = self._render_inner_markdown(body)
 
         return (
             f'<div class="roteiro">'

@@ -10,15 +10,23 @@ class AulaAdmin(admin.ModelAdmin):
         "turma",
         "numero",
         "data",
+        "status",
         "realizada",
+        "esta_realizada",
         "gera_apostila",
         "modo_aula",
         "ordem",
     )
-    list_filter = ("realizada", "gera_apostila", "turma")
+    list_filter = ("status", "realizada", "gera_apostila", "turma")
     search_fields = ("titulo", "turma__nome")
     readonly_fields = ("criado_em", "atualizado_em")
     ordering = ("turma", "ordem", "numero")
+
+    @admin.display(description="Pública?")
+    def esta_realizada(self, obj):
+        return obj.status == "publicada"
+
+    esta_realizada.boolean = True
 
     @admin.display(description="Modo")
     def modo_aula(self, obj):

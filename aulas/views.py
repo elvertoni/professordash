@@ -487,8 +487,10 @@ class AulaMarcarRealizadaView(ProfessorRequiredMixin, AulaMixin, View):
     def post(self, request, pk, aula_pk):
         aula = get_object_or_404(Aula, pk=aula_pk, turma=self.turma)
         aula.realizada = not aula.realizada
-        aula.save(update_fields=["realizada", "atualizado_em"])
-        logger.info(f"Aula pk={aula_pk} marcada como realizada={aula.realizada}")
+        # Sync status field for retrocompatibilidade
+        aula.status = "publicada" if aula.realizada else "rascunho"
+        aula.save(update_fields=["realizada", "status", "atualizado_em"])
+        logger.info(f"Aula pk={aula_pk} status={aula.status} realizada={aula.realizada}")
         if request.headers.get("HX-Request") == "true":
             return render(
                 request,
@@ -513,15 +515,17 @@ class AulaListaPublicaView(TurmaPublicaMixin, ListView):
     context_object_name = "aulas"
 
     def get_queryset(self):
-        return Aula.objects.filter(turma=self.turma).order_by("ordem", "numero")
+        return Aula.objects.filter(turma=self.turma, status="publicada").order_by(
+            "ordem", "numero"
+        )
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["turma"] = self.turma
-        qs = self.get_queryset()
+        qs = Aula.objects.filter(turma=self.turma).order_by("ordem", "numero")
         ctx["total_aulas"] = qs.count()
-        ctx["aulas_realizadas"] = qs.filter(realizada=True).count()
-        proxima = qs.filter(realizada=False).first()
+        ctx["aulas_realizadas"] = qs.filter(status="publicada").count()
+        proxima = qs.filter(status="rascunho").first()
         ctx["proxima_aula_pk"] = proxima.pk if proxima else None
         return ctx
 
@@ -537,7 +541,7 @@ class AulaDetalhePublicoView(TurmaPublicaMixin, AulaNavMixin, DetailView):
             Aula,
             pk=self.kwargs["aula_pk"],
             turma=self.turma,
-            realizada=True,
+            status="publicada",
         )
 
     def _build_aula_url(self, aula_pk):
@@ -547,7 +551,9 @@ class AulaDetalhePublicoView(TurmaPublicaMixin, AulaNavMixin, DetailView):
         )
 
     def get_nav_queryset(self):
-        return Aula.objects.filter(turma=self.turma, realizada=True).order_by("ordem", "numero")
+        return Aula.objects.filter(turma=self.turma, status="publicada").order_by(
+            "ordem", "numero"
+        )
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -578,7 +584,7 @@ class AulaApostilaPublicaView(TurmaPublicaMixin, DetailView):
             Aula.objects.select_related("turma"),
             pk=self.kwargs["aula_pk"],
             turma=self.turma,
-            realizada=True,
+            status="publicada",
             gera_apostila=True,
         )
 

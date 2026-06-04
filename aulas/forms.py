@@ -16,6 +16,7 @@ class AulaForm(forms.ModelForm):
             "numero",
             "data",
             "imagem_capa",
+            "status",
             "gera_apostila",
             "conteudo",
             "ordem",

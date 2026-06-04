@@ -115,6 +115,11 @@ GOOGLE_CLIENT_SECRET = config("GOOGLE_CLIENT_SECRET", default="")
 GOOGLE_DRIVE_OAUTH_ENABLED = config(
     "GOOGLE_DRIVE_OAUTH_ENABLED", default=False, cast=bool
 )
+GOOGLE_ALLOWED_DOMAINS = config(
+    "GOOGLE_ALLOWED_DOMAINS",
+    default="escola.pr.gov.br",
+    cast=lambda v: [d.strip() for d in v.split(",") if d.strip()],
+)
 
 google_scopes = ["profile", "email"]
 google_auth_params = {"access_type": "online"}

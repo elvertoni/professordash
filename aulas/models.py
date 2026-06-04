@@ -27,7 +27,20 @@ class Aula(BaseModel):
         help_text="Permite exportar esta aula como HTML standalone.",
     )
     realizada = models.BooleanField(default=False)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("rascunho", "Rascunho"),
+            ("publicada", "Publicada"),
+            ("arquivada", "Arquivada"),
+        ],
+        default="rascunho",
+    )
     ordem = models.PositiveIntegerField(default=0)
+
+    @property
+    def esta_realizada(self):
+        return self.status == "publicada"
 
     class Meta:
         ordering = ["ordem", "numero"]
