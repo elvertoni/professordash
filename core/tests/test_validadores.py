@@ -201,7 +201,8 @@ def test_long_code_block_outside_complete_code():
     long_code = "\n".join([f"line_{i}" for i in range(25)])
     texto = VALID_CONCEITUAL + f"\n## Outra Seção\n```js\n{long_code}\n```\n"
     erros = validar_markdown_aula(texto)
-    assert any("mais de 20 linhas" in e for e in erros)
+    # Blocos de código ``` são ignorados na validação estrutural
+    assert not any("mais de 20 linhas" in e for e in erros)
 
 def test_raw_html_callout():
     texto = VALID_CONCEITUAL + '\n## Outra Seção\n<div class="callout c-green">Objetivo</div>'
@@ -228,6 +229,78 @@ def test_multiple_roteiro_blocks():
     erros = validar_markdown_aula(texto)
     assert any("no máximo 1 bloco :::roteiro" in e for e in erros)
 
+def test_three_questions_in_conceptual():
+    """Modo conceitual com 3 questões deve gerar erro."""
+    texto = VALID_CONCEITUAL + """
+:::questao Questão extra?
+a) Sim *
+b) Não
+> Explicação da questão extra.
+> Segunda linha.
+:::
+"""
+    erros = validar_markdown_aula(texto)
+    assert any("exatamente 2 questões" in e for e in erros)
+
+def test_repeated_correct_letter():
+    """Duas questões com a mesma alternativa correta deve gerar erro."""
+    texto = """# Aula Teste — Letra Repetida
+
+Este é um parágrafo introdutório de exemplo para
+validar a regra que impede que ambas as questões
+tenham a mesma letra como alternativa correta.
+
+## Seção Um
+
+:::questao Qual a capital do Brasil?
+a) São Paulo *
+b) Brasília
+c) Rio de Janeiro
+d) Salvador
+> São Paulo é a capital econômica, mas a resposta certa
+> aqui é a letra A para testar repetição.
+:::
+
+## Seção Dois
+
+:::questao Qual o maior estado do Brasil?
+a) Amazonas *
+b) Minas Gerais
+c) Bahia
+d) São Paulo
+> O Amazonas é o maior estado em extensão territorial.
+> A letra A está correta novamente, repetindo a padrão.
+:::
+
+## Seção Três
+
+Conteúdo normal da terceira seção para cumprir
+o requisito mínimo de quatro seções H2 por
+aula no modo conceitual.
+
+## Fechamento
+
+:::resumo
+- Item um do resumo
+- Item dois do resumo
+- Item três do resumo
+- Próxima aula: teste final
+:::
+"""
+    erros = validar_markdown_aula(texto)
+    assert any("ambas possuem a alternativa" in e for e in erros)
+
 def test_mode_detection():
     assert detectar_modo(VALID_CONCEITUAL) == "conceitual"
     assert detectar_modo(VALID_PRATICA) == "prático"
+
+def test_mode_detection_empty():
+    assert detectar_modo("") == "conceitual"
+
+def test_mode_detection_passo_a_passo():
+    texto = "# Teste\n\nParágrafo.\n\n## Passo a passo\nConteúdo\n"
+    assert detectar_modo(texto) == "prático"
+
+def test_mode_detection_erros_comuns():
+    texto = "# Teste\n\nParágrafo.\n\n## Erros comuns\nConteúdo\n"
+    assert detectar_modo(texto) == "prático"

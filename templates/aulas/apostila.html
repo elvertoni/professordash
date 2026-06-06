@@ -27,6 +27,14 @@
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <title>{{ aula.titulo|default:"Apostila" }} — ProfessorDash</title>
 
+{# ── OG Meta Tags ───────────────────────────────────────────── #}
+<meta property="og:title" content="{{ aula.titulo|default:'Apostila' }} — ProfessorDash">
+{% with desc=aula.resumo|default:aula.titulo %}
+<meta property="og:description" content="{{ desc|truncatechars:200 }}">
+{% endwith %}
+<meta property="og:type" content="article">
+<meta name="description" content="{{ aula.resumo|default:aula.titulo|truncatechars:200 }}">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">

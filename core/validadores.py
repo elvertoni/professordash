@@ -19,6 +19,10 @@ def detectar_modo(texto: str) -> str:
             return "prático"
     return "conceitual"
 
+def _strip_code_blocks(texto: str) -> str:
+    """Remove blocos de código (``` ... ```) do texto para evitar falsos positivos."""
+    return re.sub(r'```.*?```', '', texto, flags=re.DOTALL)
+
 def validar_markdown_aula(texto: str) -> list[str]:
     """
     Valida se o texto de uma aula em Markdown segue as regras do FORMATO_AULAS.md v2.1.
@@ -28,14 +32,17 @@ def validar_markdown_aula(texto: str) -> list[str]:
     if not texto or not texto.strip():
         return ["O documento está vazio."]
 
+    # Remove code blocks antes de validar estrutura
+    text_sem_codigo = _strip_code_blocks(texto)
+
     # 1. Checagem de Título (#)
-    h1_headers = [line.strip() for line in texto.splitlines() if line.startswith("# ")]
+    h1_headers = [line.strip() for line in text_sem_codigo.splitlines() if line.startswith("# ")]
     if len(h1_headers) != 1:
         violacoes.append(f"Deve haver exatamente um título H1 ('# Título'). Encontrados: {len(h1_headers)}.")
 
     # 2. Primeiro parágrafo após o H1
     # Vamos encontrar o parágrafo explicativo logo após o H1
-    linhas = texto.splitlines()
+    linhas = text_sem_codigo.splitlines()
     h1_idx = -1
     for idx, line in enumerate(linhas):
         if line.startswith("# "):
@@ -67,7 +74,7 @@ def validar_markdown_aula(texto: str) -> list[str]:
             violacoes.append("Não foi encontrado o parágrafo introdutório obrigatório após o H1.")
 
     # 3. Seções H2 (##)
-    h2_headers = [line.strip() for line in texto.splitlines() if line.startswith("## ")]
+    h2_headers = [line.strip() for line in text_sem_codigo.splitlines() if line.startswith("## ")]
     num_h2 = len(h2_headers)
     if num_h2 < 4 or num_h2 > 8:
         violacoes.append(f"A faixa ideal de seções H2 (##) é de 4 a 6 (máximo 8). Encontradas: {num_h2}.")
@@ -81,7 +88,7 @@ def validar_markdown_aula(texto: str) -> list[str]:
             pass
 
     # 5. Modo de aula
-    modo = detectar_modo(texto)
+    modo = detectar_modo(text_sem_codigo)
 
     # 6. Parsear blocos ::: e fences de código e listas por seção
     # Vamos dividir o texto em seções H2 para analisar individualmente

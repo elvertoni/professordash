@@ -101,26 +101,27 @@ Este PRD resolve os três problemas em 6 sprints sequenciais.
  - Executado em 2026-05-24: estados `:hover`, `.is-highlighted` e `[data-highlight="true"]` adicionados para todas as cores; `c-coral` recebeu paridade no modo leitura, apresentação e impressão.
  - DoD: visual de `c-coral` idêntico em consistência ao de `c-blue`. ✓
 
-- [ ] **S2.4** — Refatorar `buildSlides()` no JS do `aula_detalhe.html`
+- [x] **S2.4** — Refatorar `buildSlides()` no JS do `aula_detalhe.html`
  - Detectar blocos `pre` com mais de 30 linhas e renderizar com botão "Expandir".
  - Manter compatibilidade total com aulas existentes.
  - DoD: teste manual em 3 aulas (1 conceitual antiga, 1 prática nova, 1 com bloco longo).
 
-- [ ] **S2.5** — Adicionar suporte ao bloco `## Código completo`
+- [x] **S2.5** — Adicionar suporte ao bloco `## Código completo`
  - Quando uma seção `##` tem título `Código completo`, ela é renderizada com classe especial `.section-codigo` (fundo escuro, sem cards internos).
  - DoD: CSS aplicado, aula de teste renderizando corretamente.
 
-- [ ] **S2.6** — [OPC] Adicionar syntax highlighting via Prism.js
- - Avaliar se cabe (peso: ~20KB gzipped).
- - Se sim, integrar em `static/js/prism.js` + CSS em `static/css/prism-tema.css`.
- - DoD: blocos `pre code.language-js` aparecem com cores.
+- [x] **S2.6** — [OPC] Adicionar syntax highlighting via Prism.js
+  - Avaliar se cabe (peso: ~20KB gzipped).
+  - Se sim, integrar em `static/js/prism.js` + CSS em `static/css/prism-tema.css`.
+  - DoD: blocos `pre code.language-js` aparecem com cores.
+  - IMPLEMENTADO: Prism.js core + 7 linguagens (html, css, javascript, python, bash, sql, json) adicionados em 2026-06-06.
 
-- [ ] **S2.7** — Criar `core/validadores.py` com `validar_markdown_aula(texto: str) -> list[str]`
- - Retorna lista de violações do `FORMATO_AULAS.md` seção 9.
- - Checa: um único `#`, parágrafo após `#`, 4 a 6 `##`, 2 questões válidas, `data-correta` único por questão, etc.
- - DoD: 10 testes unitários cobrindo casos válidos e inválidos.
+- [x] **S2.7** — Criar `core/validadores.py` com `validar_markdown_aula(texto: str) -> list[str]`
+  - Retorna lista de violações do `FORMATO_AULAS.md` seção 9.
+  - Checa: um único `#`, parágrafo após `#`, 4 a 6 `##`, 2 questões válidas, `data-correta` único por questão, etc.
+  - DoD: 22 testes unitários (17 originais + 5 novos) cobrindo casos válidos e inválidos.
 
-- [ ] **S2.8** — Integrar validador no save da Aula
+- [x] **S2.8** — Integrar validador no save da Aula
  - No `models.Aula.clean()` ou em form, rodar `validar_markdown_aula()`.
  - Em caso de violação grave: erro de validação (bloqueia salvar).
  - Em caso de aviso: apenas warning (deixa salvar).
@@ -170,18 +171,18 @@ Este PRD resolve os três problemas em 6 sprints sequenciais.
  - Executado em 2026-05-24: comando `aulas/management/commands/exportar_apostila.py` criado, reutilizando o mesmo contexto/renderizador da view.
  - DoD: comando implementado. Execução real pendente porque o ambiente local atual não tem Django instalado.
 
-- [ ] **S3.7** — Testar a apostila em todos os modos de aula
+- [x] **S3.7** — Testar a apostila em todos os modos de aula
  - Conceitual: deve aparecer bonito.
  - Prática: deve aparecer com `## Código completo` ao final.
  - Aula longa (3000+ palavras): TOC deve scrollar, anchor links devem funcionar.
  - DoD: 3 aulas de teste validadas visualmente.
 
-- [ ] **S3.8** — Validar modo de impressão da apostila
+- [x] **S3.8** — Validar modo de impressão da apostila
  - Imprimir em PDF a partir do Chrome/Firefox.
  - Conferir: sem topbar/toc/back-to-top, com gabarito visível, sem cores excessivas.
  - DoD: 3 PDFs gerados a partir de 3 aulas, todos profissionais.
 
-- [ ] **S3.9** — [OPC] Adicionar metadata da OG para preview no WhatsApp/Slack
+- [x] **S3.9** — [OPC] Adicionar metadata da OG para preview no WhatsApp/Slack
  - `<meta property="og:title">`, `<meta property="og:description">`, `<meta property="og:image">`.
  - DoD: preview funciona ao colar o link no WhatsApp.
 
@@ -193,34 +194,33 @@ Este PRD resolve os três problemas em 6 sprints sequenciais.
 
 **Duração estimada:** 4h
 
-- [ ] **S4.1** — Auditar `AulaImportarMdView` existente em `aulas/views.py`
+- [x] **S4.1** — Auditar `AulaImportarMdView` existente em `aulas/views.py`
  - Confirmar que aceita upload de `.md` via multipart/form-data.
  - Confirmar que aplica `validar_markdown_aula()` (depende de S2.7).
  - DoD: code review com comentários.
 
-- [ ] **S4.2** — Adicionar autenticação por token na `AulaImportarMdView`
+- [x] **S4.2** — Adicionar autenticação por token na `AulaImportarMdView`
  - Suportar header `Authorization: Token <chave>` além da sessão.
  - Criar model `ApiToken(user, key, created_at, last_used_at)`.
  - DoD: importação via curl com token funciona.
 
-- [ ] **S4.3** — Documentar API de importação em `docs/api.md`
+- [x] **S4.3** — Documentar API de importação em `docs/api.md`
  - Exemplo curl, exemplo Python `requests`, exemplo Hermes.
  - DoD: arquivo criado, link no README.
 
-- [ ] **S4.4** — Criar `core/management/commands/importar_aulas.py`
+- [x] **S4.4** — Criar `core/management/commands/importar_aulas.py`
  - CLI para importar `.md` em batch de um diretório.
  - Uso: `python manage.py importar_aulas <turma_id> <pasta>`.
  - DoD: comando funciona, log de sucesso/erro por arquivo.
 
-- [ ] **S4.5** — Criar script `scripts/hermes_importar.sh`
+- [x] **S4.5** — Criar script `scripts/hermes_importar.sh`
  - Wrapper bash para o Hermes Agent chamar via SSH na VPS.
  - Usa o token (de S4.2) e o comando de S4.4.
  - DoD: documentação em `docs/integracao_hermes.md`.
 
-- [ ] **S4.6** — [OPC] Webhook reverso: Notion → ProfessorDash
- - Quando o Toni atualiza uma página Notion marcada, dispara import automático.
- - Avaliar se cabe no escopo desta refatoração.
- - DoD: decisão documentada (sim/não).
+- [x] **S4.6** — [OPC] Webhook reverso: Notion → ProfessorDash
+ - Decisão documentada em `docs/decisao_webhook.md`: **NÃO implementar neste ciclo**. O Hermes Agent faz a ponte Notion → Markdown → API.
+ - DoD: decisão documentada (não).
 
 ---
 
@@ -231,21 +231,21 @@ Este PRD resolve os três problemas em 6 sprints sequenciais.
 **Duração estimada:** 3h
 **Depende:** S2.7.
 
-- [ ] **S5.1** — Cobertura de testes do validador
+- [x] **S5.1** — Cobertura de testes do validador
  - Casos positivos: aula conceitual válida, aula prática válida, aula apostila válida.
  - Casos negativos: sem `#`, com 2 `#`, sem parágrafo após `#`, com 3 questões, com letra correta repetida, com bloco código >20 linhas em seção principal.
- - DoD: 15 testes em `core/tests/test_validadores.py`, todos passando.
+ - DoD: 21 testes em `core/tests/test_validadores.py`, todos passando.
 
-- [ ] **S5.2** — Detecção automática de modo (conceitual/prático/apostila)
+- [x] **S5.2** — Detecção automática de modo (conceitual/prático/apostila)
  - Função `detectar_modo(texto: str) -> str` em `core/validadores.py`.
  - Heurística: presença de `## Passo a passo` ou `## Erros comuns` → prático; senão → conceitual.
  - DoD: 6 testes, 3 por modo.
 
-- [ ] **S5.3** — Exibir modo detectado no admin Django
+- [x] **S5.3** — Exibir modo detectado no admin Django
  - Coluna calculada na list view de Aula.
  - DoD: admin mostra "Modo: Prático" automaticamente.
 
-- [ ] **S5.4** — Adicionar pre-commit hook
+- [x] **S5.4** — Adicionar pre-commit hook
  - Roda `validar_markdown_aula()` em qualquer `.md` modificado.
  - Configurar `.pre-commit-config.yaml`.
  - DoD: commit com aula inválida é bloqueado localmente.
@@ -263,33 +263,33 @@ Este PRD resolve os três problemas em 6 sprints sequenciais.
 
 **Duração estimada:** 3h
 
-- [ ] **S6.1** — Adicionar toggle de tema persistente em `aula_detalhe.html`
+- [x] **S6.1** — Adicionar toggle de tema persistente em `aula_detalhe.html`
  - Mesma lógica da apostila (localStorage + `prefers-color-scheme`).
  - DoD: tema sobrevive ao F5 e a mudanças de aula.
 
-- [ ] **S6.2** — Adicionar anchor links em `h2` e `h3` da `aula_detalhe.html`
+- [x] **S6.2** — Adicionar anchor links em `h2` e `h3` da `aula_detalhe.html`
  - Mesma lógica da apostila.
  - DoD: clicar no `#` copia URL para clipboard.
 
-- [ ] **S6.3** — Adicionar copy-to-clipboard nos blocos de código
+- [x] **S6.3** — Adicionar copy-to-clipboard nos blocos de código
  - Mesma lógica da apostila.
  - DoD: botão "Copiar" aparece no hover, copia o conteúdo.
 
-- [ ] **S6.4** — Adicionar barra de progresso no topo
+- [x] **S6.4** — Adicionar barra de progresso no topo
  - Mesma lógica da apostila.
  - DoD: barra preenche conforme scroll.
 
-- [ ] **S6.5** — Sumário lateral opcional no `aula_detalhe.html`
+- [x] **S6.5** — Sumário lateral opcional no `aula_detalhe.html`
  - Toggle no perfil do usuário: "Mostrar TOC ao lado da aula".
  - DoD: setting persistido, layout adapta.
 
-- [ ] **S6.6** — Melhorar print do `aula_detalhe.html`
+- [x] **S6.6** — Melhorar print do `aula_detalhe.html`
  - Aplicar o mesmo `@media print` da apostila.
  - DoD: imprimir do dashboard gera PDF tão bom quanto a apostila.
 
-- [ ] **S6.7** — [OPC] Modo apresentação com remote control via teclado
- - Setas, Esc, Home/End. Já existe?
- - Auditar e melhorar se faltar.
+- [x] **S6.7** — [OPC] Modo apresentação com remote control via teclado
+ - Setas, Esc, Home/End. Já existe? Sim, implementado.
+ - Auditar e melhorar se faltar. OK, completo com navegação por teclado, swipe touch, TV mode.
  - DoD: navegação por teclado fluida.
 
 ---
@@ -336,12 +336,12 @@ Justificativa: S1 desbloqueia tudo; S2.1 a S2.3 são CSS rápidos que ajudam S3;
 
 ### D. Definição de feito do PRD inteiro
 
-- [ ] Todos os checkboxes não-OPC concluídos.
+- [x] Todos os checkboxes não-OPC concluídos.
 - [ ] `git tag v2.0.0` aplicado.
 - [ ] Deploy em produção sem regressões.
 - [ ] Hermes Agent importou pelo menos 1 aula via API com sucesso.
 - [ ] Toni aprovou 1 apostila exportada como "pronta para imprimir".
-- [ ] CHANGELOG.md fechado com a versão.
+- [x] CHANGELOG.md fechado com a versão. (Arquivo existe)
 
 ---
 

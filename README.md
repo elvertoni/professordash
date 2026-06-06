@@ -25,3 +25,10 @@ Os arquivos `AULAS_SPEC.md` e `formato_ideal.md` foram deprecados e apenas redir
 ## Documentação
 
 Documentação completa em [`docs/`](docs/README.md): arquitetura, modelos, autenticação, deploy e convenções.
+
+### Integração via API
+
+O ProfessorDash expõe uma API REST para importação automática de aulas em Markdown, projetada para integração com o **Hermes Agent**, **Claude Desktop** ou scripts personalizados. Consulte:
+
+- **[docs/api.md](docs/api.md)** — documentação da API de importação (endpoint, autenticação via token, exemplos com `curl`, Python e Hermes)
+- **[scripts/hermes_importar.sh](scripts/hermes_importar.sh)** — script wrapper bash para chamar a API via SSH/VPS
