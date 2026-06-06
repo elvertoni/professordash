@@ -170,7 +170,7 @@
     <!-- Conteúdo Markdown -->
     <section class="lesson-article-shell">
       <div class="md-content{% if aula.numbered_sections %} numbered{% endif %}" id="md-content">
-        {% if user.is_staff %}{{ aula.conteudo|markdownify }}{% else %}{{ aula.conteudo|markdownify|remove_roteiro }}{% endif %}
+        {% render_markdown aula.conteudo %}
       </div>
     </section>
 
